@@ -1,13 +1,11 @@
-'use strict';
-
 function Game(){
-    var self = this;
+    var global = this;
 
     var options = {
         id : 'gamescreen',
         dimension : {
-            width : 800,
-            height : 600
+            width : platformer.dimension.w,
+            height : platformer.dimension.h
         },
         fullscreen : false,
         scale : true
@@ -15,9 +13,8 @@ function Game(){
 
     var canvas,
         ctx,
-        gsh;
-
-    var running = false,
+        gsh,
+        running = false,
         now,
         delta = 0,
         last = timestamp(),
@@ -30,7 +27,7 @@ function Game(){
 
         window.addEventListener('resize', function(){
             if(options.fullscreen){
-                self.fullscreen();
+                global.fullscreen();
             }
         });
 
@@ -42,8 +39,8 @@ function Game(){
             resume();
         });
 
-        //gsh = new GameStateHandler;
-        //gsh.init();
+        gsh = new GameStateHandler;
+        gsh.init();
 
         start();
     }
@@ -51,12 +48,12 @@ function Game(){
 
     /**
     * Game loop
+    * Pour plus de détails :
+    * http://codeincomplete.com/posts/2013/12/4/javascript_game_foundations_the_game_loop/
     */
     function pause(){
-        if(running){
-            console.info('PAUSE');
-            running = false;
-        }
+        console.info('PAUSE');
+        running = false;
     }
     function resume(){
         if(!running){
@@ -65,7 +62,7 @@ function Game(){
         }
     }
 
-    function togglePause(){
+    this.togglePause = function(){
         (!running) ? resume() : pause();
     }
 
@@ -82,11 +79,11 @@ function Game(){
         while(delta > step){
             delta -= step;
             if(running){
-                //gsh.update();
+                gsh.update();
             }
         }
 
-        //gsh.render();
+        gsh.render(ctx);
         last = now;
 
         requestAnimationFrame(run);
@@ -97,43 +94,6 @@ function Game(){
     */
     function timestamp() {
         return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
-    }
-
-
-    /**
-    * Sert à inclure un fichier dans le document
-    * path - Le chemin vers le fichier
-    * callback - Fonction exécutée une fois le fichier chargé
-    */
-    function include(path, tmp){
-        var tmp = tmp || {};
-        var callback = tmp.callback || undefined;
-        var required = tmp.required || true;
-
-
-        var xhttp = new XMLHttpRequest();
-        xhttp.open('GET', path, false);
-        xhttp.setRequestHeader('Content-type', 'application/javascript');
-
-        xhttp.onreadystatechange = function(){
-            if(xhttp.readyState == 4 && xhttp.status == 200){
-                // ajout au document
-                var script = document.createElement('script');
-                script.innerHTML = xhttp.responseText;
-                document.body.appendChild(script);
-
-                if(typeof callback === 'function'){
-                    callback();
-                }
-            }
-            else{
-                if(required){
-                    throw new Error('Impossible de charger le fichier ' + path);
-                }
-            }
-        }
-
-        xhttp.send();
     }
 
     /**
@@ -150,10 +110,10 @@ function Game(){
         document.body.appendChild(canvas);
 
         if(options.fullscreen){
-            self.fullscreen();
+            global.fullscreen();
         }
         else{
-            self.windowed();
+            global.windowed();
         }
     }
 
@@ -174,12 +134,18 @@ function Game(){
         disableSmoothing();
     }
 
+    this.toggleFullscreen = function(){
+        (!options.fullscreen) ? this.fullscreen() : this.windowed();
+    }
+
     this.fullscreen = function(){
+        console.info('FULLSCREEN MODE');
         resizeGameScreen(window.innerWidth, window.innerHeight);
         options.fullscreen = true;
     }
 
     this.windowed = function(){
+        console.info('WINDOWED MODE');
         resizeGameScreen(options.dimension.width, options.dimension.height);
         options.fullscreen = false;
     }
@@ -231,7 +197,3 @@ function Game(){
     this.getScreenWidth = function(){ return canvas.width; }
     this.getScreenHeight = function(){ return canvas.height; }
 }
-
-
-var game = new Game;
-game.init();
