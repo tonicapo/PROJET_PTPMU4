@@ -14,7 +14,91 @@ function Game(){
     };
 
     var canvas,
-        ctx;
+        ctx,
+        gsh;
+
+    var running = false,
+        now,
+        delta = 0,
+        last = timestamp(),
+        step = 1 / 60;
+
+
+
+    this.init = function(){
+        initGameScreen();
+
+        window.addEventListener('resize', function(){
+            if(options.fullscreen){
+                self.fullscreen();
+            }
+        });
+
+        window.addEventListener('blur', function(){
+            pause();
+        });
+
+        window.addEventListener('focus', function(){
+            resume();
+        });
+
+        //gsh = new GameStateHandler;
+        //gsh.init();
+
+        start();
+    }
+
+
+    /**
+    * Game loop
+    */
+    function pause(){
+        if(running){
+            console.info('PAUSE');
+            running = false;
+        }
+    }
+    function resume(){
+        if(!running){
+            console.info('RESUME');
+            running = true;
+        }
+    }
+
+    function togglePause(){
+        (!running) ? resume() : pause();
+    }
+
+    function start(){
+        console.info('START');
+        running = true;
+        requestAnimationFrame(run);
+    }
+
+    function run(){
+        now = timestamp();
+        delta += Math.min(1, (now - last) / 1000);
+
+        while(delta > step){
+            delta -= step;
+            if(running){
+                //gsh.update();
+            }
+        }
+
+        //gsh.render();
+        last = now;
+
+        requestAnimationFrame(run);
+    }
+
+    /**
+    * Retourne la timestamp courante
+    */
+    function timestamp() {
+        return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
+    }
+
 
     /**
     * Sert à inclure un fichier dans le document
@@ -56,11 +140,6 @@ function Game(){
     * INIT
     */
 
-
-    this.init = function(){
-        initGameScreen();
-    }
-
     function initGameScreen(){
         canvas = document.createElement('canvas');
         ctx = canvas.getContext('2d');
@@ -76,12 +155,6 @@ function Game(){
         else{
             self.windowed();
         }
-
-        window.addEventListener('resize', function(){
-            if(options.fullscreen){
-                self.fullscreen();
-            }
-        });
     }
 
 
@@ -123,7 +196,7 @@ function Game(){
     }
 
     /**
-    * Redimensionnement pour les écrans HiDPI, avoir des polices non pixelisées 
+    * Redimensionnement pour les écrans HiDPI, avoir des polices non pixelisées
     * Solution trouvé sur :
     * http://www.html5rocks.com/en/tutorials/canvas/hidpi/#disqus_thread
     */
@@ -150,11 +223,13 @@ function Game(){
             // the fact that we've manually scaled
             // our canvas element
             ctx.scale(ratio, ratio);
-            console.log(ratio);
         }
-        ctx.font = '48px Arial';
-        ctx.fillText('This is why i am broke ', 50, 50);
     }
+
+
+    // getters
+    this.getScreenWidth = function(){ return canvas.width; }
+    this.getScreenHeight = function(){ return canvas.height; }
 }
 
 
