@@ -1,65 +1,48 @@
-'use strict';
-
 var platformer = platformer || {};
 
 /**
-* Sert à inclure un fichier dans le document
-* path - Le chemin vers le fichier
-* callback - Fonction exécutée une fois le fichier chargé
+* Dépendances : fichiers à inclure au chargement de la page
+* - Type : image | script | sound
+* - Path : chemin vers le fichier
+* - Options
 */
-platformer.include = function(path, tmp){
-    var tmp = tmp || {};
-    var callback = tmp.callback || undefined;
-    var required = tmp.required || true;
 
+var assets = [
+    { name : undefined, type : 'script', path : './platformer/javascript/seedrandom.js', options : { asynchronous : true } },
+    { name : undefined, type : 'script', path : './platformer/javascript/utility.js', options : { asynchronous : true } },
+    { name : undefined, type : 'script', path : './platformer/javascript/Game.js', options : { asynchronous : true } },
+    { name : undefined, type : 'script', path : './platformer/javascript/gamestates/GameStateHandler.js', options : { asynchronous : true } },
+    { name : undefined, type : 'script', path : './platformer/javascript/gamestates/LevelState.js', options : { asynchronous : true } },
 
-    var xhttp = new XMLHttpRequest();
-    xhttp.open('GET', path, false);
-    xhttp.setRequestHeader('Content-type', 'application/javascript');
+    { name : 'tilemap', type : 'image', path : './platformer/resources/images/tilemap.png', options : { width : 320, height : 320 } }
+];
 
-    xhttp.onreadystatechange = function(){
-        if(xhttp.readyState == 4 && xhttp.status == 200){
-            // ajout au document
-            var script = document.createElement('script');
-            script.innerHTML = xhttp.responseText;
-            document.body.appendChild(script);
-
-            if(typeof callback === 'function'){
-                callback();
-            }
-        }
-        else{
-            if(required){
-                throw new Error('Impossible de charger le fichier ' + path);
-            }
-        }
-    }
-
-    xhttp.send();
-}
-
-/**
-* Permet d'afficher des messages dans la console seulement en mode débug
-*/
-platformer.notify = function(message){
-    if(platformer.debug){
-        console.info(message);
-    }
-}
-
+// Activer / désactiver l'affichage des informations de debug
 platformer.debug = true;
 
-/**
-* Dimension de la canvas
-*/
+// Dimension de la canvas
 platformer.dimension = {
     w : 800,
     h : 500
 };
 
-/**
-* Liste des touches
-*/
+// Fonts
+platformer.font = {
+    normal : 'silkscreen'
+};
+
+
+platformer.scale = 1;
+
+platformer.tileSizeX = 32;
+platformer.tileSizeY = 32;
+
+platformer.seed;
+
+platformer.sounds;
+platformer.textures;
+
+// Liste des touches
 platformer.keylist = {
     mvt_up : 38,
     mvt_down : 40,
@@ -70,17 +53,38 @@ platformer.keylist = {
     toggle_fullscreen : 70,
     toggle_restart : 82,
     toggle_pause : 27
-}
+};
+
+
+
+
+window.addEventListener('DOMContentLoaded', function(){
+    /**
+    * Load resources
+    */
+    console.time('ASSETS_LOAD_TIME');
+
+    platformer.loadAssets(assets, function(resources){
+        console.timeEnd('ASSETS_LOAD_TIME');
+
+        /**
+        * Textures
+        */
+        platformer.textures = {
+            test1 : [ platformer.getSubImage(resources.tilemap, 0, 0, 32, 32) ],
+            test2 : [ platformer.getSubImage(resources.tilemap, 32, 0, 32, 32) ]
+        };
+
+        platformer.game = new Game;
+        platformer.game.init();
+    });
+});
 
 /**
-* Dépendances
+* Permet d'afficher des messages dans la console seulement en mode débug
 */
-platformer.include('./platformer/javascript/seedrandom.js');
-platformer.include('./platformer/javascript/Game.js');
-platformer.include('./platformer/javascript/gamestates/GameStateHandler.js');
-platformer.include('./platformer/javascript/gamestates/LevelState.js');
-
-
-
-platformer.game = new Game;
-platformer.game.init();
+platformer.notify = function(message){
+    if(platformer.debug){
+        console.info(message);
+    }
+}

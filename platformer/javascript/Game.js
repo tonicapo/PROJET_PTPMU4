@@ -23,6 +23,11 @@ function Game(){
 
 
     this.init = function(){
+        /**
+        * Création d'un canvas
+        * Gestion des ressources du jeu
+        * Lancement du jeu
+        */
         initGameScreen();
 
         window.addEventListener('resize', function(){
@@ -38,6 +43,12 @@ function Game(){
         window.addEventListener('focus', function(){
             resume();
         });
+
+        /**
+        * On récupère les ressources
+        */
+
+
 
         gsh = new GameStateHandler;
         gsh.init();

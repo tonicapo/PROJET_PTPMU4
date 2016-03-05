@@ -1,6 +1,6 @@
 function LevelState(){
     var global = this;
-    
+
     this.init = function(){
 
     }
@@ -10,6 +10,8 @@ function LevelState(){
     }
 
     this.render = function(ctx){
+        ctx.fillStyle = 'red';
+        ctx.fillRect(0, 0, platformer.game.getScreenWidth(), platformer.game.getScreenHeight());
 
     }
 
