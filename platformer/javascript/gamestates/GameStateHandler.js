@@ -11,6 +11,14 @@ function GameStateHandler(){
         // on charge les stages du jeu et on initialise le premier
         states.push(new LevelState);
         this.setState(0);
+
+        window.addEventListener('keyup', function(e){
+            global.keyUp(e);
+        });
+
+        window.addEventListener('keyup', function(e){
+            global.keyDown(e);
+        });
     }
 
     /**
@@ -47,12 +55,12 @@ function GameStateHandler(){
         return current;
     }
 
-    window.onkeyup = function(e){
+    this.keyUp = function(e){
         var key = e.keyCode || e.which;
         states[current].keyUp(key);
     }
 
-    window.onkeydown = function(e){
+    this.keyDown = function(e){
         var key = e.keyCode || e.which;
         states[current].keyDown(key);
 
