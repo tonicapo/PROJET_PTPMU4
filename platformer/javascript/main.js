@@ -38,11 +38,28 @@ platformer.include = function(path, tmp){
     xhttp.send();
 }
 
+/**
+* Permet d'afficher des messages dans la console seulement en mode débug
+*/
+platformer.notify = function(message){
+    if(platformer.debug){
+        console.info(message);
+    }
+}
+
+platformer.debug = true;
+
+/**
+* Dimension de la canvas
+*/
 platformer.dimension = {
     w : 800,
     h : 500
 };
 
+/**
+* Liste des touches
+*/
 platformer.keylist = {
     mvt_up : 38,
     mvt_down : 40,
@@ -55,10 +72,15 @@ platformer.keylist = {
     toggle_pause : 27
 }
 
+/**
+* Dépendances
+*/
 platformer.include('./platformer/javascript/seedrandom.js');
 platformer.include('./platformer/javascript/Game.js');
 platformer.include('./platformer/javascript/gamestates/GameStateHandler.js');
 platformer.include('./platformer/javascript/gamestates/LevelState.js');
+
+
 
 platformer.game = new Game;
 platformer.game.init();

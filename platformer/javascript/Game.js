@@ -52,12 +52,12 @@ function Game(){
     * http://codeincomplete.com/posts/2013/12/4/javascript_game_foundations_the_game_loop/
     */
     function pause(){
-        console.info('PAUSE');
+        platformer.notify('PAUSE');
         running = false;
     }
     function resume(){
         if(!running){
-            console.info('RESUME');
+            platformer.notify('RESUME');
             running = true;
         }
     }
@@ -67,7 +67,7 @@ function Game(){
     }
 
     function start(){
-        console.info('START');
+        platformer.notify('START');
         running = true;
         requestAnimationFrame(run);
     }
@@ -139,13 +139,13 @@ function Game(){
     }
 
     this.fullscreen = function(){
-        console.info('FULLSCREEN MODE');
+        platformer.notify('FULLSCREEN MODE');
         resizeGameScreen(window.innerWidth, window.innerHeight);
         options.fullscreen = true;
     }
 
     this.windowed = function(){
-        console.info('WINDOWED MODE');
+        platformer.notify('WINDOWED MODE');
         resizeGameScreen(options.dimension.width, options.dimension.height);
         options.fullscreen = false;
     }
