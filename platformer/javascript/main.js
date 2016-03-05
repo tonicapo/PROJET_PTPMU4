@@ -6,15 +6,19 @@ var platformer = platformer || {};
 * - Path : chemin vers le fichier
 * - Options
 */
+var SCRIPTS_PATH = './platformer/javascript/';
+var IMAGES_PATH = './platformer/resources/images/';
+var SOUNDS_PATH = './platformer/resources/sounds/';
 
 var assets = [
-    { name : undefined, type : 'script', path : './platformer/javascript/seedrandom.js', options : { asynchronous : true } },
-    { name : undefined, type : 'script', path : './platformer/javascript/utility.js', options : { asynchronous : true } },
-    { name : undefined, type : 'script', path : './platformer/javascript/Game.js', options : { asynchronous : true } },
-    { name : undefined, type : 'script', path : './platformer/javascript/gamestates/GameStateHandler.js', options : { asynchronous : true } },
-    { name : undefined, type : 'script', path : './platformer/javascript/gamestates/LevelState.js', options : { asynchronous : true } },
+    { name : undefined, type : 'script', path : SCRIPTS_PATH + 'seedrandom.js', options : { asynchronous : true } },
+    { name : undefined, type : 'script', path : SCRIPTS_PATH + 'utility.js', options : { asynchronous : true } },
+    { name : undefined, type : 'script', path : SCRIPTS_PATH + 'Game.js', options : { asynchronous : true } },
+    { name : undefined, type : 'script', path : SCRIPTS_PATH + 'gamestates/GameStateHandler.js', options : { asynchronous : true } },
+    { name : undefined, type : 'script', path : SCRIPTS_PATH + 'gamestates/LevelState.js', options : { asynchronous : true } },
+    { name : undefined, type : 'script', path : SCRIPTS_PATH + 'world/Rectangle.js', options : { asynchronous : true } },
 
-    { name : 'tilemap', type : 'image', path : './platformer/resources/images/tilemap.png', options : { width : 320, height : 320 } }
+    { name : 'tilemap', type : 'image', path : IMAGES_PATH + 'tilemap.png', options : { width : 320, height : 320 } }
 ];
 
 // Activer / désactiver l'affichage des informations de debug
@@ -54,8 +58,6 @@ platformer.keylist = {
     toggle_restart : 82,
     toggle_pause : 27
 };
-
-
 
 
 window.addEventListener('DOMContentLoaded', function(){
