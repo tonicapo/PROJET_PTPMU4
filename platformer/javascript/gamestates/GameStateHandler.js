@@ -1,5 +1,5 @@
 function GameStateHandler(){
-    var global = this;
+    var self = this;
     var current;
 
     /**
@@ -13,11 +13,11 @@ function GameStateHandler(){
         this.setState(0);
 
         window.addEventListener('keyup', function(e){
-            global.keyUp(e);
+            self.keyUp(e);
         });
 
-        window.addEventListener('keyup', function(e){
-            global.keyDown(e);
+        window.addEventListener('keydown', function(e){
+            self.keyDown(e);
         });
     }
 
@@ -68,7 +68,7 @@ function GameStateHandler(){
             platformer.game.toggleFullscreen();
         }
         else if(key == platformer.keylist.toggle_restart){
-            global.reloadState();
+            self.reloadState();
         }
         else if(key == platformer.keylist.toggle_pause){
             platformer.game.togglePause();

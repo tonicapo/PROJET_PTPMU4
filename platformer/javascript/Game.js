@@ -1,5 +1,5 @@
 function Game(){
-    var global = this;
+    var self = this;
 
     var options = {
         id : 'gamescreen',
@@ -7,7 +7,7 @@ function Game(){
             width : platformer.dimension.w,
             height : platformer.dimension.h
         },
-        fullscreen : false,
+        fullscreen : true,
         scale : true
     };
 
@@ -21,6 +21,8 @@ function Game(){
         step = 1 / 60;
 
 
+    var screenWidth;
+    var screenHeight;
 
     this.init = function(){
         /**
@@ -32,7 +34,7 @@ function Game(){
 
         window.addEventListener('resize', function(){
             if(options.fullscreen){
-                global.fullscreen();
+                self.fullscreen();
             }
         });
 
@@ -121,10 +123,10 @@ function Game(){
         document.body.appendChild(canvas);
 
         if(options.fullscreen){
-            global.fullscreen();
+            self.fullscreen();
         }
         else{
-            global.windowed();
+            self.windowed();
         }
     }
 
@@ -140,9 +142,19 @@ function Game(){
         canvas.setAttribute('width', parseInt(width, 10));
         canvas.setAttribute('height', parseInt(height, 10));
 
+        if(options.fullscreen){
+            document.body.style.overflow = 'hidden';
+        }
+        else{
+            document.body.style.overflow = 'auto';
+        }
+
         scaleGameScreen();
         // désactive le lissage des images
         disableSmoothing();
+
+        screenWidth = parseInt(window.getComputedStyle(canvas).width, 10);
+        screenHeight = parseInt(window.getComputedStyle(canvas).height, 10);
     }
 
     this.toggleFullscreen = function(){
@@ -151,14 +163,14 @@ function Game(){
 
     this.fullscreen = function(){
         platformer.notify('FULLSCREEN MODE');
-        resizeGameScreen(window.innerWidth, window.innerHeight);
         options.fullscreen = true;
+        resizeGameScreen(window.innerWidth, window.innerHeight);
     }
 
     this.windowed = function(){
         platformer.notify('WINDOWED MODE');
-        resizeGameScreen(options.dimension.width, options.dimension.height);
         options.fullscreen = false;
+        resizeGameScreen(options.dimension.width, options.dimension.height);
     }
 
     /**
@@ -199,12 +211,13 @@ function Game(){
             // now scale the context to counter
             // the fact that we've manually scaled
             // our canvas element
+
             ctx.scale(ratio, ratio);
         }
     }
 
 
     // getters
-    this.getScreenWidth = function(){ return canvas.width; }
-    this.getScreenHeight = function(){ return canvas.height; }
+    this.getScreenWidth = function(){ return screenWidth; }
+    this.getScreenHeight = function(){ return screenHeight }
 }
