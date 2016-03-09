@@ -3,10 +3,12 @@ function Player(level, position){
 
     this.property = {
         speed : 1,
-        stopSpeed : 0.5,
-        maxSpeed : 4,
+        stopSpeed : 0.75,
+        maxSpeed : 6,
         fallSpeed : 2,
-        maxFallSpeed : 6
+        maxFallSpeed : 8,
+        jumpHeight : 8,
+        doubleJumpHeight : 4
     };
 
     this.keyUp = function(key){
@@ -15,12 +17,6 @@ function Player(level, position){
         }
         else if(key == platformer.keylist.mvt_right){
             this.right = false;
-        }
-        else if(key == platformer.keylist.mvt_up){
-            this.up = false;
-        }
-        else if(key == platformer.keylist.mvt_down){
-            this.down = false;
         }
     }
 
@@ -32,10 +28,7 @@ function Player(level, position){
             this.right = true;
         }
         else if(key == platformer.keylist.mvt_up){
-            this.up = true;
-        }
-        else if(key == platformer.keylist.mvt_down){
-            this.down = true;
+            this.setJumping();
         }
     }
 }

@@ -6,24 +6,34 @@ function MapObject(level, x, y, width, height){
     var vx = 0,
         vy = 0;
 
+    var gravityForce = 8;
+
     var blockedLeft = false,
         blockedRight = false,
         blockedUp = false,
         blockedDown = false;
 
     var falling = false;
+    var jumping = false;
+    var doubleJumping = false;
+    var canDoubleJump = false;
+    var canJump = true;
 
     this.left = false;
     this.right = false;
-    this.up = false;
+    this.jump = false;
+    this.doubleJump = false;
     this.down = false;
+    this.up = false;
 
     this.property = {
         speed : 0,
         stopSpeed : 0,
         maxSpeed : 0,
         fallSpeed : 0,
-        maxFallSpeed : 0
+        maxFallSpeed : 0,
+        jumpHeight : 0,
+        doubleJumpHeight : 0
     };
 
     this.update = function(){
@@ -31,8 +41,8 @@ function MapObject(level, x, y, width, height){
         collision();
         gravity();
 
-        self.x += vx;
-        self.y += vy;
+        self.x += platformer.math.toFloat(vx);
+        self.y += platformer.math.toFloat(vy);
 
         fixBounds();
     }
@@ -49,15 +59,23 @@ function MapObject(level, x, y, width, height){
 
         if(self.x < 0){
             self.x = 0;
+            vx = 0;
+            blockedLeft = true;
         }
         if(self.y < 0){
             self.y = 0;
+            vy = 0;
+            blockedUp = true;
         }
-        if(self.x + this.width > mapSizeX){
-            self.x = mapSizeX - this.width;
+        if(self.x + self.width > mapSizeX){
+            self.x = mapSizeX - self.width;
+            vx = 0;
+            blockedRight = true;
         }
-        if(self.y + this.height > mapSizeY){
-            self.y = mapSizeY - this.height;
+        if(self.y + self.height > mapSizeY){
+            self.y = mapSizeY - self.height;
+            vy = 0;
+            blockedDown = true;
         }
     }
 
@@ -94,7 +112,7 @@ function MapObject(level, x, y, width, height){
             }
         }
 
-
+        /*
         if(self.up && !blockedUp){
             vy -= self.property.speed;
             if(vy < -self.property.maxSpeed){
@@ -124,6 +142,47 @@ function MapObject(level, x, y, width, height){
                 }
             }
         }
+        */
+
+        if(self.jump){
+            vy -= self.property.jumpHeight;
+            self.jump = false;
+            falling = true;
+            jumping = true;
+            canDoubleJump = true;
+        }
+
+        if(falling){
+            if(self.doubleJump){
+                vy -= self.property.doubleJumpHeight;
+                self.doubleJump = false;
+                doubleJumping = true;
+            }
+
+            vy += (jumping) ? self.property.fallSpeed / gravityForce : self.property.fallSpeed;
+
+            if(vy > self.property.maxFallSpeed){
+                vy = self.property.maxFallSpeed;
+            }
+
+            if(vy >= 0){
+                doubleJumping = false;
+                jumping = false;
+                falling = false;
+                canJump = true;
+            }
+        }
+    }
+
+    this.setJumping = function(){
+        if(!falling && canJump){
+            canJump = false;
+            this.jump = true;
+        }
+        if(jumping && canDoubleJump){
+            canDoubleJump = false;
+            this.doubleJump = true;
+        }
     }
 
     function collision(){
@@ -147,7 +206,7 @@ function MapObject(level, x, y, width, height){
             topLeftTile = getTileAt(destX - 1, self.y + 1);
             bottomLeftTile = getTileAt(destX - 1, self.y + self.height - 1);
 
-            if(topLeftTile.tiletype.solid || bottomLeftTile.tiletype.solid){
+            if((typeof topLeftTile !== 'undefined' && topLeftTile.tiletype.solid) || (typeof bottomLeftTile !== 'undefined' && bottomLeftTile.tiletype.solid)){
                 blockedLeft = true;
                 self.x = topLeftTile.x + platformer.tileSizeX || bottomLeftTile.x + platformer.tileSizeX;
                 vx = 0;
@@ -158,7 +217,7 @@ function MapObject(level, x, y, width, height){
             topRightTile = getTileAt(destX + self.width, self.y + 1);
             bottomRightTile = getTileAt(destX + self.width, self.y + self.height - 1);
 
-            if(topRightTile.tiletype.solid || bottomRightTile.tiletype.solid){
+            if((typeof topRightTile !== 'undefined' && topRightTile.tiletype.solid) || (typeof bottomRightTile !== 'undefined' && bottomRightTile.tiletype.solid)){
                 blockedRight = true;
                 self.x = topRightTile.x - self.width - 0.1 || bottomRightTile.x - self.width - 0.1;
                 vx = 0;
@@ -170,7 +229,7 @@ function MapObject(level, x, y, width, height){
             topLeftTile = getTileAt(self.x + 1, destY - 1);
             topRightTile = getTileAt(self.x + self.width - 1, destY - 1);
 
-            if(topLeftTile.tiletype.solid || topRightTile.tiletype.solid){
+            if((typeof topLeftTile !== 'undefined' && topLeftTile.tiletype.solid) || (typeof topRightTile !== 'undefined' && topRightTile.tiletype.solid)){
                 blockedUp = true;
                 self.y = topLeftTile.y + platformer.tileSizeY || topRightTile.y - platformer.tileSizeY;
                 vy = 0;
@@ -181,7 +240,7 @@ function MapObject(level, x, y, width, height){
             bottomLeftTile = getTileAt(self.x + 1, destY + self.height + 1);
             bottomRightTile = getTileAt(self.x + self.width - 1, destY + self.height + 1);
 
-            if(bottomLeftTile.tiletype.solid || bottomRightTile.tiletype.solid){
+            if((typeof bottomLeftTile !== 'undefined' && bottomLeftTile.tiletype.solid) || (typeof bottomRightTile !== 'undefined' && bottomRightTile.tiletype.solid)){
                 blockedDown = true;
                 self.y = bottomLeftTile.y - self.height || bottomRightTile.y - self.height;
                 vy = 0;
@@ -193,27 +252,26 @@ function MapObject(level, x, y, width, height){
         var bottomLeftTile = getTileAt(self.x + 1, self.y + self.height);
         var bottomRightTile = getTileAt(self.x + self.width - 1, self.y + self.height);
 
-        if(!bottomLeftTile.tiletype.solid && !bottomRightTile.tiletype.solid){
+        if((typeof bottomLeftTile !== 'undefined' && !bottomLeftTile.tiletype.solid) && (typeof bottomRightTile !== 'undefined' && !bottomRightTile.tiletype.solid)){
             falling = true;
-
-            vy += self.property.fallSpeed;
-            if(vy > self.property.maxFallSpeed){
-                vy = self.property.maxFallSpeed;
-            }
         }
         else{
-            vy = 0;
+            falling = false;
         }
     }
 
     function getTileAt(posX, posY){
-        return level.getMap().getTilemap()[parseInt(posX / platformer.tileSizeX, 10)][parseInt(posY / platformer.tileSizeY, 10)] || undefined;
+        var map = level.getMap();
+        var x = parseInt(posX / platformer.tileSizeX, 10);
+        var y = parseInt(posY / platformer.tileSizeY, 10);
+        return (x >= 0 && x < map.getNumCols() && y >= 0 && y < map.getNumRows()) ? map.getTilemap()[x][y] : undefined;
     }
 
-    function isBlockedLeft(){ return blockedLeft; }
-    function isBlockedRight(){ return blockedRight; }
-    function isBlockedUp(){ return blockedUp; }
-    function isBlockedDown(){ return blockedDown; }
+    this.isBlockedLeft = function(){ return blockedLeft; }
+    this.isBlockedRight = function(){ return blockedRight; }
+    this.isBlockedUp = function(){ return blockedUp; }
+    this.isBlockedDown = function(){ return blockedDown; }
 
-    function isFalling(){ return falling; }
+    this.isFalling = function(){ return falling; }
+    this.isJumping = function(){ return jumping; }
 }
