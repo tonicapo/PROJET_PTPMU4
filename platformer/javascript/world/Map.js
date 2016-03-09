@@ -1,23 +1,31 @@
 function Map(level, player){
-    var world;
+    var world,
+        tileAcrossX,
+        tileAcrossY,
 
-    var tileAcrossX, tileAcrossY;
+        startX,
+        startY,
+        endX,
+        endY,
 
-    var startX, startY, endX, endY;
+        levelSizeX,
+        levelSizeY,
 
-    var levelSizeX, levelSizeY;
+        numCols,
+        numRows,
 
-    var numCols, numRows;
+        panX = 0,
+        panY = 0,
 
-    var panX = 0, panY = 0;
+        tilemap,
 
-    var tilemap;
+        renderlist = [],
 
-    var renderlist = [];
+        screenWidth = 0,
+        screenHeight = 0,
 
-    var screenWidth = 0, screenHeight = 0;
-
-    var targetPanX, targetPanY;
+        targetPanX,
+        targetPanY;
 
     this.init = function(){
         world = new WorldGeneration;
@@ -36,16 +44,16 @@ function Map(level, player){
         screenWidth = platformer.game.getScreenWidth();
         screenHeight = platformer.game.getScreenHeight();
 
-        targetPanX = Math.round(player.x - screenWidth / 2 + player.width / 2);
-        targetPanY = Math.round(player.y - screenHeight / 2 + player.height / 2);
+        targetPanX = player.x - screenWidth / 2 + player.width / 2;
+        targetPanY = player.y - screenHeight / 2 + player.height / 2;
 
         // test
-        panX = Math.floor(platformer.math.lerp(panX, targetPanX, 0.05));
-        panY = Math.floor(platformer.math.lerp(panY, targetPanY, 0.05));
+        panX = platformer.math.lerp(panX, targetPanX, 0.05);
+        panY = platformer.math.lerp(panY, targetPanY, 0.05);
 
 
-        tileAcrossX = Math.ceil(screenWidth / platformer.tileSizeX) + 1;
-        tileAcrossY = Math.ceil(screenHeight / platformer.tileSizeY) + 1;
+        tileAcrossX = parseInt(screenWidth / platformer.tileSizeX + 2);
+        tileAcrossY = parseInt(screenHeight / platformer.tileSizeY + 2);
 
 
         if(panX < 0){
@@ -61,8 +69,8 @@ function Map(level, player){
             panY = levelSizeY - screenHeight;
         }
 
-        startX = Math.floor(panX / platformer.tileSizeX);
-        startY = Math.floor(panY / platformer.tileSizeY);
+        startX = parseInt(panX / platformer.tileSizeX);
+        startY = parseInt(panY / platformer.tileSizeY);
 
 
         if(startX > numCols - tileAcrossX){
@@ -106,9 +114,13 @@ function Map(level, player){
     }
 
     this.render = function(ctx){
+        ctx.fillStyle = '#DADADA';
+        ctx.fillRect(0, 0, platformer.game.getScreenWidth(), platformer.game.getScreenHeight());
+
         for(var i = 0, n = renderlist.length; i < n; i++){
             renderlist[i].render(ctx, panX, panY);
         }
+
         player.render(ctx, panX, panY);
     }
 
