@@ -17,7 +17,7 @@ platformer.loadAssets = function(files, callback){
         var file = files[i];
 
         if(file != undefined && file.type != undefined){
-            var method;
+            var method = undefined;
 
             if(file.type == 'image'){
                 method = platformer.loadSpritesheet;
@@ -30,8 +30,8 @@ platformer.loadAssets = function(files, callback){
             }
 
             if(method != undefined){
-                method(file.path, file.options, function(item){
-                    handler(file.name, item);
+                method(file.name, file.path, file.options, function(name, item){
+                    handler(name, item);
                 });
             }
         }
@@ -39,8 +39,8 @@ platformer.loadAssets = function(files, callback){
 
     function handler(name, item){
         if(name != undefined) list[name] = item;
-
         index--;
+
         if(index == 0){
             if(typeof callback === 'function'){
                 callback(list);
@@ -53,6 +53,11 @@ platformer.loadAssets = function(files, callback){
 * Permet de récupérer une image sur une spritesheet
 */
 platformer.getSubImage = function(spritesheet, x, y, width, height){
+    if(typeof spritesheet === 'undefined'){
+        throw 'Could not read from spritesheet';
+        return;
+    }
+
     var canvas, ctx, data, img;
 
     canvas = platformer.createCanvas(width, height);
@@ -70,7 +75,7 @@ platformer.getSubImage = function(spritesheet, x, y, width, height){
 /**
 * Charge une image et retourne le contexte de la canvas où on a dessiné l'image
 */
-platformer.loadSpritesheet = function(filepath, options, callback){
+platformer.loadSpritesheet = function(name, filepath, options, callback){
     var canvas, context, img;
     var width = options.width || 0;
     var height = options.height || 0;
@@ -83,7 +88,7 @@ platformer.loadSpritesheet = function(filepath, options, callback){
         context.drawImage(img, 0, 0, width, height);
 
         if(typeof callback === 'function'){
-            callback(context);
+            callback(name, context);
         }
     }
     img.src = filepath;
@@ -92,8 +97,8 @@ platformer.loadSpritesheet = function(filepath, options, callback){
 /**
 * Charge un fichier de son
 */
-platformer.loadSound = function(filepath, options, callback){
-    
+platformer.loadSound = function(name, filepath, options, callback){
+
 }
 
 /**
@@ -104,7 +109,7 @@ platformer.loadSound = function(filepath, options, callback){
 * filepath - Le chemin vers le fichier
 * callback - Fonction exécutée une fois le fichier chargé
 */
-platformer.loadScript = function(filepath, options, callback){
+platformer.loadScript = function(name, filepath, options, callback){
     var required = options.required || false;
     var asynchronous = options.asynchronous || false;
 
