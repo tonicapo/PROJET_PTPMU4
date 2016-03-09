@@ -59,3 +59,10 @@ platformer.math.randomChoiceObject = function(obj){
 platformer.math.toFloat = function(a){
     return Math.floor(a * 100) / 100;
 }
+
+/**
+* Retourne la timestamp courante
+*/
+platformer.timestamp = function(){
+    return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
+}

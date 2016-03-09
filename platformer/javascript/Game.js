@@ -17,7 +17,7 @@ function Game(){
         running = false,
         now,
         delta = 0,
-        last = timestamp(),
+        last = platformer.timestamp(),
         step = 1 / 60;
 
 
@@ -85,15 +85,15 @@ function Game(){
         requestAnimationFrame(run);
     }
 
-    function run(now){
-        //now = timestamp();
+    function run(){
+        now = platformer.timestamp();
         delta += Math.min(1, (now - last) / 1000);
 
         while(delta >= step){
             delta -= step;
             if(running){
                 //console.log(delta);
-                gsh.update();
+                gsh.update(delta / step);
             }
         }
 
@@ -101,13 +101,6 @@ function Game(){
         last = now;
 
         requestAnimationFrame(run);
-    }
-
-    /**
-    * Retourne la timestamp courante
-    */
-    function timestamp() {
-        return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
     }
 
     /**

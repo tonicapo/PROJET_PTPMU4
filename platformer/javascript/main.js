@@ -25,8 +25,10 @@ var assets = [
     { name : undefined, type : 'script', path : SCRIPTS_PATH + 'world/MapObject.js', options : { asynchronous : true } },
     { name : undefined, type : 'script', path : SCRIPTS_PATH + 'entities/Entity.js', options : { asynchronous : true } },
     { name : undefined, type : 'script', path : SCRIPTS_PATH + 'entities/Player.js', options : { asynchronous : true } },
+    { name : undefined, type : 'script', path : SCRIPTS_PATH + 'Animation.js', options : { asynchronous : true } },
 
-    { name : 'tilemap', type : 'image', path : IMAGES_PATH + 'tilemap.png', options : { width : 320, height : 320 } }
+    { name : 'tilemap', type : 'image', path : IMAGES_PATH + 'tilemap.png', options : { width : 320, height : 320 } },
+    { name : 'player', type : 'image', path : IMAGES_PATH + 'player.png', options : { width : 480, height : 480 } }
 ];
 
 // Activer / désactiver l'affichage des informations de debug
@@ -36,7 +38,7 @@ platformer.math = {};
 
 // Dimension de la canvas
 platformer.dimension = {
-    w : 800,
+    w : 1000,
     h : 500
 };
 
@@ -54,7 +56,7 @@ platformer.tileSizeY = 32 * platformer.scale;
 platformer.seed;
 
 platformer.sounds;
-platformer.textures;
+platformer.textures = {};
 
 // Liste des touches
 platformer.keylist = {
@@ -80,12 +82,12 @@ window.addEventListener('DOMContentLoaded', function(){
 
     platformer.loadAssets(assets, function(resources){
         console.timeEnd('ASSETS_LOAD_TIME');
-
         /**
         * TL TM TR
         * ML MM MR
         * BL BM BR
         */
+        /*
         platformer.material = {
             dirt : {
                 tl : [ { texture : platformer.getSubImage(resources.tilemap, 0, 0, 32, 32), frequency : 1 } ],
@@ -116,6 +118,16 @@ window.addEventListener('DOMContentLoaded', function(){
                 ],
             }
         };
+        */
+
+        // textures
+        platformer.textures.player = {};
+        platformer.textures.player.jumping = [ platformer.getSubImage(resources.player, 192, 0, 64, 64) ];
+        platformer.textures.player.falling = [ platformer.getSubImage(resources.player, 256, 0, 64, 64) ];
+        platformer.textures.player.walking = [ platformer.getSubImage(resources.player, 0, 64, 64, 64), platformer.getSubImage(resources.player, 64, 64, 64, 64), platformer.getSubImage(resources.player, 0, 64, 64, 64), platformer.getSubImage(resources.player, 128, 64, 64, 64) ];
+        platformer.textures.player.idle = [ platformer.getSubImage(resources.player, 0, 0, 64, 64), platformer.getSubImage(resources.player, 64, 0, 64, 64), platformer.getSubImage(resources.player, 128, 0, 64, 64) ];
+        platformer.textures.player.deadIdle = [ platformer.getSubImage(resources.player, 0, 192, 64, 64), platformer.getSubImage(resources.player, 64, 192, 64, 64) ];
+        platformer.textures.player.deadFalling = [ platformer.getSubImage(resources.player, 0, 192, 64, 64) ];
 
         // Tiletypes
         platformer.tiletype.void = new TileType('void', undefined, false);

@@ -1,14 +1,16 @@
 function LevelState(){
-    var self = this;
-
-    var map;
-    var player;
+    var self = this,
+        map,
+        player;
 
     this.init = function(){
         player = new Player(this, new Position(1, 1));
+        player.init();
 
         map = new Map(this, player);
         map.init();
+
+        player.spawn(new Position(2, map.getNumRows() - 2));
     }
 
     this.update = function(){
