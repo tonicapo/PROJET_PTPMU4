@@ -1,23 +1,35 @@
-function MapObject(level, x, y, width, height){
+function MapObject(level, x, y, width, height, renderWidth, renderHeight){
     Rectangle.call(this, x, y, width, height);
 
-    var self = this;
+    var DIRECTION_LEFT = 0;
+    var DIRECTION_RIGHT = 1;
+    var DIRECTION_UP = 2;
+    var DIRECTION_DOWN = 3;
 
-    var vx = 0,
-        vy = 0;
+    var self = this,
 
-    var gravityForce = 8;
+        vx = 0,
+        vy = 0,
 
-    var blockedLeft = false,
+        gravityForce = 8,
+
+        blockedLeft = false,
         blockedRight = false,
         blockedUp = false,
-        blockedDown = false;
+        blockedDown = false,
 
-    var falling = false;
-    var jumping = false;
-    var doubleJumping = false;
-    var canDoubleJump = false;
-    var canJump = true;
+        falling = false,
+        jumping = false,
+        doubleJumping = false,
+
+        canJump = true,
+
+        animation,
+
+        direction;
+
+    // liste des animations
+    this.animations = {};
 
     this.left = false;
     this.right = false;
@@ -45,11 +57,39 @@ function MapObject(level, x, y, width, height){
         self.y += platformer.math.toFloat(vy);
 
         fixBounds();
+
+        if(animation.canSkipAnimation()) this.animate();
+
+        if(animation != undefined){
+            animation.update();
+        }
+    }
+
+    this.init = function(){
+        for(var i in this.animations){
+            this.animations[i].init();
+        }
+
+        this.setAnimation(this.animations[Object.keys(this.animations)[0]]);
+    }
+
+    this.animate = function(){
+        // change animations
     }
 
     this.render = function(ctx, panX, panY){
-        ctx.fillStyle = 'purple';
-        ctx.fillRect(this.x - panX, this.y - panY, this.width, this.height);
+        var renderBox = this.getRenderBox();
+        var posX = (direction == 0) ? (renderBox.x + renderBox.width - panX) * -1 : renderBox.x - panX;
+
+        ctx.save();
+        ctx.scale((direction == 0) ? -1 : 1, 1);
+        ctx.drawImage(animation.getFrame() , posX, renderBox.y - panY, renderBox.width, renderBox.height);
+        ctx.restore();
+    }
+
+    this.draw = function(ctx, panX, panY){
+        ctx.strokeStyle = '#D9828C';
+        ctx.strokeRect(this.x - panX, this.y - panY, this.width, this.height);
     }
 
     function fixBounds(){
@@ -267,6 +307,24 @@ function MapObject(level, x, y, width, height){
         return (x >= 0 && x < map.getNumCols() && y >= 0 && y < map.getNumRows()) ? map.getTilemap()[x][y] : undefined;
     }
 
+    // setters
+
+    this.setAnimation = function(tmp){
+        if(tmp.constructor.name == 'Animation' && (typeof animation === 'undefined' || animation.getID() != tmp.getID())){
+            animation = tmp;
+        }
+    }
+    this.setDirection = function(d){
+        direction = d;
+    }
+
+    this.spawn = function(p){
+        this.x = p.x * platformer.tileSizeX;
+        this.y = p.y * platformer.tileSizeY + platformer.tileSizeY - this.height;
+    }
+
+    // getters
+
     this.isBlockedLeft = function(){ return blockedLeft; }
     this.isBlockedRight = function(){ return blockedRight; }
     this.isBlockedUp = function(){ return blockedUp; }
@@ -274,4 +332,9 @@ function MapObject(level, x, y, width, height){
 
     this.isFalling = function(){ return falling; }
     this.isJumping = function(){ return jumping; }
+    this.isDoubleJumping = function(){ return doubleJumping; }
+
+    this.getDirection = function(){ return direction; }
+
+    this.getRenderBox = function(){ return new Rectangle(this.x + this.width / 2 - renderWidth / 2, this.y + this.height - renderHeight, renderWidth, renderHeight); }
 }
