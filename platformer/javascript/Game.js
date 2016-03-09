@@ -85,13 +85,14 @@ function Game(){
         requestAnimationFrame(run);
     }
 
-    function run(){
-        now = timestamp();
+    function run(now){
+        //now = timestamp();
         delta += Math.min(1, (now - last) / 1000);
 
-        while(delta > step){
+        while(delta >= step){
             delta -= step;
             if(running){
+                //console.log(delta);
                 gsh.update();
             }
         }

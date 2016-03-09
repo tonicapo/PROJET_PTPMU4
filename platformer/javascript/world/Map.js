@@ -36,12 +36,12 @@ function Map(level, player){
         screenWidth = platformer.game.getScreenWidth();
         screenHeight = platformer.game.getScreenHeight();
 
-        targetPanX = Math.floor(player.x - screenWidth / 2 + player.width / 2);
-        targetPanY = Math.floor(player.y - screenHeight / 2 + player.height / 2);
+        targetPanX = Math.round(player.x - screenWidth / 2 + player.width / 2);
+        targetPanY = Math.round(player.y - screenHeight / 2 + player.height / 2);
 
         // test
-        panX = Math.floor(platformer.math.lerp(panX, targetPanX, 0.025));
-        if(Math.abs(targetPanY - panY) > 80) panY = Math.floor(platformer.math.lerp(panY, targetPanY, 0.025));
+        panX = Math.floor(platformer.math.lerp(panX, targetPanX, 0.05));
+        panY = Math.floor(platformer.math.lerp(panY, targetPanY, 0.05));
 
 
         tileAcrossX = Math.ceil(screenWidth / platformer.tileSizeX) + 1;
@@ -64,23 +64,29 @@ function Map(level, player){
         startX = Math.floor(panX / platformer.tileSizeX);
         startY = Math.floor(panY / platformer.tileSizeY);
 
-        if(startX < 0){
-            startX = 0;
-        }
+
         if(startX > numCols - tileAcrossX){
             startX = numCols - tileAcrossX;
         }
-
-        if(startY < 0){
-            startY = 0;
-        }
         if(startY > numRows - tileAcrossY){
             startY = numRows - tileAcrossY;
+        }
+        if(startX < 0){
+            startX = 0;
+        }
+        if(startY < 0){
+            startY = 0;
         }
 
         endX = startX + tileAcrossX;
         endY = startY + tileAcrossY;
 
+        if(endX > numCols){
+            endX = numCols;
+        }
+        if(endY > numRows){
+            endY = numRows;
+        }
 
         /**
         * Renderlist
@@ -90,7 +96,7 @@ function Map(level, player){
 
         for(var x = startX; x < endX; x++){
             for(var y = startY; y < endY; y++){
-                if(typeof tilemap[x][y] !== 'undefined'){
+                if(typeof tilemap[x][y] !== 'undefined' && !tilemap[x][y].equals(platformer.tiletype.void)){
                     renderlist.push(tilemap[x][y]);
                 }
             }
@@ -111,4 +117,6 @@ function Map(level, player){
     this.getLevelSizeX = function(){ return levelSizeX; }
     this.getLevelSizeY = function(){ return levelSizeY; }
     this.getTilemap = function(){ return tilemap; }
+    this.getNumCols = function(){ return numCols; }
+    this.getNumRows = function(){ return numRows; }
 }

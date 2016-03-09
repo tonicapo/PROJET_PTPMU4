@@ -2,6 +2,7 @@ function WorldGeneration(){
     var seed;
     var tilemap;
     var numCols, numRows;
+    var cursor;
 
     this.init = function(){
         if(typeof seed == 'undefined'){
@@ -12,7 +13,7 @@ function WorldGeneration(){
         Math.seedrandom(seed);
 
         numCols = 30;
-        numRows = 15;
+        numRows = 10;
 
         generateTilemap();
 
@@ -28,6 +29,11 @@ function WorldGeneration(){
 
         var i = 0;
 
+        var horizon = numRows - 2; //Math.floor(numRows * 3 / 5);
+        var spawnProtection = 5;
+
+        cursor = new Position(spawnProtection, horizon - 2);
+
         for(var x = 0; x < numCols; x++){
             tilemap[x] = tilemap[x] || [];
 
@@ -37,21 +43,30 @@ function WorldGeneration(){
             }
 
             for(var y = 0; y < numRows; y++){
-                tilemap[x][y] = new Tile(platformer.tiletype.void, new Position(x, y), 1, 0);
+                var tiletype = platformer.tiletype.void;
 
-                // temp
-                if(
-                    (y >= Math.floor(numRows / 2)) ||
-                    (y == Math.floor(numRows / 2) - 1 && x % 6 == 0) ||
-                    (y == 4 && x == 4) ||
-                    (y == 4 && x == 6) ||
-                    (y == 2 && (x > 3 && x < 9))
-                ){
-                    tilemap[x][y] = new Tile(platformer.tiletype.test, new Position(x, y), 1, 0);
+                if(y == numRows - 1){
+                    tiletype = platformer.tiletype.test;
                 }
 
+                tilemap[x][y] = new Tile(tiletype, new Position(x, y), 1, 0);
             }
         }
+
+        createPlatform(cursor.x, cursor.y, 6);
+        createPlatform(cursor.x + 4, cursor.y - 2, 3);
+        createPlatform(cursor.x + 6, cursor.y + 1, 4);
+        createPlatform(cursor.x - 3, cursor.y - 3, 2);
+    }
+
+    function createPlatform(dx, dy, width){
+        for(var x = dx, n = dx + width; x < n; x++){
+            if(x >= 0 && dy >= 0 && x < numCols && dy < numRows){
+                tilemap[x][dy] = new Tile(platformer.tiletype.test, new Position(x, dy), 1, 0);
+            }
+        }
+
+        cursor = new Position(dx + width, dy);
     }
 
 

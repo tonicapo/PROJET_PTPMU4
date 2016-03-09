@@ -55,3 +55,7 @@ platformer.math.randomChoiceObject = function(obj){
     var keys = Object.keys(obj);
     return obj[keys[platformer.math.randomInt(0, keys.length)]];
 }
+
+platformer.math.toFloat = function(a){
+    return Math.floor(a * 100) / 100;
+}
