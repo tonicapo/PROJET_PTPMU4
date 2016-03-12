@@ -18,4 +18,8 @@ function Rectangle(x, y, width, height){
     this.clone = function(){
         return new Rectangle(this.x, this.y, this.width, this.height);
     }
+
+    this.getCenter = function(){
+        return new Position(this.x + this.width / 2, this.y + this.height / 2);
+    }
 }

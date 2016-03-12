@@ -1,8 +1,11 @@
 function WorldGeneration(){
-    var seed;
-    var tilemap;
-    var numCols, numRows;
-    var cursor;
+    var seed,
+        tilemap,
+
+        numCols,
+        numRows,
+
+        cursor;
 
     this.init = function(){
         if(typeof seed == 'undefined'){
@@ -13,7 +16,7 @@ function WorldGeneration(){
         Math.seedrandom(seed);
 
         numCols = 30;
-        numRows = 10;
+        numRows = 20;
 
         generateTilemap();
 
@@ -48,12 +51,15 @@ function WorldGeneration(){
                 if(y == numRows - 1){
                     tiletype = platformer.tiletype.test;
                 }
+                else if(y == numRows - 2){
+                    tiletype = platformer.tiletype.spike;
+                }
 
                 tilemap[x][y] = new Tile(tiletype, new Position(x, y), 1, 0);
             }
         }
 
-        createPlatform(cursor.x, cursor.y, 6);
+        createPlatform(cursor.x, cursor.y, 10);
         createPlatform(cursor.x + 4, cursor.y - 2, 3);
         createPlatform(cursor.x + 6, cursor.y + 1, 4);
         createPlatform(cursor.x - 3, cursor.y - 3, 2);
