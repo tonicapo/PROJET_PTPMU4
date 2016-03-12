@@ -17,12 +17,11 @@ function Game(){
         running = false,
         now,
         delta = 0,
-        last = platformer.timestamp(),
-        step = 1 / 60;
+        last = timestamp(),
+        step = 1 / 60,
 
-
-    var screenWidth;
-    var screenHeight;
+        screenWidth,
+        screenHeight;
 
     this.init = function(){
         /**
@@ -86,7 +85,7 @@ function Game(){
     }
 
     function run(){
-        now = platformer.timestamp();
+        now = timestamp();
         delta += Math.min(1, (now - last) / 1000);
 
         while(delta >= step){
@@ -190,7 +189,8 @@ function Game(){
                             ctx.msBackingStorePixelRatio ||
                             ctx.oBackingStorePixelRatio ||
                             ctx.backingStorePixelRatio || 1;
-        var ratio = devicePixelRatio / backingStoreRatio;
+
+        var ratio = toFloat(devicePixelRatio / backingStoreRatio);
 
         if(options.scale && devicePixelRatio !== backingStoreRatio){
             var oldWidth = canvas.width;
