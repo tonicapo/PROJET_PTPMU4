@@ -35,10 +35,10 @@ function Animation(id, frames, speed, options){
     }
 
     this.update = function(){
-        time = time || platformer.timestamp();
+        time = time || timestamp();
 
-        if(size > 1 && !paused && platformer.timestamp() - time > speed && ((!playedOnce && loop == false) || loop == true)){
-            time = platformer.timestamp();
+        if(size > 1 && !paused && timestamp() - time >= speed && ((!playedOnce && cancelable == false) || (loop == true && cancelable == true))){
+            time = timestamp();
 
             if(!random){
                 currentFrame++;
@@ -55,7 +55,7 @@ function Animation(id, frames, speed, options){
                 }
             }
             else{
-                currentFrame = platformer.math.randomInt(0, size - 1);
+                currentFrame = randomInt(0, size - 1);
             }
         }
     }
@@ -73,43 +73,17 @@ function Animation(id, frames, speed, options){
     this.canSkipAnimation = function(){
         if(cancelable == false){
             if(playedOnce && loop){
-                this.reset();
+                playedOnce = false;
                 return true;
             }
             else{
                 return false;
             }
         }
-        else {
+        else{
             return true;
         }
     }
+
+    this.getSpeed = function(){ return speed; }
 }
-
-/*
-function Timer(action, wait){
-    id = id || 0;
-
-    var time = platformer.timestamp() + wait;
-    var index = id;
-    var paused = false;
-    var callback = action;
-
-    this.play = function(){
-        paused = false;
-    }
-    this.pause = function(){
-        paused = true;
-    }
-
-    this.update = function(){
-        if(!paused && platformer.timestamp() > time){
-            if(typeof callback === 'function'){
-                callback();
-            }
-        }
-    }
-    id++;
-    return index;
-}
-*/
