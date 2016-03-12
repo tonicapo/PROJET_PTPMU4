@@ -1,5 +1,5 @@
 function Player(level, position){
-    Entity.call(this, level, position, 52, 80, 64 * platformer.scale, 64 * platformer.scale);
+    Entity.call(this, level, position, 60, 85, 64 * platformer.scale, 64 * platformer.scale);
 
     this.property = {
         speed : 1,
@@ -8,8 +8,21 @@ function Player(level, position){
         fallSpeed : 2,
         maxFallSpeed : 8,
         jumpHeight : 8,
-        doubleJumpHeight : 4
+        doubleJumpHeight : 4,
+
+        maxHealth : 20,
+        baseRange : 20,
+        bleedingChance : 0.05
     };
+
+    this.setHealth(this.property.maxHealth);
+
+    this.addInventory(platformer.weapons.sword);
+    this.addInventory(platformer.weapons.bow);
+    this.addInventory(platformer.weapons.knife);
+
+    this.setSelectedItem(1);
+
 
     this.animations = {
         idle : new Animation('idle', platformer.textures.player.idle, 1000, { random : true }),
@@ -17,38 +30,14 @@ function Player(level, position){
         jumping : new Animation('jumping', platformer.textures.player.jumping, 0),
         doubleJumping : new Animation('doubleJumping', platformer.textures.player.jumping, 0, { loop : false, cancelable : true }),
         falling : new Animation('falling', platformer.textures.player.falling, 1000),
+
         deadIdle : new Animation('deadIdle', platformer.textures.player.deadIdle, 75, { loop : false, cancelable : false }),
-        deadFalling : new Animation('deadFalling', platformer.textures.player.deadFalling, 0, { loop : false, cancelable : true })
+        deadFalling : new Animation('deadFalling', platformer.textures.player.deadFalling, 0, { loop : false, cancelable : true }),
+
+        bowAttack : new Animation('bowAttack', platformer.textures.player.bowAttack, 150, { cancelable : false }),
+        knifeAttack : new Animation('knifeAttack', platformer.textures.player.knifeAttack, 150, { cancelable : false }),
+        swordAttack : new Animation('swordAttack', platformer.textures.player.swordAttack, 150, { cancelable : false })
     };
-
-    this.animate = function(){
-        if(!this.isDead()){
-            if(this.isJumping()){
-                this.setAnimation(this.animations.jumping);
-
-                if(this.isDoubleJumping()){
-                    this.setAnimation(this.animations.doubleJumping);
-                }
-            }
-            else if(this.isFalling()){
-                this.setAnimation(this.animations.falling);
-            }
-            else if(this.left || this.right){
-                this.setAnimation(this.animations.walking);
-            }
-            else{
-                this.setAnimation(this.animations.idle);
-            }
-        }
-        else{
-            if(this.isFalling()){
-                this.setAnimation(this.animations.deadFalling);
-            }
-            else{
-                this.setAnimation(this.animations.deadIdle);
-            }
-        }
-    }
 
     this.keyUp = function(key){
         if(key == platformer.keylist.mvt_left){
@@ -65,7 +54,7 @@ function Player(level, position){
         }
 
         if(key == platformer.keylist.action_attack){
-            this.setDead();
+            this.attack(level.getEntities());
         }
         else if(key == platformer.keylist.mvt_left){
             this.left = true;
