@@ -26,18 +26,23 @@ var files = [
     'world/WorldGeneration.js',
     'world/Tile.js',
     'world/TileType.js',
-    'world/MapObject.js',
     'entities/Entity.js',
     'entities/Player.js',
     'entities/Hostile.js',
     'entities/AI_Entity.js',
     'entities/Enemy.js',
-    'particules/Particle.js',
-    'particules/Blood.js',
-    'items/Weapon.js',
-    'projectiles/Projectile.js',
-    'projectiles/Arrow.js',
-    'projectiles/Knife.js'
+    'objects/MapObject.js',
+    'objects/particles/Particle.js',
+    'objects/particles/Blood.js',
+    'objects/items/Weapon.js',
+    'objects/projectiles/Projectile.js',
+    'objects/projectiles/Arrow.js',
+    'objects/projectiles/Knife.js',
+    'objects/projectiles/FireBall.js',
+    'objects/loot/Loot.js',
+    'objects/loot/Potion.js',
+    'objects/loot/Coin.js',
+    'objects/Crate.js'
 ];
 
 for(var i = 0, n = files.length; i < n; i++){
@@ -105,65 +110,72 @@ window.addEventListener('DOMContentLoaded', function(){
         platformer.textures.entity = [ platformer.getSubImage(resources.player, 0, 384, 64, 64) ];
 
         platformer.textures.player = {};
-        platformer.textures.player.jumping = [ platformer.getSubImage(resources.player, 192, 0, 64, 64) ];
-        platformer.textures.player.falling = [ platformer.getSubImage(resources.player, 256, 0, 64, 64) ];
-        platformer.textures.player.walking = [ platformer.getSubImage(resources.player, 0, 64, 64, 64), platformer.getSubImage(resources.player, 64, 64, 64, 64), platformer.getSubImage(resources.player, 0, 64, 64, 64), platformer.getSubImage(resources.player, 128, 64, 64, 64) ];
-        platformer.textures.player.idle = [ platformer.getSubImage(resources.player, 0, 0, 64, 64), platformer.getSubImage(resources.player, 64, 0, 64, 64), platformer.getSubImage(resources.player, 128, 0, 64, 64) ];
-        platformer.textures.player.deadIdle = [ platformer.getSubImage(resources.player, 0, 192, 64, 64), platformer.getSubImage(resources.player, 64, 192, 64, 64) ];
-        platformer.textures.player.deadFalling = [ platformer.getSubImage(resources.player, 0, 192, 64, 64) ];
-        platformer.textures.player.bowAttack = [ platformer.getSubImage(resources.player, 0, 256, 64, 64), platformer.getSubImage(resources.player, 64, 256, 64, 64), platformer.getSubImage(resources.player, 128, 256, 64, 64) ];
-        platformer.textures.player.knifeAttack = [ platformer.getSubImage(resources.player, 0, 128, 64, 64), platformer.getSubImage(resources.player, 64, 128, 64, 64), platformer.getSubImage(resources.player, 128, 128, 64, 64) ];
-        platformer.textures.player.swordAttack = [ platformer.getSubImage(resources.player, 0, 320, 64, 64), platformer.getSubImage(resources.player, 64, 320, 64, 64), platformer.getSubImage(resources.player, 128, 320, 64, 64) ];
+        platformer.textures.player.jumping = [ platformer.getSubImage(resources.player, 80, 0, 80, 64) ];
+        platformer.textures.player.doubleJumping = [ platformer.getSubImage(resources.player, 0, 0, 80, 64), platformer.getSubImage(resources.player, 80, 0, 80, 64) ];
+        platformer.textures.player.falling = [ platformer.getSubImage(resources.player, 0, 0, 80, 64) ];
+        platformer.textures.player.walking = [ platformer.getSubImage(resources.player, 0, 64, 80, 64), platformer.getSubImage(resources.player, 80, 64, 80, 64), platformer.getSubImage(resources.player, 0, 64, 80, 64), platformer.getSubImage(resources.player, 160, 64, 80, 64) ];
+        platformer.textures.player.idle = [ platformer.getSubImage(resources.player, 0, 0, 80, 64) ];
+        platformer.textures.player.deadIdle = [ platformer.getSubImage(resources.player, 0, 192, 80, 64), platformer.getSubImage(resources.player, 80, 192, 80, 64) ];
+        platformer.textures.player.deadFalling = [ platformer.getSubImage(resources.player, 0, 192, 80, 64) ];
+        platformer.textures.player.bowAttack = [ platformer.getSubImage(resources.player, 0, 256, 80, 64), platformer.getSubImage(resources.player, 80, 256, 80, 64), platformer.getSubImage(resources.player, 160, 256, 80, 64) ];
+        platformer.textures.player.knifeAttack = [ platformer.getSubImage(resources.player, 0, 128, 80, 64), platformer.getSubImage(resources.player, 80, 128, 80, 64), platformer.getSubImage(resources.player, 160, 128, 80, 64) ];
+        platformer.textures.player.swordAttack = [ platformer.getSubImage(resources.player, 0, 320, 80, 64), platformer.getSubImage(resources.player, 80, 320, 80, 64), platformer.getSubImage(resources.player, 160, 320, 80, 64), platformer.getSubImage(resources.player, 240, 320, 80, 64) ];
 
         platformer.textures.items = {};
+        platformer.textures.items.coin = [ platformer.getSubImage(resources.tilemap, 0, 32, 32, 32) ];
+        platformer.textures.items.potions = [ platformer.getSubImage(resources.tilemap, 32, 32, 32, 32), platformer.getSubImage(resources.tilemap, 64, 32, 32, 32), platformer.getSubImage(resources.tilemap, 96, 32, 32, 32), platformer.getSubImage(resources.tilemap, 128, 32, 32, 32) ];
         platformer.textures.items.sword = [ platformer.getSubImage(resources.gui, 0, 0, 32, 32) ];
         platformer.textures.items.knife = [ platformer.getSubImage(resources.gui, 64, 0, 32, 32) ];
         platformer.textures.items.bow = [ platformer.getSubImage(resources.gui, 128, 0, 32, 32) ];
+        platformer.textures.items.fireballSpell = [ platformer.getSubImage(resources.gui, 160, 0, 32, 32) ];
 
         platformer.textures.items.arrowIdle = [ platformer.getSubImage(resources.gui, 0, 32, 32, 32) ];
         platformer.textures.items.arrowMoving = [ platformer.getSubImage(resources.gui, 0, 32, 32, 32), platformer.getSubImage(resources.gui, 32, 32, 32, 32) ];
         platformer.textures.items.knifeIdle = [ platformer.getSubImage(resources.gui, 64, 32, 32, 32) ];
         platformer.textures.items.knifeMoving = [ platformer.getSubImage(resources.gui, 64, 32, 32, 32) ];
+        platformer.textures.items.fireBallMoving = [ platformer.getSubImage(resources.gui, 96, 32, 32, 32), platformer.getSubImage(resources.gui, 128, 32, 32, 32), platformer.getSubImage(resources.gui, 160, 32, 32, 32) ];
+        platformer.textures.items.fireBallExploding = [ platformer.getSubImage(resources.gui, 192, 32, 32, 32), platformer.getSubImage(resources.gui, 224, 32, 32, 32) ];
 
         // Tiletypes
-        platformer.tiletype.void = new TileType('void', undefined, false);
+        platformer.tiletype.void = new TileType('void', [ platformer.getSubImage(resources.tilemap, 80, 0, 32, 32) ], false);
         platformer.tiletype.test = new TileType('test', [ platformer.getSubImage(resources.tilemap, 0, 0, 32, 32) ], true);
         platformer.tiletype.spike = new TileType('spike', [ platformer.getSubImage(resources.tilemap, 32, 0, 32, 32) ], false);
+        platformer.tiletype.crate = new TileType('crate', [ platformer.getSubImage(resources.tilemap, 64, 0, 32, 32) ], true);
 
         // épée
         platformer.weapons.sword = new Weapon('sword', platformer.textures.items.sword, {
-            damage : 5,
-            maxDamage : 7.5,
-            knockback : 5,
-            maxKnockback : 10,
+            damage : 7.5,
+            knockback : 10,
             bleeding : 4,
-            range : 40,
-            maxRange : 40,
-            delay : 300,
+            range : 50,
+            delay : 400,
             projectile : false
         });
         // couteaux de lancé
         platformer.weapons.knife = new Weapon('knife', platformer.textures.items.knife, {
-            damage : 6,
-            maxDamage : 9,
-            knockback : 1,
-            maxKnockback : 5,
+            damage : 5,
+            knockback : 5,
             bleeding : 2.5,
             range : 200,
-            maxRange : 300,
-            delay : 350,
+            delay : 200,
             projectile : true
         });
         // arc
         platformer.weapons.bow = new Weapon('bow', platformer.textures.items.bow, {
-            damage : 5,
-            maxDamage : 12,
-            knockback : 5,
-            maxKnockback : 8,
-            bleeding : 2,
-            range : 350,
-            maxRange : 400,
-            delay : 1000,
+            damage : 10,
+            knockback : 15,
+            bleeding : 4,
+            range : 300,
+            delay : 1250,
+            projectile : true
+        });
+        // fireball spell
+        platformer.weapons.fireballSpell = new Weapon('fireBallSpell', platformer.textures.items.fireballSpell, {
+            damage : 10,
+            knockback : 25,
+            bleeding : 6,
+            range : 250,
+            delay : 1750,
             projectile : true
         });
 

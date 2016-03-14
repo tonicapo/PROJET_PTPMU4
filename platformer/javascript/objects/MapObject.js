@@ -1,4 +1,4 @@
-function MapObject(level, x, y, width, height, renderWidth, renderHeight){
+function MapObject(level, x, y, width, height){
     Rectangle.call(this, x, y, width, height);
 
     var DIRECTION_LEFT = 0;
@@ -26,16 +26,12 @@ function MapObject(level, x, y, width, height, renderWidth, renderHeight){
 
         animation,
 
-        dirty,
-
         direction = 0,
 
-        color = '#252525',
-        texture,
+        hitBoxWidth,
+        hitBoxHeight,
 
-        reduction = { x : 1, y : 1 },
-
-        fixToBottom = true;
+        reduction = { x : 1, y : 1 };
 
     // liste des animations
     this.animations = {};
@@ -101,7 +97,7 @@ function MapObject(level, x, y, width, height, renderWidth, renderHeight){
 
         ctx.save();
         ctx.scale((direction == 0) ? -1 : 1, 1);
-        ctx.drawImage(animation.getFrame() , posX, renderBox.y - panY, renderBox.width, renderBox.height);
+        ctx.drawImage(animation.getFrame(), posX, renderBox.y - panY, renderBox.width, renderBox.height);
         ctx.restore();
     }
 
@@ -224,7 +220,7 @@ function MapObject(level, x, y, width, height, renderWidth, renderHeight){
             }
 
             if(vy >= 0){
-                doubleJumping = false;
+                //doubleJumping = false;
                 jumping = false;
                 falling = false;
                 canJump = true;
@@ -341,30 +337,36 @@ function MapObject(level, x, y, width, height, renderWidth, renderHeight){
         reduction.y = y;
     }
 
+    this.addVector = function(x, y){
+        vx += x;
+        vy += y;
+    }
+
     this.setVector = function(x, y){
-        vx = x;
-        vy = y;
+        vx = lerp(x, vx, 0.5);
+        vy = lerp(y, vy, 0.5);
     }
 
-    this.setDirty = function(d){
-        dirty = d;
+    this.setDoubleJumping = function(d){
+        doubleJumping = d;
     }
 
-    this.setColor = function(c){
-        color = c;
+    /**
+    * Hit box
+    */
+    this.setHitBox = function(width, height){
+        hitBoxWidth = width;
+        hitBoxHeight = height;
+    }
+    this.getHitBox = function(){
+        var offsetX = this.width / 2 - hitBoxWidth / 2;
+        var offsetY = this.height / 2 - hitBoxHeight / 2;
+
+        return new Rectangle(this.x + offsetX, this.y + offsetY, hitBoxWidth, hitBoxHeight);
     }
 
-    this.setTexture = function(t){
-        texture = t;
-    }
-
-    this.setFixedToBottom = function(b){
-        fixToBottom = b;
-    }
 
     // getters
-    this.isDirty = function(){ return dirty; }
-
     this.isBlockedLeft = function(){ return blockedLeft; }
     this.isBlockedRight = function(){ return blockedRight; }
     this.isBlockedUp = function(){ return blockedUp; }
@@ -376,13 +378,5 @@ function MapObject(level, x, y, width, height, renderWidth, renderHeight){
 
     this.getDirection = function(){ return direction; }
 
-    this.getColor = function(){ return color; }
-    this.getTexture = function(){ return texture; }
-
-    this.getRenderBox = function(){
-        var offsetX = this.width / 2 - renderWidth / 2;
-        var offsetY = (fixToBottom) ? this.height - renderHeight : this.height / 2 - renderHeight / 2;
-
-        return new Rectangle(this.x + offsetX, this.y + offsetY, renderWidth, renderHeight);
-    }
+    this.getVector = function(){ return { x : vx, y : vy } }
 }

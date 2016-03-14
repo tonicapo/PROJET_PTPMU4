@@ -34,7 +34,7 @@ function Map(level){
 
 
     this.init = function(){
-        world = new WorldGeneration;
+        world = new WorldGeneration(level);
         world.init();
 
         numCols = world.getNumCols();
@@ -186,4 +186,7 @@ function Map(level){
     this.getTilemap = function(){ return tilemap; }
     this.getNumCols = function(){ return numCols; }
     this.getNumRows = function(){ return numRows; }
+
+    this.getVisibleItems = function(){ return renderlist.items; }
+    this.getVisibleTiles = function(){ return renderlist.tiles; }
 }

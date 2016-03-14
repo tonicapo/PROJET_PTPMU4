@@ -1,4 +1,4 @@
-function WorldGeneration(){
+function WorldGeneration(level){
     var seed,
         tilemap,
 
@@ -55,7 +55,7 @@ function WorldGeneration(){
                     tiletype = platformer.tiletype.spike;
                 }
 
-                tilemap[x][y] = new Tile(tiletype, new Position(x, y), 1, 0);
+                tilemap[x][y] = new Tile(level, tiletype, new Position(x, y), 1, 0);
             }
         }
 
@@ -63,12 +63,18 @@ function WorldGeneration(){
         createPlatform(cursor.x + 4, cursor.y - 2, 3);
         createPlatform(cursor.x + 6, cursor.y + 1, 4);
         createPlatform(cursor.x - 3, cursor.y - 3, 2);
+
+        tilemap[10][numRows - 5] = new Crate(level, new Position(10, numRows - 5));
     }
 
     function createPlatform(dx, dy, width){
         for(var x = dx, n = dx + width; x < n; x++){
-            if(x >= 0 && dy >= 0 && x < numCols && dy < numRows){
-                tilemap[x][dy] = new Tile(platformer.tiletype.test, new Position(x, dy), 1, 0);
+            for(var y = 0; y < numRows; y++){
+                if(x >= 0 && x < numCols){
+                    if(y >= dy){
+                        tilemap[x][y] = new Tile(level, platformer.tiletype.test, new Position(x, y), 1, 0);
+                    }
+                }
             }
         }
 

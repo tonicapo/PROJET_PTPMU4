@@ -1,5 +1,5 @@
-function Entity(level, position, width, height, renderWidth, renderHeight){
-    MapObject.call(this, level, position.x * platformer.tileSizeX + platformer.tileSizeX - width, position.y * platformer.tileSizeY  + platformer.tileSizeY - height, width, height, renderWidth, renderHeight);
+function Entity(level, position, width, height){
+    MapObject.call(this, level, position.x * platformer.tileSizeX + platformer.tileSizeX - width, position.y * platformer.tileSizeY  + platformer.tileSizeY - height, width, height);
 
     var self = this;
     var health;
@@ -17,19 +17,19 @@ function Entity(level, position, width, height, renderWidth, renderHeight){
 
     this.property.bleedingChance = 0;
 
-    this.animations = {
-        idle : new Animation('test', platformer.textures.entity, 1000),
-        walking : new Animation('test', platformer.textures.entity, 1000),
-        jumping : new Animation('test', platformer.textures.entity, 1000),
-        doubleJumping : new Animation('test', platformer.textures.entity, 1000),
-        falling : new Animation('test', platformer.textures.entity, 1000),
-        deadIdle : new Animation('test', platformer.textures.entity, 1000),
-        deadFalling : new Animation('test', platformer.textures.entity, 1000),
+    this.animations.idle = new Animation('idle', platformer.textures.player.idle, 1000, { random : true });
+    this.animations.walking = new Animation('walking', platformer.textures.player.walking, 100);
+    this.animations.jumping = new Animation('jumping', platformer.textures.player.jumping, 0);
+    this.animations.doubleJumping = new Animation('doubleJumping', platformer.textures.player.doubleJumping, 150, { loop : true, cancelable : false });
+    this.animations.falling = new Animation('falling', platformer.textures.player.falling, 1000);
 
-        bowAttack : new Animation('bowAttack', platformer.textures.entity, 150, { cancelable : false }),
-        knifeAttack : new Animation('knifeAttack', platformer.textures.entity, 150, { cancelable : false }),
-        swordAttack : new Animation('swordAttack', platformer.textures.entity, 150, { cancelable : false })
-    };
+    this.animations.deadIdle = new Animation('deadIdle', platformer.textures.player.deadIdle, 100, { loop : false, cancelable : false });
+    this.animations.deadFalling = new Animation('deadFalling', platformer.textures.player.deadFalling, 0, { loop : false, cancelable : true });
+
+    this.animations.bowAttack = new Animation('bowAttack', platformer.textures.player.bowAttack, 150, { cancelable : false });
+    this.animations.knifeAttack = new Animation('knifeAttack', platformer.textures.player.knifeAttack, 150, { cancelable : false });
+    this.animations.swordAttack = new Animation('swordAttack', platformer.textures.player.swordAttack, 100, { cancelable : false });
+    this.animations.fireBallAttack = new Animation('fireBallAttack', platformer.textures.player.knifeAttack, 150, { cancelable : false });
 
     this.update = function(){
         this.updateMovement();
@@ -48,7 +48,7 @@ function Entity(level, position, width, height, renderWidth, renderHeight){
                 this.property.fallSpeed = 0.1;
                 this.property.maxFallSpeed = 0.25;
 
-                this.setDamage(this, 1000, 4, 2);
+                this.setDamage(this, 1000, 0, 2, 2);
             }
         }
     }
@@ -58,11 +58,11 @@ function Entity(level, position, width, height, renderWidth, renderHeight){
     * Blood effects
     */
 
-    this.bloodSplash = function(dir, min, max){
-        var amount = randomInt(min, max);
+    this.bloodSplash = function(dir, multiplier){
+        var amount = randomInt(this.minBloodAmount() * multiplier, this.maxBloodAmount() * multiplier);
 
         for(var i = 0; i < amount; i++){
-            level.spawnParticle(new Blood(level, self.getCenter(), dir));
+            level.spawnParticle(new Blood(level, this.getCenter(), dir));
         }
     }
 
@@ -82,14 +82,19 @@ function Entity(level, position, width, height, renderWidth, renderHeight){
                 else if(selectedWeapon.getName() == 'sword'){
                     this.setAnimation(this.animations.swordAttack);
                 }
+                else if(selectedWeapon.getName() == 'fireBallSpell'){
+                    this.setAnimation(this.animations.fireBallAttack);
+                }
 
                 this.setAttacking(false);
             }
             else if(this.isJumping()){
-                this.setAnimation(this.animations.jumping);
-
                 if(this.isDoubleJumping()){
                     this.setAnimation(this.animations.doubleJumping);
+                    this.setDoubleJumping(false);
+                }
+                else{
+                    this.setAnimation(this.animations.jumping);
                 }
             }
             else if(this.isFalling()){
@@ -103,11 +108,11 @@ function Entity(level, position, width, height, renderWidth, renderHeight){
             }
         }
         else{
-            if(this.isFalling()){
-                this.setAnimation(this.animations.deadFalling);
+            if(this.isBlockedDown()){
+                this.setAnimation(this.animations.deadIdle);
             }
             else{
-                this.setAnimation(this.animations.deadIdle);
+                this.setAnimation(this.animations.deadFalling);
             }
         }
     }
@@ -143,7 +148,18 @@ function Entity(level, position, width, height, renderWidth, renderHeight){
             if(!weapon.property.projectile){
                 for(var i in targets){
                     if(rangeBox.intersects(targets[i]) && !targets[i].isDead() && targets[i] !== this){
-                        this.hit(targets[i], weapon, this.getDirection());
+                        this.hit(targets[i], weapon, 0, this.getDirection());
+                    }
+                }
+
+                // on boucle dans la liste des tiles visibles pour savoir si on a touché un tile cassable
+                var tiles = level.getMap().getVisibleTiles();
+
+                for(var i = 0, n = tiles.length; i < n; i++){
+                    if(tiles[i].isBreakable()){
+                        if(self.getRangeBox().intersects(tiles[i])){
+                            tiles[i].break();
+                        }
                     }
                 }
             }
@@ -158,6 +174,9 @@ function Entity(level, position, width, height, renderWidth, renderHeight){
                 else if(weaponName == 'knife'){
                     animDelay = this.animations.knifeAttack.getSpeed();
                 }
+                else if(weaponName == 'fireBallSpell'){
+                    animDelay = this.animations.fireBallAttack.getSpeed();
+                }
 
                 level.getTimers().addTimer(function(){
                     var offset = (self.getDirection() == 1) ? self.width : 0;
@@ -165,10 +184,13 @@ function Entity(level, position, width, height, renderWidth, renderHeight){
                     var position = new Position(self.x + offset, self.y + self.height / 2);
 
                     if(weaponName == 'bow'){
-                        level.spawnItem(new Arrow(level, self, targets, weapon, position, self.getDirection()));
+                        level.spawnItem(new Arrow(level, self, targets, position, self.getDirection()));
                     }
                     else if(weaponName == 'knife'){
-                        level.spawnItem(new Knife(level, self, targets, weapon, position, self.getDirection()));
+                        level.spawnItem(new Knife(level, self, targets, position, self.getDirection()));
+                    }
+                    else if(weaponName == 'fireBallSpell'){
+                        level.spawnItem(new FireBall(level, self, targets, position, self.getDirection()));
                     }
                 }, animDelay);
             }
@@ -179,22 +201,34 @@ function Entity(level, position, width, height, renderWidth, renderHeight){
         }
     }
 
-    this.hit = function(target, weapon, originDirection){
-        var amount = weapon.property.damage;
-        // TODO : prendre en compte la distance / ajouter un effet de knockback
-        this.setDamage(target, amount, weapon.property.bleeding, originDirection);
+    this.hit = function(target, weapon, distance, originDirection){
+        if(typeof distance === 'undefined'){
+            distance = 0;
+        }
+        var bloodMultiplier = 1,
+            modifier = 1,
+            amount = 0,
+            knockback = 0;
+
+        if(weapon.constructor.name == 'Weapon'){
+            if(distance > weapon.property.range){
+                modifier = toFloat(distance / weapon.property.range);
+            }
+
+            knockback = toFloat(weapon.property.knockback / modifier);
+            amount = toFloat(weapon.property.damage / modifier);
+            bloodMultiplier = Math.round(weapon.property.bleeding / modifier);
+        }
+
+        this.setDamage(target, amount, knockback, bloodMultiplier, originDirection);
     }
 
-    this.setDamage = function(entity, amount, bloodMultiplier, originDirection){
-        if(typeof bloodMultiplier === 'undefined'){
-            bloodMultiplier = 1;
+    this.setDamage = function(entity, amount, knockback, bloodMultiplier, originDirection){
+        if(knockback > 0){
+            entity.setVector((originDirection == 1) ? knockback : -knockback, -knockback);
         }
-        if(bloodMultiplier < 0){
-            bloodMultiplier = 0;
-        }
-
         entity.setHealth(entity.getHealth() - amount);
-        entity.bloodSplash(originDirection, entity.minBloodAmount() * bloodMultiplier, entity.maxBloodAmount() * bloodMultiplier);
+        entity.bloodSplash(originDirection, bloodMultiplier);
 
         if(!entity.isDead()){
             var rand = Math.random();
@@ -223,16 +257,16 @@ function Entity(level, position, width, height, renderWidth, renderHeight){
         level.getTimers().addTimer(function(){
             if(bleeding){
                 bloodSplash(2, 0, 3);
-                self.setDamage(entity, damageAmount * 0.25, 2);
+                self.setDamage(entity, damageAmount * 0.25, 0, 1, 2);
             }
         }, 1000);
     }
 
     this.minBloodAmount = function(){
-        return parseInt(1 + ((this.width * this.height) / (platformer.tileSizeX * platformer.tileSizeY)) * 2, 10);
+        return parseInt(1 + ((this.width * this.height) / (platformer.tileSizeX * platformer.tileSizeY)) * 1, 10);
     }
     this.maxBloodAmount = function(){
-        return parseInt(1 + ((this.width * this.height) / (platformer.tileSizeX * platformer.tileSizeY)) * 10, 10);
+        return parseInt(1 + ((this.width * this.height) / (platformer.tileSizeX * platformer.tileSizeY)) * 6, 10);
     }
 
 
@@ -242,6 +276,7 @@ function Entity(level, position, width, height, renderWidth, renderHeight){
         vy = 0;
         this.left = false;
         this.right = false;
+        this.setColor('#a6374b');
     }
 
     this.setBleeding = function(b){

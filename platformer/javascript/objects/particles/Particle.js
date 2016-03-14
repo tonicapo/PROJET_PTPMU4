@@ -1,7 +1,8 @@
 function Particle(level, position, width, height, duration){
-    MapObject.call(this, level, position.x - width / 2, position.y - height / 2, width, height);
-
+    MapObject.call(this, level, position.x, position.y, width, height);
     var self = this;
+
+    this.setRenderBox(platformer.tileSizeX, platformer.tileSizeY);
 
     var velocity = {
         vx : 0,
@@ -12,8 +13,7 @@ function Particle(level, position, width, height, duration){
         ry : 0
     };
 
-    var angles = [ 0, 90, 180, 270 ];
-    var angle = randomChoiceArray(angles);
+    var angle = 0;
 
     if(duration != -1){
         level.getTimers().addTimer(function(){
@@ -22,12 +22,19 @@ function Particle(level, position, width, height, duration){
     }
 
     this.update = function(){
-        updateBehaviour();
-
-        self.x += toFloat(velocity.vx);
-        self.y += toFloat(velocity.vy);
-
+        this.updateBehaviour();
+        this.updateParticuleMovement();
         this.updateMovement();
+    }
+
+    this.updateParticuleMovement = function(){
+        this.left = !(velocity.x != 0 && velocity.y < 0);
+        this.right = !(velocity.x != 0 && velocity.y > 0);
+
+        var x = toFloat(velocity.vx * Math.cos(angle * Math.PI / 180));
+        var y = toFloat(velocity.vy * Math.cos(angle * Math.PI / 180));
+
+        this.setVector(x , y);
     }
 
     this.setVelocity = function(x, y){
@@ -40,7 +47,11 @@ function Particle(level, position, width, height, duration){
         friction.ry = y;
     }
 
-    function updateBehaviour(){
+    this.setSpread = function(spread){
+        angle = spread;
+    }
+
+    this.updateBehaviour = function(){
         if(self.isBlockedDown()){
             velocity.vy = 0;
         }
@@ -82,6 +93,7 @@ function Particle(level, position, width, height, duration){
             }
         }
     }
+
 
     this.render = function(ctx, panX, panY){
         ctx.save();

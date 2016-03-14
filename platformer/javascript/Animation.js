@@ -23,11 +23,13 @@ function Animation(id, frames, speed, options){
     }
 
     this.reset = function(){
+        time = undefined;
         currentFrame = 0;
         playedOnce = false;
     }
 
     this.init = function(){
+        time = undefined;
         currentFrame = 0;
         playedOnce = false;
 
@@ -69,6 +71,8 @@ function Animation(id, frames, speed, options){
     }
 
     this.getID = function(){ return id; }
+
+    this.getDuration = function(){ return speed * frames.length; }
 
     this.canSkipAnimation = function(){
         if(cancelable == false){

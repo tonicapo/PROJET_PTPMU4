@@ -20,9 +20,11 @@ function LevelState(){
         player.init();
         player.setDirection(1);
 
-        this.spawnEntity(new Enemy(this, new Position(9, map.getNumRows() - 6)));
-        this.spawnEntity(new Enemy(this, new Position(5, map.getNumRows() - 6)));
-        this.spawnEntity(new Enemy(this, new Position(16, map.getNumRows() - 9)));
+        this.spawnEntity(new Enemy(this, new Position(13, map.getNumRows() - 6)));
+        this.spawnEntity(new Enemy(this, new Position(19, map.getNumRows() - 9)));
+
+        this.spawnItem(new Coin(this, new Position(6, map.getNumRows() - 6)));
+        this.spawnItem(new Coin(this, new Position(7, map.getNumRows() - 6)));
     }
 
     this.update = function(){

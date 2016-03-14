@@ -1,10 +1,12 @@
 function Enemy(level, position){
-    Hostile.call(this, level, position, 60, 85, platformer.tileSizeX, platformer.tileSizeY);
+    Hostile.call(this, level, position, 60, 85);
+
+    this.setRenderBox(80 * platformer.scale, 64 * platformer.scale);
 
     this.property = {
-        speed : 1,
-        stopSpeed : 0.75,
-        maxSpeed : 6,
+        speed : 0.1,
+        stopSpeed : 0.25,
+        maxSpeed : 1.5,
         fallSpeed : 2,
         maxFallSpeed : 8,
         jumpHeight : 8,
