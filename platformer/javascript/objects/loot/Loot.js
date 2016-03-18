@@ -1,5 +1,5 @@
-function Loot(level, point){
-    Particle.call(this, level, new Position(point.x * platformer.tileSizeX, point.y * platformer.tileSizeY), platformer.tileSizeX, platformer.tileSizeY, -1);
+function Loot(level, position){
+    Particle.call(this, level, position, platformer.tileSizeX, platformer.tileSizeY, -1, true);
 
     this.setRenderBox(platformer.tileSizeX, platformer.tileSizeY);
 
@@ -13,20 +13,29 @@ function Loot(level, point){
     this.setVelocity(0, -10);
     this.setFriction(0, 0.2);
 
-    this.init = function(){}
 
     this.update = function(){
         this.updateBehaviour();
         this.updateParticuleMovement();
         this.updateMovement();
         this.updateStatus();
+        this.updateObject();
+    }
+
+    this.animate = function(){
+        this.setAnimation(this.animationList.idle);
     }
 
     this.updateStatus = function(){
         // on boucle dans la liste des tiles visibles pour savoir si on a touché un tile cassable
-        if(this.getHitBox().intersects(level.getPlayer())){
+        if(!level.getPlayer().isDead() && this.getHitBox().intersects(level.getPlayer())){
+            this.pickLoot(level.getPlayer());
             this.setDirty(true);
         }
+    }
+
+    this.pickLoot = function(entity){
+        // action à effectuer une fois le loot ramassé
     }
 
     this.render = function(ctx, panX, panY){
