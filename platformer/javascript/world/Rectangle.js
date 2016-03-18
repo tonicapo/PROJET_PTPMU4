@@ -14,12 +14,24 @@ function Rectangle(x, y, width, height){
 
     var dirty = false;
 
+    this.init = function(){
+
+    }
+
     /**
     * Permet de savoir si un objet de la carte entre en collision avec l'objet courant
     * rect - Un autre rectangle
     */
     this.intersects = function(rect){
         return (this.x + this.width > rect.x && this.x < rect.x + rect.width && this.y + this.height > rect.y && this.y < rect.y + rect.height);
+    }
+
+    this.touch = function(rect){
+        return (this.x + this.width + 1 > rect.x && this.x - 1 < rect.x + rect.width && this.y + this.height + 1 > rect.y && this.y - 1 < rect.y + rect.height);
+    }
+
+    this.updateObject = function(){
+
     }
 
     /**
@@ -29,10 +41,10 @@ function Rectangle(x, y, width, height){
         return new Rectangle(this.x, this.y, this.width, this.height);
     }
 
+    // retourne une position représentant le centre du rectangle
     this.getCenter = function(){
         return new Position(this.x + this.width / 2, this.y + this.height / 2);
     }
-
 
     this.setDirty = function(d){
         dirty = d;

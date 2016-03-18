@@ -1,5 +1,10 @@
-function MapObject(level, x, y, width, height){
-    Rectangle.call(this, x, y, width, height);
+function MapObject(level, x, y, width, height, animated){
+    if(typeof animated === 'undefined' || !animated){
+        Rectangle.call(this, x, y, width, height);
+    }
+    else{
+        AnimatedObject.call(this, x, y, width, height);
+    }
 
     var DIRECTION_LEFT = 0;
     var DIRECTION_RIGHT = 1;
@@ -23,18 +28,20 @@ function MapObject(level, x, y, width, height){
         doubleJumping = false,
 
         canJump = true,
-
-        animation,
+        canFall = true,
 
         direction = 0,
 
         hitBoxWidth,
         hitBoxHeight,
 
-        reduction = { x : 1, y : 1 };
+        bonus = {
+            speed : 1,
+            strength : 1,
+            resistance : 1
+        },
 
-    // liste des animations
-    this.animations = {};
+        reduction = { x : 1, y : 1 };
 
     this.left = false;
     this.right = false;
@@ -55,7 +62,7 @@ function MapObject(level, x, y, width, height){
 
     this.update = function(){
         this.updateMovement();
-        this.updateAnimation();
+        this.updateObject();
     }
 
     this.updateMovement = function(){
@@ -63,32 +70,10 @@ function MapObject(level, x, y, width, height){
         collision();
         gravity();
 
-        self.x += toFloat(vx) * reduction.x;
-        self.y += toFloat(vy) * reduction.y;
+        self.x += toFloat(vx) * reduction.x * this.getBonus('speed');
+        self.y += toFloat(vy) * reduction.y * this.getBonus('speed');
 
         fixBounds();
-    }
-
-    this.updateAnimation = function(){
-        if(animation.canSkipAnimation()){
-            this.animate();
-        }
-
-        if(animation != undefined){
-            animation.update();
-        }
-    }
-
-    this.init = function(){
-        for(var i in this.animations){
-            this.animations[i].init();
-        }
-
-        this.setAnimation(this.animations[Object.keys(this.animations)[0]]);
-    }
-
-    this.animate = function(){
-        // change animations
     }
 
     this.render = function(ctx, panX, panY){
@@ -97,12 +82,12 @@ function MapObject(level, x, y, width, height){
 
         ctx.save();
         ctx.scale((direction == 0) ? -1 : 1, 1);
-        ctx.drawImage(animation.getFrame(), posX, renderBox.y - panY, renderBox.width, renderBox.height);
+        ctx.drawImage(this.getTexture(), posX, renderBox.y - panY, renderBox.width, renderBox.height);
         ctx.restore();
     }
 
     this.draw = function(ctx, panX, panY){
-        ctx.strokeStyle = color;
+        ctx.strokeStyle = this.getColor();
         ctx.strokeRect(this.x - panX, this.y - panY, this.width, this.height);
     }
 
@@ -303,6 +288,9 @@ function MapObject(level, x, y, width, height){
     }
 
     function gravity(){
+        if(!canFall){
+            return;
+        }
         var bottomLeftTile = self.getTileAt(self.x + 1, self.y + self.height);
         var bottomRightTile = self.getTileAt(self.x + self.width - 1, self.y + self.height);
 
@@ -323,11 +311,6 @@ function MapObject(level, x, y, width, height){
 
     // setters
 
-    this.setAnimation = function(tmp){
-        if(typeof tmp !== 'undefined' && (typeof animation === 'undefined' || animation.getID() != tmp.getID())){
-            animation = tmp;
-        }
-    }
     this.setDirection = function(d){
         direction = d;
     }
@@ -365,6 +348,36 @@ function MapObject(level, x, y, width, height){
         return new Rectangle(this.x + offsetX, this.y + offsetY, hitBoxWidth, hitBoxHeight);
     }
 
+    this.setDimension = function(w, h){
+        this.width = w;
+        this.height = h;
+    }
+
+    /**
+    * BONUS
+    * ajoute un bonus à l'entité
+    */
+    this.setBonus = function(name, factor, delay){
+        if(typeof bonus[name] === 'undefined' || typeof delay === 'undefined' || typeof factor === 'undefined'){
+            return;
+        }
+
+        if(factor < 1){
+            factor = 1;
+        }
+
+        if(bonus[name] == 1 && delay > 0){
+            bonus[name] = factor;
+            // timer pour remettre le bonus à la normale une fois le délais dépassé
+            level.getTimers().addTimer(function(){
+                bonus[name] = 1;
+            }, delay);
+        }
+    }
+    this.getBonus = function(name){
+        return bonus[name];
+    }
+
 
     // getters
     this.isBlockedLeft = function(){ return blockedLeft; }
@@ -375,6 +388,10 @@ function MapObject(level, x, y, width, height){
     this.isFalling = function(){ return falling; }
     this.isJumping = function(){ return jumping; }
     this.isDoubleJumping = function(){ return doubleJumping; }
+
+    this.enableGravity = function(b){
+        canFall = b;
+    }
 
     this.getDirection = function(){ return direction; }
 

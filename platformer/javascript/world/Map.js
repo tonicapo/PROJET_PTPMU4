@@ -49,7 +49,8 @@ function Map(level){
             tiles : [],
             particles : [],
             items : [],
-            entities : []
+            entities : [],
+            loots : []
         };
     }
 
@@ -121,7 +122,8 @@ function Map(level){
             tiles : [],
             particles : [],
             items : [],
-            entities : []
+            entities : [],
+            loots : []
         };
 
         for(var x = startX; x < endX; x++){
@@ -134,6 +136,7 @@ function Map(level){
         renderlist.items = filterObjects(level.getItems());
         renderlist.entities = filterObjects(level.getEntities());
         renderlist.particles = filterObjects(level.getParticles());
+        renderlist.loots = filterObjects(level.getLoots());
     }
 
     this.render = function(ctx){
@@ -144,6 +147,7 @@ function Map(level){
         renderObjects(ctx, renderlist.tiles);
         renderObjects(ctx, renderlist.entities);
         level.getPlayer().render(ctx, panX, panY);
+        renderObjects(ctx, renderlist.loots);
         renderObjects(ctx, renderlist.particles);
     }
 
@@ -177,6 +181,25 @@ function Map(level){
             items[i].render(ctx, panX, panY);
             //items[i].draw(ctx, panX, panY);
         }
+        //renderBox(ctx, level.getPlayer());
+
+        for(var i in renderlist.entities){
+            //renderBox(ctx, renderlist.entities[i]);
+        }
+    }
+
+    function renderBox(ctx, entity){
+        if(entity.constructor.name != 'Player'){
+            var viewbox = entity.getViewBox();
+            ctx.strokeStyle = 'orange';
+            ctx.strokeRect(viewbox.x - panX, viewbox.y - panY, viewbox.width, viewbox.height);
+            var rangebox = entity.getRangeBox();
+            ctx.strokeStyle = 'red';
+            ctx.strokeRect(rangebox.x - panX, rangebox.y - panY, rangebox.width, rangebox.height);
+        }
+
+        ctx.strokeStyle = 'green';
+        ctx.strokeRect(entity.x - panX, entity.y - panY, entity.width, entity.height);
     }
 
     this.getPanX = function(){ return panX; }
@@ -189,4 +212,5 @@ function Map(level){
 
     this.getVisibleItems = function(){ return renderlist.items; }
     this.getVisibleTiles = function(){ return renderlist.tiles; }
+    this.getVisibleLoots = function(){ return renderlist.loots; }
 }

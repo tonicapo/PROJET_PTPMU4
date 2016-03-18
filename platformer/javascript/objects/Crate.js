@@ -1,6 +1,6 @@
-function Crate(level, position){
-    Tile.call(this, level, platformer.tiletype.crate, position, 1, 0);
-
+function Crate(level, point){
+    Tile.call(this, level, platformer.tiletype.crate, point, 1, 0);
+    
     this.setBreakable(true);
 
     this.break = function(){
@@ -8,19 +8,19 @@ function Crate(level, position){
         var item;
 
         if(rand > 0.75){
-            item = new HealthPotion(level, position);
+            item = new HealthPotion(level, getPositionAtCoord(point.x, point.y));
         }
         else if(rand > 0.5){
-            item = new SpeedPotion(level, position);
+            item = new SpeedPotion(level, getPositionAtCoord(point.x, point.y));
         }
         else if(rand > 0.25){
-            item = new ResistancePotion(level, position);
+            item = new ResistancePotion(level, getPositionAtCoord(point.x, point.y));
         }
         else{
-            item = new StrengthPotion(level, position);
+            item = new StrengthPotion(level, getPositionAtCoord(point.x, point.y));
         }
 
-        level.spawnItem(item);
+        level.spawnLoot(item);
         this.setBreakable(false);
         this.tiletype = platformer.tiletype.void;
     }
