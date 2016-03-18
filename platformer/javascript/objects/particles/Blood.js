@@ -12,8 +12,8 @@ function Blood(level, position, direction){
     this.property.stopSpeed = 0.2;
     this.property.maxSpeed = 4;
 
-    var xmin = -16;
-    var xmax = 16;
+    var xmin = -6;
+    var xmax = 6;
     var ymin = -10;
     var ymax = -4;
 
@@ -29,12 +29,13 @@ function Blood(level, position, direction){
         xmin = -12;
         angle = 360;
     }
-    else{
+    else if(direction == 2){
         xmin = -3;
         xmax = 3;
 
         ymin = -18;
     }
+
 
     var xx = randomFloat(xmin, xmax);
     var yy = randomFloat(ymin, ymax);
@@ -42,5 +43,5 @@ function Blood(level, position, direction){
     this.setColor('#a6374b');
     this.setVelocity(xx, yy);
     this.setSpread(angle);
-    this.setFriction(0.1, 0.25);
+    this.setFriction(randomFloat(0.05, 0.15), 0.25);
 }

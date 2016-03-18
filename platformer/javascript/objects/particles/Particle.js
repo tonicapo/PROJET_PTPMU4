@@ -1,5 +1,8 @@
-function Particle(level, position, width, height, duration){
-    MapObject.call(this, level, position.x, position.y, width, height);
+function Particle(level, position, width, height, duration, animated){
+    if(typeof animated === 'undefined'){
+        animated = false;
+    }
+    MapObject.call(this, level, position.x, position.y, width, height, animated);
     var self = this;
 
     this.setRenderBox(platformer.tileSizeX, platformer.tileSizeY);
