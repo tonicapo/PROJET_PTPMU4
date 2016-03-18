@@ -1,30 +1,32 @@
 function Player(level, position){
     Entity.call(this, level, position, 60, 85);
 
+    var self = this;
     this.setRenderBox(80 * platformer.scale, 64 * platformer.scale);
 
-    this.property = {
-        speed : 1,
-        stopSpeed : 0.75,
-        maxSpeed : 6,
-        fallSpeed : 2,
-        maxFallSpeed : 8,
-        jumpHeight : 8,
-        doubleJumpHeight : 4,
+    this.property.speed = 1;
+    this.property.stopSpeed = 0.75;
+    this.property.maxSpeed = 6;
+    this.property.fallSpeed = 2;
+    this.property.maxFallSpeed = 8;
+    this.property.jumpHeight = 8;
+    this.property.doubleJumpHeight = 4;
 
-        maxHealth : 20,
-        baseRange : 20,
-        bleedingChance : 0.05
-    };
+    this.property.maxHealth = 20;
+    this.property.baseRange = 20;
+    this.property.bleedingChance = 0.1;
+
+
+    var coins = 0;
 
     this.setHealth(this.property.maxHealth);
-
+    this.setCanDropCoin(false);
     this.addInventory(platformer.weapons.sword);
     this.addInventory(platformer.weapons.bow);
     this.addInventory(platformer.weapons.knife);
     this.addInventory(platformer.weapons.fireballSpell);
 
-    this.setSelectedItem(1);
+    this.setSelectedItem(2);
 
     this.keyUp = function(key){
         if(key == platformer.keylist.mvt_left){
@@ -55,4 +57,17 @@ function Player(level, position){
             this.setJumping();
         }
     }
+
+    this.getCoins = function(){
+        return coins;
+    }
+
+    this.addCoin = function(){
+        coins += 1;
+    }
+
+    document.addEventListener('playerdeath', function(e){
+        e.preventDefault();
+
+    });
 }
