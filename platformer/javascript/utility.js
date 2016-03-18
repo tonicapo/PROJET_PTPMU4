@@ -48,7 +48,7 @@ function randomFloat(min, max){
 }
 
 function randomChoiceArray(choices){
-    return choices[randomInt(0, choices.length - 1)];
+    return choices[randomInt(0, choices.length)];
 }
 
 function randomChoiceObject(obj){
@@ -65,4 +65,47 @@ function toFloat(a){
 */
 function timestamp(){
     return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
+}
+
+
+// retourne une position aux points x et y donnés
+function getPositionAtCoord(x, y){
+    return new Position(x * platformer.tileSizeX, y * platformer.tileSizeY);
+}
+
+
+
+/**
+* Permet d'afficher des messages dans la console seulement en mode débug
+*/
+platformer.notify = function(message){
+    if(platformer.debug){
+        console.info(message);
+    }
+}
+
+// récupère la liste des touches du clavier sauvegardée ou par défaut si elle n'existe pas encore
+platformer.getKeyList = function(){
+    var savedKeys = platformer.getRegisteredKeyList();
+    var defaultKeys = platformer.defaultKeyList;
+
+    var keyList = { };
+
+    if(typeof savedKeys === 'object' && savedKeys !== null){
+        for(var i in defaultKeys){
+            keyList[i] = (typeof savedKeys[i] !== 'undefined') ? parseInt(savedKeys[i], 10) : defaultKeys[i];
+        }
+    }
+
+    return keyList;
+}
+
+// permet d'enregistrer la liste courante des touches
+platformer.registerKeyList = function(){
+    localStorage.setItem('platformer_keylist', JSON.stringify(platformer.keylist));
+}
+
+// permet de récupérer les touches enregistrées dans le local storage
+platformer.getRegisteredKeyList = function(){
+    return JSON.parse(localStorage.getItem('platformer_keylist'));
 }

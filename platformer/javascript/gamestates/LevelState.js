@@ -12,25 +12,30 @@ function LevelState(){
         objects.particles = new ArrayList;
         objects.entities = new ArrayList;
         objects.items = new ArrayList;
+        objects.loots = new ArrayList;
 
         map = new Map(this);
         map.init();
 
-        player = new Player(this, new Position(5, map.getNumRows() - 6));
+        player = new Player(this, getPositionAtCoord(5, map.getNumRows() - 6));
         player.init();
         player.setDirection(1);
 
-        this.spawnEntity(new Enemy(this, new Position(13, map.getNumRows() - 6)));
-        this.spawnEntity(new Enemy(this, new Position(19, map.getNumRows() - 9)));
+        this.spawnEntity(new Enemy(this, getPositionAtCoord(13, map.getNumRows() - 6)));
+        this.spawnEntity(new Enemy(this, getPositionAtCoord(20, map.getNumRows() - 9)));
 
-        this.spawnItem(new Coin(this, new Position(6, map.getNumRows() - 6)));
-        this.spawnItem(new Coin(this, new Position(7, map.getNumRows() - 6)));
+        this.spawnLoot(new Coin(this, getPositionAtCoord(8, map.getNumRows() - 6)));
+        this.spawnLoot(new Coin(this, getPositionAtCoord(7, map.getNumRows() - 6)));
+
+
+        // lancement du jeu
+        document.dispatchEvent(platformer.events.levelstart);
     }
 
     this.update = function(){
-        objects.particles.clean();
-        objects.entities.clean();
-        objects.items.clean();
+        for(var i in objects){
+            objects[i].clean();
+        }
 
         timers.update();
         map.update();
@@ -65,6 +70,10 @@ function LevelState(){
         o.init();
         objects.particles.add(o);
     }
+    this.spawnLoot = function(o){
+        o.init();
+        objects.loots.add(o);
+    }
 
     this.getMap = function(){ return map; }
     this.getTimers = function(){ return timers; }
@@ -72,6 +81,7 @@ function LevelState(){
     this.getItems = function(){ return objects.items.getList(); }
     this.getEntities = function(){ return objects.entities.getList(); }
     this.getParticles = function(){ return objects.particles.getList(); }
+    this.getLoots = function(){ return objects.loots.getList(); }
 
     this.getPlayer = function(){ return player; }
 }
