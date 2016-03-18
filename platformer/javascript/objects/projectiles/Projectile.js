@@ -1,5 +1,5 @@
 function Projectile(level, originEntity, targets, weapon, position, direction, width, height){
-    MapObject.call(this, level, position.x - width / 2, position.y - height / 2, width, height);
+    MapObject.call(this, level, position.x - width / 2, position.y - height / 2, width, height, true);
 
     var self = this;
     var targetEntity;
@@ -27,8 +27,8 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
     this.property.stopSpeed = 0;
     this.property.maxSpeed = 0;
 
-    this.animations.moving = null,
-    this.animations.idle = null;
+    this.animationList.moving = null,
+    this.animationList.idle = null;
 
     this.setDirection(direction);
     this.setFixedToBottom(false);
@@ -37,8 +37,11 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
 
     this.update = function(){
         this.updateMovement();
-        this.updateAnimation();
-        updateStatus();
+        this.updateObject();
+
+        if(!stopped){
+            updateStatus();
+        }
 
         if(stopped){
             if(followTarget && !destructOnStopped && typeof targetEntity !== 'undefined'){
@@ -65,10 +68,10 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
 
     this.animate = function(){
         if(this.isStopped()){
-            this.setAnimation(this.animations.idle);
+            this.setAnimation(this.animationList.idle);
         }
         else{
-            this.setAnimation(this.animations.moving);
+            this.setAnimation(this.animationList.moving);
         }
     }
 
@@ -83,8 +86,10 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
 
             for(var i = 0, n = tiles.length; i < n; i++){
                 if(tiles[i].isBreakable()){
-                    if(self.intersects(tiles[i])){
+                    if(self.touch(tiles[i])){
                         tiles[i].break();
+
+                        if(followTarget) self.setDirty(true);
                     }
                 }
             }
@@ -95,6 +100,8 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
             for(var i in targets){
                 // on a touché une des cibles
                 if(self.intersects(targets[i]) && !targets[i].isDead() && targets[i] !== originEntity){
+                    self.x += (direction == 1) ? self.width / 2 : -(self.width / 2);
+
                     var currentPosition = self.getCenter();
                     var distance = Math.abs(currentPosition.x - originPosition.x);
 

@@ -2,9 +2,8 @@ function FireBall(level, originEntity, targets, position, direction){
     Projectile.call(this, level, originEntity, targets, platformer.weapons.fireballSpell, position, direction, 32, 32);
     var self = this;
 
-    this.animations.moving = new Animation('moving', platformer.textures.items.fireBallMoving, 100);
-    this.animations.idle = new Animation('idle', platformer.textures.items.fireBallMoving, 100);
-    this.animations.exploding = new Animation('exploding', platformer.textures.items.fireBallExploding, 150);
+    this.animationList.moving = new Animation('moving', platformer.textures.items.fireBallMoving, 100);
+    this.animationList.idle = new Animation('idle', platformer.textures.items.fireBallMoving, 100);
 
     this.property.speed = 1;
     this.property.stopSpeed = 1;
@@ -17,14 +16,25 @@ function FireBall(level, originEntity, targets, position, direction){
 
     this.animate = function(){
         if(this.isStopped()){
-            this.setAnimation(this.animations.exploding);
+            var amount = randomInt(2, 6);
+            var delay;
+            var position;
+            var target = this.getTarget();
+
+            position = new Position(this.x - this.getRenderBox().width / 2, this.y - this.getRenderBox().height / 2);
+
+
+            delay = randomInt(50, 200);
 
             level.getTimers().addTimer(function(){
-                self.setDirty(true);
-            }, this.animations.exploding.getDuration());
+                level.spawnParticle(new FireBallExplosion(level, position));
+            }, delay);
+
+
+            this.setDirty(true);
         }
         else{
-            this.setAnimation(this.animations.moving);
+            this.setAnimation(this.animationList.moving);
         }
     }
 }
