@@ -1,5 +1,5 @@
 function Game(){
-    var global = this;
+    var self = this;
 
     var options = {
         id : 'gamescreen',
@@ -7,7 +7,7 @@ function Game(){
             width : platformer.dimension.w,
             height : platformer.dimension.h
         },
-        fullscreen : false,
+        fullscreen : true,
         scale : true
     };
 
@@ -18,16 +18,22 @@ function Game(){
         now,
         delta = 0,
         last = timestamp(),
-        step = 1 / 60;
+        step = 1 / 60,
 
-
+        screenWidth,
+        screenHeight;
 
     this.init = function(){
+        /**
+        * Création d'un canvas
+        * Gestion des ressources du jeu
+        * Lancement du jeu
+        */
         initGameScreen();
 
         window.addEventListener('resize', function(){
             if(options.fullscreen){
-                global.fullscreen();
+                self.fullscreen();
             }
         });
 
@@ -38,6 +44,12 @@ function Game(){
         window.addEventListener('focus', function(){
             resume();
         });
+
+        /**
+        * On récupère les ressources
+        */
+
+
 
         gsh = new GameStateHandler;
         gsh.init();
@@ -76,10 +88,11 @@ function Game(){
         now = timestamp();
         delta += Math.min(1, (now - last) / 1000);
 
-        while(delta > step){
+        while(delta >= step){
             delta -= step;
             if(running){
-                gsh.update();
+                //console.log(delta);
+                gsh.update(delta / step);
             }
         }
 
@@ -87,13 +100,6 @@ function Game(){
         last = now;
 
         requestAnimationFrame(run);
-    }
-
-    /**
-    * Retourne la timestamp courante
-    */
-    function timestamp() {
-        return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
     }
 
     /**
@@ -110,10 +116,10 @@ function Game(){
         document.body.appendChild(canvas);
 
         if(options.fullscreen){
-            global.fullscreen();
+            self.fullscreen();
         }
         else{
-            global.windowed();
+            self.windowed();
         }
     }
 
@@ -129,9 +135,19 @@ function Game(){
         canvas.setAttribute('width', parseInt(width, 10));
         canvas.setAttribute('height', parseInt(height, 10));
 
+        if(options.fullscreen){
+            document.body.style.overflow = 'hidden';
+        }
+        else{
+            document.body.style.overflow = 'auto';
+        }
+
         scaleGameScreen();
         // désactive le lissage des images
         disableSmoothing();
+
+        screenWidth = parseInt(window.getComputedStyle(canvas).width, 10);
+        screenHeight = parseInt(window.getComputedStyle(canvas).height, 10);
     }
 
     this.toggleFullscreen = function(){
@@ -140,14 +156,14 @@ function Game(){
 
     this.fullscreen = function(){
         platformer.notify('FULLSCREEN MODE');
-        resizeGameScreen(window.innerWidth, window.innerHeight);
         options.fullscreen = true;
+        resizeGameScreen(window.innerWidth, window.innerHeight);
     }
 
     this.windowed = function(){
         platformer.notify('WINDOWED MODE');
-        resizeGameScreen(options.dimension.width, options.dimension.height);
         options.fullscreen = false;
+        resizeGameScreen(options.dimension.width, options.dimension.height);
     }
 
     /**
@@ -173,7 +189,8 @@ function Game(){
                             ctx.msBackingStorePixelRatio ||
                             ctx.oBackingStorePixelRatio ||
                             ctx.backingStorePixelRatio || 1;
-        var ratio = devicePixelRatio / backingStoreRatio;
+
+        var ratio = toFloat(devicePixelRatio / backingStoreRatio);
 
         if(options.scale && devicePixelRatio !== backingStoreRatio){
             var oldWidth = canvas.width;
@@ -188,12 +205,13 @@ function Game(){
             // now scale the context to counter
             // the fact that we've manually scaled
             // our canvas element
+
             ctx.scale(ratio, ratio);
         }
     }
 
 
     // getters
-    this.getScreenWidth = function(){ return canvas.width; }
-    this.getScreenHeight = function(){ return canvas.height; }
+    this.getScreenWidth = function(){ return screenWidth; }
+    this.getScreenHeight = function(){ return screenHeight }
 }
