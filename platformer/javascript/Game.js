@@ -158,6 +158,15 @@ function Game(){
         var width = parseInt(width, 10);
         var height = parseInt(height, 10);
 
+        if(width > window.innerWidth){
+            width = window.innerWidth;
+        }
+        if(height > window.innerHeight){
+            height = window.innerHeight;
+        }
+
+
+
         foreground.setAttribute('width', width);
         foreground.setAttribute('height', height);
 
