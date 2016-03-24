@@ -32,6 +32,8 @@ function MapObject(level, x, y, width, height, animated){
 
         direction = 0,
 
+        boundToMap = true,
+
         hitBoxWidth,
         hitBoxHeight,
 
@@ -73,7 +75,7 @@ function MapObject(level, x, y, width, height, animated){
         self.x += toFloat(vx) * reduction.x;
         self.y += toFloat(vy) * reduction.y;
 
-        fixBounds();
+        if(boundToMap) fixBounds();
     }
 
     this.render = function(ctx, panX, panY){
@@ -306,7 +308,7 @@ function MapObject(level, x, y, width, height, animated){
         var map = level.getMap();
         var x = parseInt(posX / platformer.tileSizeX, 10);
         var y = parseInt(posY / platformer.tileSizeY, 10);
-        return (x >= 0 && x < map.getNumCols() && y >= 0 && y < map.getNumRows()) ? map.getTilemap()[x][y] : undefined;
+        return (!(x < 0 || x >= map.getNumCols() || y < 0 || y >= map.getNumRows())) ? map.getTilemap()[x][y] : undefined;
     }
 
     // setters
@@ -359,6 +361,10 @@ function MapObject(level, x, y, width, height, animated){
         this.height = h;
     }
 
+    this.setBoundToMap = function(b){
+        boundToMap = b;
+    }
+
     /**
     * BONUS
     * ajoute un bonus à l'entité
@@ -400,6 +406,7 @@ function MapObject(level, x, y, width, height, animated){
     this.enableGravity = function(b){
         canFall = b;
     }
+    this.canFall = function(){ return canFall; }
 
     this.getDirection = function(){ return direction; }
 
