@@ -4,8 +4,7 @@ function Background(color, image, width, height){
         ctx.fillStyle = color;
         var screenWidth = platformer.game.getScreenWidth() * platformer.game.getRatio();
         var screenHeight = platformer.game.getScreenHeight() * platformer.game.getRatio();
-        ctx.fillRect(0, 0, screenWidth, screenHeight);
-        /*
+
         var screenWidth = platformer.game.getScreenWidth() * platformer.game.getRatio();
         var screenHeight = platformer.game.getScreenHeight() * platformer.game.getRatio();
 
@@ -16,6 +15,6 @@ function Background(color, image, width, height){
         ctx.drawImage(image, 0, 0, width, height, 0, 0, screenWidth, screenHeight);
         ctx.globalAlpha = 0.6;
         ctx.fillRect(0, 0, screenWidth, screenHeight);
-        */
+        
     }
 }

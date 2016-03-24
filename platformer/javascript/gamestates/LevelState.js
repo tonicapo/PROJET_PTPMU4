@@ -44,6 +44,8 @@ function LevelState(){
     }
 
     this.render = function(ctx){
+        ctx.fillStyle = '#b4eaf4';
+        ctx.fillRect(0, 0, platformer.game.getScreenWidth(), platformer.game.getScreenHeight());
         map.render(ctx);
     }
 
@@ -99,6 +101,6 @@ function LevelState(){
         */
 
         var stats = player.getStats();
-        
+
     });
 }

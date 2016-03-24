@@ -38,7 +38,6 @@ function AI_Entity(level, position, width, height){
         }
     }
 
-
     /**
     * MOUVEMENTS
     */
