@@ -9,8 +9,9 @@ function GameStateHandler(){
 
     this.init = function(){
         // on charge les stages du jeu et on initialise le premier
+        states.push(new MenuState);
         states.push(new LevelState);
-        this.setState(0);
+        this.setState(1);
 
         window.addEventListener('keyup', function(e){
             self.keyUp(e);
@@ -45,6 +46,7 @@ function GameStateHandler(){
 
     this.render = function(ctx){
         ctx.clearRect(0, 0, platformer.game.getScreenWidth(), platformer.game.getScreenHeight());
+        this.renderBackground(ctx);
         states[current].render(ctx);
     }
 
@@ -72,9 +74,6 @@ function GameStateHandler(){
             platformer.game.toggleFullscreen();
         }
         else if(key == platformer.keylist.toggle_restart){
-            var timers = states[current].getTimers();
-            timers.empty();
-
             self.reloadState();
         }
         else if(key == platformer.keylist.toggle_pause){

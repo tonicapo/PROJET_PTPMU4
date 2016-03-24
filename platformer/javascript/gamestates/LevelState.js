@@ -10,6 +10,10 @@ function LevelState(){
         platformer.events.levelcomplete = new CustomEvent('levelcomplete');
         platformer.events.levelstart = new CustomEvent('levelstart');
 
+        if(typeof timers !== 'undefined'){
+            timers.empty();
+        }
+
         timers = new TimerManager;
         objects = {};
         objects.particles = new ArrayList;
@@ -33,19 +37,15 @@ function LevelState(){
     }
 
     this.update = function(){
-        for(var i in objects){
-            objects[i].clean();
-        }
-
         timers.update();
         map.update();
 
         player.update();
+
+        //console.log(objects.entities.getLength(), objects.loots.getLength(), objects.particles.getLength(), objects.items.getLength());
     }
 
     this.render = function(ctx){
-        ctx.fillStyle = '#b4eaf4';
-        ctx.fillRect(0, 0, platformer.game.getScreenWidth(), platformer.game.getScreenHeight());
         map.render(ctx);
     }
 
