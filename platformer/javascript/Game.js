@@ -40,6 +40,9 @@ function Game(){
             if(options.fullscreen){
                 self.fullscreen();
             }
+            else{
+                self.windowed();
+            }
         });
 
         window.addEventListener('blur', function(){

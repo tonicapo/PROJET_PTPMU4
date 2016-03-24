@@ -23,7 +23,14 @@ window.addEventListener('DOMContentLoaded', function(){
         gameWrapper = document.getElementById(gameID);
     }
 
-    function gameResize(){
+    function gameResize(width, height){
+        // mobile & tablet & support plus petits
+        if(window.innerWidth < width || window.innerHeight < height){
+            platformer.game.fullscreen();
+            console.log(width, height, window.innerWidth);
+        }
+
+        // centrage sur l'écran pour le mode fenêtré
         if(!platformer.fullscreen){
             centerRelativeToScreen(gameWrapper);
         }
