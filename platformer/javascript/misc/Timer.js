@@ -46,7 +46,17 @@ function TimerManager(){
         return i;
     }
 
+    this.getLength = function(){
+        return Object.keys(timers).length;
+    }
+
     function removeTimer(index){
         delete timers[index];
+    }
+
+    this.empty = function(){
+        for(var i in timers){
+            removeTimer(i);
+        }
     }
 }

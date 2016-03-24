@@ -1,17 +1,20 @@
-function Loot(level, position){
+function Loot(level, position, delay){
     Particle.call(this, level, position, platformer.tileSizeX, platformer.tileSizeY, -1, true);
 
     this.setRenderBox(platformer.tileSizeX, platformer.tileSizeY);
 
-    this.property.fallSpeed = 3;
-    this.property.maxFallSpeed = 3;
-    this.property.speed = 1;
-    this.property.stopSpeed = 0.5;
-    this.property.maxSpeed = 2;
+    var pickable = false;
+    var dropAmount = 1;
 
-    this.setSpread(0);
-    this.setVelocity(0, -10);
-    this.setFriction(0, 0.2);
+    if(typeof delay === 'undefined'){
+        delay = -1;
+    }
+
+    if(delay != -1){
+        level.getTimers().addTimer(function(){
+            pickable = true;
+        }, delay);
+    }
 
 
     this.update = function(){
@@ -30,7 +33,6 @@ function Loot(level, position){
         // on boucle dans la liste des tiles visibles pour savoir si on a touché un tile cassable
         if(!level.getPlayer().isDead() && this.getHitBox().intersects(level.getPlayer())){
             this.pickLoot(level.getPlayer());
-            this.setDirty(true);
         }
     }
 
@@ -53,4 +55,14 @@ function Loot(level, position){
         ctx.strokeStyle = 'red';
         ctx.strokeRect(this.x - panX, this.y - panY, this.width, this.height);
     }
+
+    this.isPickable = function(){
+        return pickable;
+    }
+
+    this.setDropAmount = function(da){
+        dropAmount = da;
+    }
+
+    this.getDropAmount = function(){ return dropAmount; }
 }

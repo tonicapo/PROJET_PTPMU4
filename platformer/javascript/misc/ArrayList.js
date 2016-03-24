@@ -16,7 +16,7 @@ function ArrayList(){
         return list;
     }
 
-    this.length = function(){
+    this.getLength = function(){
         return Object.keys(list).length;
     }
 

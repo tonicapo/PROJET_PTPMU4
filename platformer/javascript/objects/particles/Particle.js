@@ -37,7 +37,7 @@ function Particle(level, position, width, height, duration, animated){
         var x = toFloat(velocity.vx * Math.cos(angle * Math.PI / 180));
         var y = toFloat(velocity.vy * Math.cos(angle * Math.PI / 180));
 
-        this.setVector(x , y);
+        this.setVector(x , y, true);
     }
 
     this.setVelocity = function(x, y){

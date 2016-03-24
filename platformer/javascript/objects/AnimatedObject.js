@@ -7,6 +7,10 @@ function AnimatedObject(x, y, width, height){
     this.animationList = {};
 
     this.init = function(){
+        this.initAnimations();
+    }
+
+    this.initAnimations = function(){
         for(var i in this.animationList){
             this.animationList[i].init();
         }

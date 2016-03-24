@@ -5,6 +5,7 @@ function Entity(level, position, width, height){
     var health;
     var dead = false;
     var bleeding = false;
+    var attacked = 0;
 
     var inventory = [];
     var selectedItemId = 0;
@@ -14,13 +15,17 @@ function Entity(level, position, width, height){
 
     var dropCoin = false;
 
+    var bloodRatio = 1;
+    var DeathParticule = Blood;
+
     this.property.maxHealth = 0;
     this.property.baseRange = 0;
-
+    this.property.attackCooldown = 0;
     this.property.bleedingChance = 0;
 
     this.animationList.idle = new Animation('idle', platformer.textures.player.idle, 1000, { random : true });
     this.animationList.walking = new Animation('walking', platformer.textures.player.walking, 100);
+    this.animationList.walkingSpeedPotion = new Animation('walkingSpeedPotion', platformer.textures.player.walking, 70);
     this.animationList.jumping = new Animation('jumping', platformer.textures.player.jumping, 0);
     this.animationList.doubleJumping = new Animation('doubleJumping', platformer.textures.player.doubleJumping, 150, { loop : true, cancelable : false });
     this.animationList.falling = new Animation('falling', platformer.textures.player.falling, 1000);
@@ -63,10 +68,10 @@ function Entity(level, position, width, height){
     */
 
     this.bloodSplash = function(dir, multiplier){
-        var amount = randomInt(this.minBloodAmount() * multiplier, this.maxBloodAmount() * multiplier);
+        var amount = randomInt(self.minBloodAmount() * multiplier * bloodRatio, self.maxBloodAmount() * multiplier * bloodRatio);
 
         for(var i = 0; i < amount; i++){
-            level.spawnParticle(new Blood(level, this.getCenter(), dir));
+            level.spawnParticle(new DeathParticule(level, self.getCenter(), dir));
         }
     }
 
@@ -106,16 +111,19 @@ function Entity(level, position, width, height){
             }
             else if(this.left || this.right){
                 this.setAnimation(this.animationList.walking);
+
+                if(this.getBonus('speed') > 1){
+                    this.setAnimation(this.animationList.walkingSpeedPotion);
+                }
             }
             else{
                 this.setAnimation(this.animationList.idle);
             }
         }
         else{
-            if(this.isBlockedDown()){
-                this.setAnimation(this.animationList.deadIdle);
-            }
-            else{
+            this.setAnimation(this.animationList.deadIdle);
+
+            if(!this.isBlockedDown() && this.getVector().y != 0){
                 this.setAnimation(this.animationList.deadFalling);
             }
         }
@@ -164,6 +172,7 @@ function Entity(level, position, width, height){
                         if(tile.isBreakable()){
                             if(this.getRangeBox().intersects(tile)){
                                 tile.break();
+                                break;
                             }
                         }
                     }
@@ -202,7 +211,7 @@ function Entity(level, position, width, height){
 
             level.getTimers().addTimer(function(){
                 canAttack = true;
-            }, weapon.property.delay);
+            }, weapon.property.delay + this.property.attackCooldown);
         }
     }
 
@@ -225,10 +234,16 @@ function Entity(level, position, width, height){
             bloodMultiplier = Math.round(weapon.property.bleeding / modifier);
         }
 
+        target.setAttacked();
+
         this.setDamage(target, amount, knockback, bloodMultiplier, originDirection);
     }
 
     this.setDamage = function(entity, amount, knockback, bloodMultiplier, originDirection){
+        if(knockback > this.property.jumpHeight){
+            knockback = this.property.jumpHeight;
+        }
+
         if(knockback > 0){
             entity.setVector((originDirection == 1) ? knockback : -knockback, -knockback);
         }
@@ -247,6 +262,9 @@ function Entity(level, position, width, height){
             }
         }
 
+        if(entity.isDead() && this.constructor.name == 'Player'){
+            this.addKill();
+        }
     }
 
     /**
@@ -286,7 +304,7 @@ function Entity(level, position, width, height){
         }
         if(!dead){
             if(this.canDropCoin()){
-                level.spawnLoot(new Coin(level, this.getCenter(), true));
+                level.spawnLoot(new Coin(level, this.getCenter(), 100, true));
             }
 
             dead = true;
@@ -297,10 +315,30 @@ function Entity(level, position, width, height){
             this.setColor('#a6374b');
             this.setBleeding(false);
 
+            this.setBonus('speed', 1, -1);
+            this.setBonus('strength', 1, -1);
+            this.setBonus('resistance', 1, -1);
+
+
             if(this.constructor.name == 'Player'){
+                this.deathBleed();
                 document.dispatchEvent(platformer.events.playerdeath);
             }
         }
+    }
+
+    this.deathBleed = function(){
+        level.getTimers().addTimer(function(){
+            self.bloodSplash(4, 0.25);
+            if(self.isDead()){
+                self.deathBleed();
+            }
+        }, 1000);
+    }
+
+    this.setAlive = function(){
+        dead = false;
+        health = this.property.maxHealth;
     }
 
     this.setBleeding = function(b){
@@ -338,10 +376,17 @@ function Entity(level, position, width, height){
         }
     }
 
+    this.setDeathParticle = function(particle){
+        DeathParticule = particle;
+    }
+
     this.setCanDropCoin = function(b){
         dropCoin = b;
     }
 
+    this.setBloodRatio = function(r){
+        bloodRatio = r;
+    }
     /**
     * Retourne un rectangle représentant la portée de l'entité
     */
@@ -353,10 +398,10 @@ function Entity(level, position, width, height){
 
         if(typeof selected !== 'undefined'){
             rangeWidth = selected.property.range + this.property.baseRange;
-            rangeHeight = this.height;
+            rangeHeight = this.height * 3/5;
         }
 
-        offset = (this.getDirection() == 1) ? this.width : -rangeWidth;
+        offset = (this.getDirection() == 1) ? this.width / 2 : -rangeWidth + this.width / 2;
 
         return new Rectangle(this.x + offset, this.y, rangeWidth, rangeHeight);
     }
@@ -364,6 +409,24 @@ function Entity(level, position, width, height){
     this.renderBox = function(box, ctx, panX, panY){
         ctx.strokeStyle = '#a974bd';
         ctx.strokeRect(box.x - panX, box.y - panY, box.width, box.height);
+    }
+
+    this.setAttacked = function(reset){
+        if(reset == -1){
+            attacked = 0;
+        }
+        else{
+            attacked = timestamp();
+        }
+    }
+
+    // retourne une booléen si l'entité a été attaquée pendant les dernières secondes écoulées
+    this.isAttacked = function(){
+        return (attacked != 0 && timestamp() - attacked < 2500);
+    }
+
+    this.setCanAttack = function(b){
+        canAttack = b;
     }
 
     this.getInventory = function(){ return inventory; }
