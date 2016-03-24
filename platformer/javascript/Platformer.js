@@ -2,7 +2,7 @@
 
 var platformer = platformer || {};
 
-platformer.init = function(id, options){
+platformer.init = function(id, callback, options){
     platformer.id = id;
     // Activer / désactiver l'affichage des informations de debug
     platformer.debug = (typeof options.debug !== 'undefined') ? options.debug: true;
@@ -67,6 +67,10 @@ platformer.init = function(id, options){
 
         platformer.game = new Game;
         platformer.game.init();
+
+        if(typeof callback === 'function'){
+            callback();
+        }
     });
 }
 

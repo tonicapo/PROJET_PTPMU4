@@ -150,9 +150,14 @@ function Game(){
     * Change la taille de la canvas
     */
     function resizeGameScreen(width, height){
-        foreground.setAttribute('width', parseInt(width, 10));
-        foreground.setAttribute('height', parseInt(height, 10));
+        var width = parseInt(width, 10);
+        var height = parseInt(height, 10);
 
+        foreground.setAttribute('width', width);
+        foreground.setAttribute('height', height);
+
+        gameWrapper.style.width = width + 'px';
+        gameWrapper.style.height = height + 'px';
 
         if(options.fullscreen){
             document.body.style.overflow = 'hidden';
