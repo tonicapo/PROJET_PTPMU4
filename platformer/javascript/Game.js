@@ -35,6 +35,7 @@ function Game(){
 
         initGameScreen();
 
+
         window.addEventListener('resize', function(){
             if(options.fullscreen){
                 self.fullscreen();
@@ -113,6 +114,10 @@ function Game(){
         gameWrapper.style.position = 'relative';
         document.body.appendChild(gameWrapper);
 
+        if(typeof platformer.onready === 'function'){
+            platformer.onready();
+        }
+
         // le premier plan pour le rendu dynamique
         foreground = createCanvas(options.id, 1);
 
@@ -174,6 +179,10 @@ function Game(){
 
         screenWidth = parseInt(window.getComputedStyle(foreground).width, 10);
         screenHeight = parseInt(window.getComputedStyle(foreground).height, 10);
+
+        if(typeof platformer.onresize === 'function'){
+            platformer.onresize(width, height);
+        }
     }
 
     this.toggleFullscreen = function(){

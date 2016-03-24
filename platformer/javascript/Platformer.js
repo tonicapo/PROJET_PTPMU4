@@ -2,7 +2,7 @@
 
 var platformer = platformer || {};
 
-platformer.init = function(id, callback, options){
+platformer.init = function(id, options){
     platformer.id = id;
     // Activer / désactiver l'affichage des informations de debug
     platformer.debug = (typeof options.debug !== 'undefined') ? options.debug: true;
@@ -11,10 +11,19 @@ platformer.init = function(id, callback, options){
     platformer.dimension = { };
     platformer.dimension.w = (typeof options.width !== 'undefined') ? options.width : 1200;
     platformer.dimension.h = (typeof options.height !== 'undefined') ? options.height : 800;
-    platformer.seed = (typeof options.seed !== 'undefined') ? options.seed : undefined;
+
     platformer.scale = (typeof options.scale !== 'undefined') ? options.scale : 2;
     platformer.fullscreen = (typeof options.fullscreen !== 'undefined') ? options.fullscreen : false;
+
+
+    platformer.seed = (typeof options.seed !== 'undefined') ? options.seed : undefined;
+
     platformer.title = (typeof options.title !== 'undefined') ? options.title : '';
+
+    // évènement notifiant que le conteneur du jeu est prêt
+    platformer.onready = (typeof options.onready === 'function') ? options.onready : undefined;
+    // évènement déclenché au moment où le jeu est redimensionné
+    platformer.onresize = (typeof options.onresize === 'function') ? options.onresize : undefined;
 
     // Font
     platformer.font = (typeof options.font !== 'undefined') ? options.font : 'Arial';
@@ -67,10 +76,6 @@ platformer.init = function(id, callback, options){
 
         platformer.game = new Game;
         platformer.game.init();
-
-        if(typeof callback === 'function'){
-            callback();
-        }
     });
 }
 
