@@ -5,22 +5,20 @@ function Valuable(level, position, delay, gravity){
         gravity = true;
     }
 
-    if(gravity){
-        this.property.fallSpeed = 3;
-        this.property.maxFallSpeed = 8;
-        this.property.speed = randomFloat(0.25, 0.75);
-        this.property.stopSpeed = 0.2;
-        this.property.maxSpeed = 4;
+    this.enableGravity(gravity);
 
+    this.property.fallSpeed = 3;
+    this.property.maxFallSpeed = 8;
+    this.property.speed = randomFloat(0.25, 0.75);
+    this.property.stopSpeed = 0.2;
+    this.property.maxSpeed = 4;
+
+    if(gravity){
         this.setSpread(0);
         this.setVelocity(0, -10);
         this.setFriction(0, 0.2);
     }
-    else{
-        this.setSpread(0);
-        this.setVelocity(0, 0);
-        this.setFriction(0, 0);
-    }
+
 
     this.setHitBox(11 * platformer.scale, 10 * platformer.scale);
     this.setRenderBox(platformer.tileSizeX, platformer.tileSizeY);

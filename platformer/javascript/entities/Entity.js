@@ -23,22 +23,6 @@ function Entity(level, position, width, height){
     this.property.attackCooldown = 0;
     this.property.bleedingChance = 0;
 
-    this.animationList.idle = new Animation('idle', platformer.textures.player.idle, 1000, { random : true });
-    this.animationList.walking = new Animation('walking', platformer.textures.player.walking, 100);
-    this.animationList.walkingSpeedPotion = new Animation('walkingSpeedPotion', platformer.textures.player.walking, 70);
-    this.animationList.jumping = new Animation('jumping', platformer.textures.player.jumping, 0);
-    this.animationList.doubleJumping = new Animation('doubleJumping', platformer.textures.player.doubleJumping, 150, { loop : true, cancelable : false });
-    this.animationList.falling = new Animation('falling', platformer.textures.player.falling, 1000);
-
-    this.animationList.deadIdle = new Animation('deadIdle', platformer.textures.player.deadIdle, 100, { loop : false, cancelable : false });
-    this.animationList.deadFalling = new Animation('deadFalling', platformer.textures.player.deadFalling, 0, { loop : false, cancelable : true });
-
-    this.animationList.bowAttack = new Animation('bowAttack', platformer.textures.player.bowAttack, 150, { cancelable : false });
-    this.animationList.knifeAttack = new Animation('knifeAttack', platformer.textures.player.knifeAttack, 150, { cancelable : false });
-    this.animationList.swordAttack = new Animation('swordAttack', platformer.textures.player.swordAttack, 75, { cancelable : false });
-    this.animationList.fireBallAttack = new Animation('fireBallAttack', platformer.textures.player.knifeAttack, 150, { cancelable : false });
-
-
     this.update = function(){
         this.updateMovement();
         this.updateInteraction();
@@ -49,7 +33,8 @@ function Entity(level, position, width, height){
     * Permet d'intéragir avec le tile dans lequel l'entité se trouve
     */
     this.updateInteraction = function(){
-        var currentTile = this.getTileAt(this.x + this.width / 2, this.y + this.height / 2);
+        var center = this.getCenter();
+        var currentTile = this.getTileAt(center.x, center.y);
 
         if(typeof currentTile !== 'undefined'){
             if(currentTile.equals(platformer.tiletype.spike) && !this.isDead()){

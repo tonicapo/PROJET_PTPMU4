@@ -27,7 +27,7 @@ function Map(level){
         targetPanX,
         targetPanY,
 
-        updateDistance = platformer.game.getScreenWidth(),
+        updateDistance = 750,
 
         minDistance,
         maxDistance,
@@ -42,7 +42,7 @@ function Map(level){
         player = level.getPlayer();
 
         world = new WorldGeneration(level);
-        world.init({ seed : platformer.seed, cols : 500, rows : 20 });
+        world.init({ seed : platformer.seed, cols : 300, rows : 20 });
 
 
         numCols = world.getNumCols();
@@ -72,6 +72,93 @@ function Map(level){
     }
 
     this.update = function(){
+        updateCamera();
+        /**
+        * Renderlist
+        * Liste des éléments visibles par le joueur et nécessitant d'être rendu à l'écran
+        */
+        filterTiles();
+        filterObjects('items', level.getItems());
+        filterObjects('entities', level.getEntities());
+        filterObjects('particles', level.getParticles());
+        filterObjects('loots', level.getLoots(), true);
+
+    }
+
+    this.render = function(ctx){
+        renderObjects(ctx, renderlist.items);
+        renderObjects(ctx, renderlist.tiles);
+        renderObjects(ctx, renderlist.entities);
+        player.render(ctx, panX, panY);
+        renderObjects(ctx, renderlist.loots, true);
+        renderObjects(ctx, renderlist.particles);
+    }
+
+    function isVisibleAt(posX, posY){
+        var tempX = Math.round(posX / platformer.tileSizeX);
+        var tempY = Math.round(posY / platformer.tileSizeY);
+
+        return !(tempX < startX || tempY < startY || tempX > endX || tempY > endY);
+    }
+
+    function filterTiles(){
+        delete renderlist.tiles;
+        renderlist.tiles = [];
+
+        for(var x = startX; x < endX; x++){
+            for(var y = startY; y < endY; y++){
+                if(!(typeof tilemap[x][y] === 'undefined' || tilemap[x][y].equals(platformer.tiletype.void))){
+                    renderlist.tiles.push(tilemap[x][y]);
+                }
+            }
+        }
+    }
+
+    function filterObjects(filter, items, animate){
+        // recréé une liste des éléments à afficher et update ceux qui doivent l'être
+        delete renderlist[filter];
+        renderlist[filter] = [];
+
+        for(var k in items){
+            if(items[k].isDirty()){
+                delete items[k];
+            }
+            else{
+                // update
+                if(!(typeof items[k] === 'undefined' || items[k].isDirty() || items[k].x > maxDistance || items[k].x < minDistance)){
+                    items[k].update();
+
+                    // render
+                    if(isVisibleAt(items[k].x, items[k].y)){
+                        renderlist[filter].push(items[k]);
+                    }
+                }
+                else{
+                    // animations des objets distants si elles doivent rester synchrones
+                    if(typeof items[k] !== 'undefined' && animate){
+                        items[k].updateObject();
+                    }
+                }
+            }
+        }
+    }
+
+    function renderObjects(ctx, items){
+        for(var i = 0, n = items.length; i < n; i++){
+            items[i].render(ctx, panX, panY);
+            //items[i].draw(ctx, panX, panY);
+        }
+        //renderBox(ctx, player);
+
+        /*
+        for(var i in renderlist.entities){
+            renderBox(ctx, renderlist.entities[i]);
+        }
+        */
+
+    }
+
+    function updateCamera(){
         // calcul des positions min et max d'affichage entre lesquelles on met à jour les entités
         maxDistance = player.x + player.width / 2 + updateDistance / 2 + platformer.game.getScreenWidth() / 2;
         minDistance = player.x - updateDistance / 2 - platformer.game.getScreenWidth() / 2;
@@ -83,8 +170,8 @@ function Map(level){
         targetPanY = player.y - screenHeight / 2 + player.height / 2;
 
         // test
-        panX = lerp(panX, targetPanX, 0.05);
-        panY = lerp(panY, targetPanY, 0.05);
+        panX = parseInt(lerp(panX, targetPanX, 0.075), 10);
+        panY = parseInt(lerp(panY, targetPanY, 0.075), 10);
 
 
         tileAcrossX = parseInt(screenWidth / platformer.tileSizeX + 2);
@@ -130,81 +217,8 @@ function Map(level){
         if(endY > numRows){
             endY = numRows;
         }
-
-        /**
-        * Renderlist
-        * Liste des éléments visibles par le joueur et nécessitant d'être rendu à l'écran
-        */
-        renderlist = {
-            tiles : [],
-            particles : [],
-            items : [],
-            entities : [],
-            loots : []
-        };
-
-        for(var x = startX; x < endX; x++){
-            for(var y = startY; y < endY; y++){
-                if(typeof tilemap[x][y] !== 'undefined' && !tilemap[x][y].equals(platformer.tiletype.void)){
-                    renderlist.tiles.push(tilemap[x][y]);
-                }
-            }
-        }
-        renderlist.items = filterObjects(level.getItems());
-        renderlist.entities = filterObjects(level.getEntities());
-        renderlist.particles = filterObjects(level.getParticles());
-        renderlist.loots = filterObjects(level.getLoots());
-
     }
 
-    this.render = function(ctx){
-        renderObjects(ctx, renderlist.items);
-        renderObjects(ctx, renderlist.tiles);
-        renderObjects(ctx, renderlist.entities);
-        player.render(ctx, panX, panY);
-        renderObjects(ctx, renderlist.loots);
-        renderObjects(ctx, renderlist.particles);
-    }
-
-    function isVisibleAt(posX, posY){
-        var tempX = Math.round(posX / platformer.tileSizeX);
-        var tempY = Math.round(posY / platformer.tileSizeY);
-
-        return (tempX >= startX - 1 && tempY >= startY - 1 && tempX < endX + 1 && tempY < endY + 1);
-    }
-
-    function filterObjects(items){
-        // retourne une liste des éléments à afficher et update ceux qui doivent l'être
-        var tmp = [];
-        for(var k in items){
-            // update
-            if(typeof items[k] !== 'undefined' && !items[k].isDirty() && items[k].x <= maxDistance && items[k].x >= minDistance){
-                items[k].update();
-
-                // render
-                if(isVisibleAt(items[k].x, items[k].y)){
-                    tmp.push(items[k]);
-                }
-            }
-        }
-
-        return tmp;
-    }
-
-    function renderObjects(ctx, items){
-        for(var i = 0, n = items.length; i < n; i++){
-            items[i].render(ctx, panX, panY);
-            //items[i].draw(ctx, panX, panY);
-        }
-        //renderBox(ctx, player);
-
-        /*
-        for(var i in renderlist.entities){
-            renderBox(ctx, renderlist.entities[i]);
-        }
-        */
-
-    }
 
     function renderBox(ctx, entity){
         if(entity.constructor.name != 'Player'){

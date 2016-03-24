@@ -23,11 +23,11 @@ function Rectangle(x, y, width, height){
     * rect - Un autre rectangle
     */
     this.intersects = function(rect){
-        return (this.x + this.width > rect.x && this.x < rect.x + rect.width && this.y + this.height > rect.y && this.y < rect.y + rect.height);
+        return !(this.x + this.width < rect.x || this.x > rect.x + rect.width || this.y + this.height < rect.y || this.y > rect.y + rect.height);
     }
 
     this.touch = function(rect){
-        return (this.x + this.width + 1 > rect.x && this.x - 1 < rect.x + rect.width && this.y + this.height + 1 > rect.y && this.y - 1 < rect.y + rect.height);
+        return !(this.x + this.width + 1 < rect.x || this.x - 1 > rect.x + rect.width || this.y + this.height + 1 < rect.y || this.y - 1 > rect.y + rect.height);
     }
 
     this.updateObject = function(){

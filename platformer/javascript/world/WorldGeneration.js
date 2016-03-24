@@ -17,7 +17,7 @@ function WorldGeneration(level){
     var bossRoomProtection = 10;
     var hostileSpawnRate = 0.2;
     var hostileSpawnDistance = 4;
-    var coinBridgeSpawnChance = 0.25;
+    var coinBridgeSpawnChance = 1;
     var bonusChestSpawnChance = 0.15;
     var startElevation;
 
@@ -351,7 +351,7 @@ function WorldGeneration(level){
                         niv = endLevel;
                     }
 
-                    level.spawnItem(new Coin(level, getPositionAtCoord(x, niv - 1), -1, false));
+                    level.spawnLoot(new Coin(level, getPositionAtCoord(x, niv - 1), -1, false));
                 }
             }
         }

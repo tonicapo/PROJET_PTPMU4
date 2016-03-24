@@ -33,7 +33,7 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
     this.setDirection(direction);
     this.setFixedToBottom(false);
     this.setRenderBox(platformer.tileSizeX, platformer.tileSizeY);
-
+    this.setBoundToMap(false);
 
     this.update = function(){
         this.updateMovement();

@@ -10,7 +10,7 @@ function Game(){
             width : platformer.dimension.w,
             height : platformer.dimension.h
         },
-        fullscreen : true,
+        fullscreen : platformer.fullscreen,
         scale : true
     };
 
@@ -92,8 +92,7 @@ function Game(){
         while(delta >= step){
             delta -= step;
             if(running){
-                //console.log(delta);
-                gsh.update(delta / step);
+                gsh.update();
             }
         }
 
@@ -110,12 +109,12 @@ function Game(){
     function initGameScreen(){
         // le conteneur du jeu
         gameWrapper = document.createElement('div');
-        gameWrapper.setAttribute('id', 'platformer');
+        gameWrapper.setAttribute('id', platformer.id);
         gameWrapper.style.position = 'relative';
         document.body.appendChild(gameWrapper);
 
         // le premier plan pour le rendu dynamique
-        foreground = createCanvas(options.id + '_foreground', 1);
+        foreground = createCanvas(options.id, 1);
 
 
         if(options.fullscreen){
