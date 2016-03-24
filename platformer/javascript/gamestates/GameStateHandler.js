@@ -48,6 +48,10 @@ function GameStateHandler(){
         states[current].render(ctx);
     }
 
+    this.renderBackground = function(ctx){
+        states[current].renderBackground(ctx);
+    }
+
     /**
     * current - Indice du stage courant
     */
@@ -68,6 +72,9 @@ function GameStateHandler(){
             platformer.game.toggleFullscreen();
         }
         else if(key == platformer.keylist.toggle_restart){
+            var timers = states[current].getTimers();
+            timers.empty();
+
             self.reloadState();
         }
         else if(key == platformer.keylist.toggle_pause){

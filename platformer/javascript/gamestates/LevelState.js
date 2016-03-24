@@ -6,27 +6,27 @@ function LevelState(){
         timers;
 
     this.init = function(){
-        timers = new TimerManager;
+        // events généraux
+        platformer.events.levelcomplete = new CustomEvent('levelcomplete');
+        platformer.events.levelstart = new CustomEvent('levelstart');
 
+        timers = new TimerManager;
         objects = {};
         objects.particles = new ArrayList;
         objects.entities = new ArrayList;
         objects.items = new ArrayList;
         objects.loots = new ArrayList;
 
-        map = new Map(this);
-        map.init();
-
-        player = new Player(this, getPositionAtCoord(5, map.getNumRows() - 6));
+        player = new Player(this);
         player.init();
         player.setDirection(1);
 
-        this.spawnEntity(new Enemy(this, getPositionAtCoord(13, map.getNumRows() - 6)));
-        this.spawnEntity(new Enemy(this, getPositionAtCoord(20, map.getNumRows() - 9)));
+        // premier plan
+        map = new Map(this);
+        map.init();
 
-        this.spawnLoot(new Coin(this, getPositionAtCoord(8, map.getNumRows() - 6)));
-        this.spawnLoot(new Coin(this, getPositionAtCoord(7, map.getNumRows() - 6)));
-
+        // arrière plan
+        background = new Background('#b4eaf4', platformer.textures.background, 1920, 1080);
 
         // lancement du jeu
         document.dispatchEvent(platformer.events.levelstart);
@@ -47,6 +47,9 @@ function LevelState(){
         map.render(ctx);
     }
 
+    this.renderBackground = function(ctx){
+        background.render(ctx);
+    }
 
 
     this.keyUp = function(key){
@@ -84,4 +87,18 @@ function LevelState(){
     this.getLoots = function(){ return objects.loots.getList(); }
 
     this.getPlayer = function(){ return player; }
+
+
+    onetime(document, 'levelcomplete', function(e){
+        e.stopPropagation();
+
+        /**
+        - Envoyer le nombre de pièces
+        - Envoyer le nombre de kills
+        En gros les stats du player
+        */
+
+        var stats = player.getStats();
+        
+    });
 }

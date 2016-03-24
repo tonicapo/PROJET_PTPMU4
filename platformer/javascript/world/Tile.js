@@ -3,8 +3,8 @@ function Tile(level, tiletype, position, opacity, metadata){
 
     this.tiletype = tiletype;
     this.position = position;
-    this.opacity = opacity || 0;
-    this.metadata = metadata || 0;
+    this.opacity = opacity;
+    this.metadata = metadata;
 
     var breakable = false;
 

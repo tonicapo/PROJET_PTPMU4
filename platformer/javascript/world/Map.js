@@ -27,15 +27,23 @@ function Map(level){
         targetPanX,
         targetPanY,
 
-        updateDistance = 1000,
+        updateDistance = platformer.game.getScreenWidth(),
 
         minDistance,
-        maxDistance;
+        maxDistance,
+
+        player,
+        spawn,
+
+        background;
 
 
     this.init = function(){
+        player = level.getPlayer();
+
         world = new WorldGeneration(level);
-        world.init();
+        world.init({ seed : platformer.seed, cols : 500, rows : 20 });
+
 
         numCols = world.getNumCols();
         numRows = world.getNumRows();
@@ -44,6 +52,15 @@ function Map(level){
         levelSizeY = numRows * platformer.tileSizeY;
 
         tilemap = world.getTilemap();
+
+        spawn = world.getSpawn();
+        player.setSpawn(spawn.x, spawn.y);
+
+        // spawn des entités
+        var entities = world.getEntities();
+        for(var i = 0, n = entities.length; i < n; i++){
+            level.spawnEntity(entities[i]);
+        }
 
         renderlist = {
             tiles : [],
@@ -56,14 +73,14 @@ function Map(level){
 
     this.update = function(){
         // calcul des positions min et max d'affichage entre lesquelles on met à jour les entités
-        maxDistance = level.getPlayer().x + level.getPlayer().width / 2 + updateDistance / 2 + platformer.game.getScreenWidth() / 2;
-        minDistance = level.getPlayer().x - updateDistance / 2 - platformer.game.getScreenWidth() / 2;
+        maxDistance = player.x + player.width / 2 + updateDistance / 2 + platformer.game.getScreenWidth() / 2;
+        minDistance = player.x - updateDistance / 2 - platformer.game.getScreenWidth() / 2;
 
         screenWidth = platformer.game.getScreenWidth();
         screenHeight = platformer.game.getScreenHeight();
 
-        targetPanX = level.getPlayer().x - screenWidth / 2 + level.getPlayer().width / 2;
-        targetPanY = level.getPlayer().y - screenHeight / 2 + level.getPlayer().height / 2;
+        targetPanX = player.x - screenWidth / 2 + player.width / 2;
+        targetPanY = player.y - screenHeight / 2 + player.height / 2;
 
         // test
         panX = lerp(panX, targetPanX, 0.05);
@@ -137,16 +154,14 @@ function Map(level){
         renderlist.entities = filterObjects(level.getEntities());
         renderlist.particles = filterObjects(level.getParticles());
         renderlist.loots = filterObjects(level.getLoots());
+
     }
 
     this.render = function(ctx){
-        ctx.fillStyle = '#9CC8BB';
-        ctx.fillRect(0, 0, platformer.game.getScreenWidth(), platformer.game.getScreenHeight());
-
         renderObjects(ctx, renderlist.items);
         renderObjects(ctx, renderlist.tiles);
         renderObjects(ctx, renderlist.entities);
-        level.getPlayer().render(ctx, panX, panY);
+        player.render(ctx, panX, panY);
         renderObjects(ctx, renderlist.loots);
         renderObjects(ctx, renderlist.particles);
     }
@@ -155,7 +170,7 @@ function Map(level){
         var tempX = Math.round(posX / platformer.tileSizeX);
         var tempY = Math.round(posY / platformer.tileSizeY);
 
-        return (tempX >= startX - 1 && tempY >= startY && tempX < endX + 1 && tempY < endY);
+        return (tempX >= startX - 1 && tempY >= startY - 1 && tempX < endX + 1 && tempY < endY + 1);
     }
 
     function filterObjects(items){
@@ -181,11 +196,14 @@ function Map(level){
             items[i].render(ctx, panX, panY);
             //items[i].draw(ctx, panX, panY);
         }
-        //renderBox(ctx, level.getPlayer());
+        //renderBox(ctx, player);
 
+        /*
         for(var i in renderlist.entities){
-            //renderBox(ctx, renderlist.entities[i]);
+            renderBox(ctx, renderlist.entities[i]);
         }
+        */
+
     }
 
     function renderBox(ctx, entity){

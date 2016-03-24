@@ -1,21 +1,23 @@
 function Blood(level, position, direction){
-    position.x += randomFloat(-4, 4);
-    position.y += randomFloat(-4, 4);
+    var self = this;
 
-    Particle.call(this, level, position, 6, 6, -1);
+    position.x += randomFloat(-8, 8);
+    position.y += randomFloat(-8, 8);
+
+    Particle.call(this, level, position, 6, 6, 10000 + randomInt(0, 500));
 
     this.setRenderBox(platformer.tileSizeX, platformer.tileSizeY);
 
     this.property.fallSpeed = 3;
     this.property.maxFallSpeed = 8;
     this.property.speed = randomFloat(0.25, 0.75);
-    this.property.stopSpeed = 0.2;
+    this.property.stopSpeed = 1.5;
     this.property.maxSpeed = 4;
 
     var xmin = -6;
     var xmax = 6;
-    var ymin = -10;
-    var ymax = -4;
+    var ymin = -12;
+    var ymax = -6;
 
     var angle = 0;
 
@@ -43,5 +45,5 @@ function Blood(level, position, direction){
     this.setColor('#a6374b');
     this.setVelocity(xx, yy);
     this.setSpread(angle);
-    this.setFriction(randomFloat(0.05, 0.15), 0.25);
+    this.setFriction(randomFloat(0.1, 0.15), 0.25);
 }

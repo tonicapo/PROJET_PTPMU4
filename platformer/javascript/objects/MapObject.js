@@ -70,8 +70,8 @@ function MapObject(level, x, y, width, height, animated){
         collision();
         gravity();
 
-        self.x += toFloat(vx) * reduction.x * this.getBonus('speed');
-        self.y += toFloat(vy) * reduction.y * this.getBonus('speed');
+        self.x += toFloat(vx) * reduction.x;
+        self.y += toFloat(vy) * reduction.y;
 
         fixBounds();
     }
@@ -102,9 +102,9 @@ function MapObject(level, x, y, width, height, animated){
             blockedLeft = true;
         }
         if(self.y < 0){
-            self.y = 0;
-            vy = 0;
-            blockedUp = true;
+            //self.y = 0;
+            //vy = 0;
+            //blockedUp = true;
         }
         if(self.x + self.width > mapSizeX){
             self.x = mapSizeX - self.width;
@@ -123,8 +123,8 @@ function MapObject(level, x, y, width, height, animated){
         // mouvements horizontaux et verticaux
         if(self.left && !blockedLeft){
             vx -= self.property.speed;
-            if(vx < -self.property.maxSpeed){
-                vx = -self.property.maxSpeed;
+            if(vx < -self.property.maxSpeed * self.getBonus('speed')){
+                vx = -self.property.maxSpeed * self.getBonus('speed');
             }
         }
         else{
@@ -138,8 +138,8 @@ function MapObject(level, x, y, width, height, animated){
 
         if(self.right && !blockedRight){
             vx += self.property.speed;
-            if(vx > self.property.maxSpeed){
-                vx = self.property.maxSpeed;
+            if(vx > self.property.maxSpeed * self.getBonus('speed')){
+                vx = self.property.maxSpeed * self.getBonus('speed');
             }
         }
         else{
@@ -325,9 +325,15 @@ function MapObject(level, x, y, width, height, animated){
         vy += y;
     }
 
-    this.setVector = function(x, y){
-        vx = lerp(x, vx, 0.5);
-        vy = lerp(y, vy, 0.5);
+    this.setVector = function(x, y, smooth){
+        if(smooth === true){
+            vx = lerp(x, vx, 0.5);
+            vy = lerp(y, vy, 0.5);
+        }
+        else{
+            vx = x;
+            vy = y;
+        }
     }
 
     this.setDoubleJumping = function(d){
@@ -366,13 +372,15 @@ function MapObject(level, x, y, width, height, animated){
             factor = 1;
         }
 
-        if(bonus[name] == 1 && delay > 0){
-            bonus[name] = factor;
+
+        bonus[name] = factor;
+        if(delay != -1){
             // timer pour remettre le bonus à la normale une fois le délais dépassé
             level.getTimers().addTimer(function(){
                 bonus[name] = 1;
             }, delay);
         }
+
     }
     this.getBonus = function(name){
         return bonus[name];

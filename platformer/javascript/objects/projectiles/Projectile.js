@@ -52,6 +52,12 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
                     self.setDirty(true);
                 }
             }
+
+            level.getTimers().addTimer(function(){
+                self.property.fallSpeed = 2;
+                self.property.maxFallSpeed = 8;
+                followTarget = false;
+            }, 5000);
         }
 
         if(this.x - originPosition.x > maxDistance){
@@ -89,7 +95,10 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
                     if(self.touch(tiles[i])){
                         tiles[i].break();
 
-                        if(followTarget) self.setDirty(true);
+                        if(followTarget){
+                            self.setDirty(true);
+                        }
+                        break;
                     }
                 }
             }
@@ -126,7 +135,7 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
     function disableMovement(){
         self.left = false;
         self.right = false;
-        self.setVector(0, 0);
+        self.setVector(0, 0, false);
     }
 
     this.isDestructOnStopped = function(){ return destructOnStopped; }

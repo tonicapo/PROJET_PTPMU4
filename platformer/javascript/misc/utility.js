@@ -73,39 +73,16 @@ function getPositionAtCoord(x, y){
     return new Position(x * platformer.tileSizeX, y * platformer.tileSizeY);
 }
 
-
-
 /**
-* Permet d'afficher des messages dans la console seulement en mode débug
+* Evenements uniques
+* Source : http://www.sitepoint.com/create-one-time-events-javascript/
 */
-platformer.notify = function(message){
-    if(platformer.debug){
-        console.info(message);
-    }
-}
-
-// récupère la liste des touches du clavier sauvegardée ou par défaut si elle n'existe pas encore
-platformer.getKeyList = function(){
-    var savedKeys = platformer.getRegisteredKeyList();
-    var defaultKeys = platformer.defaultKeyList;
-
-    var keyList = { };
-
-    if(typeof savedKeys === 'object' && savedKeys !== null){
-        for(var i in defaultKeys){
-            keyList[i] = (typeof savedKeys[i] !== 'undefined') ? parseInt(savedKeys[i], 10) : defaultKeys[i];
-        }
-    }
-
-    return keyList;
-}
-
-// permet d'enregistrer la liste courante des touches
-platformer.registerKeyList = function(){
-    localStorage.setItem('platformer_keylist', JSON.stringify(platformer.keylist));
-}
-
-// permet de récupérer les touches enregistrées dans le local storage
-platformer.getRegisteredKeyList = function(){
-    return JSON.parse(localStorage.getItem('platformer_keylist'));
+function onetime(node, type, callback){
+    // create event
+	node.addEventListener(type, function(e) {
+		// remove event
+		e.target.removeEventListener(e.type, arguments.callee);
+		// call handler
+		return callback(e);
+	});
 }
