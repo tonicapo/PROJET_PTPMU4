@@ -10,6 +10,11 @@ function AI_Entity(level, position, width, height){
     var idle = false;
     var hostile = false;
 
+    var attacked = false;
+
+    var player;
+    var timers;
+
     this.property.reactionTime = 350;
     this.property.attackCooldown = 500;
     this.property.viewDistance = 250;
@@ -18,13 +23,20 @@ function AI_Entity(level, position, width, height){
     this.init = function(){
         this.setAlive();
         this.initAnimations();
+        player = level.getPlayer();
+        timers = level.getTimers();
+
+        randomBehaviour();
     }
 
     this.update = function(){
-        this.updateLogic();
         this.updateMovement();
         this.updateInteraction();
         this.updateObject();
+
+        if(!self.isDead()){
+            this.updateLogic();
+        }
     }
 
 
@@ -32,9 +44,11 @@ function AI_Entity(level, position, width, height){
     * Met à jour le comportement de l'IA
     **/
     this.updateLogic = function(){
-        if(!self.isDead()){
-            movementLogic();
-            combatLogic();
+        movementLogic();
+        combatLogic();
+
+        if(playerInSight && idle && hostile){
+            idle = false;
         }
     }
 
@@ -46,7 +60,6 @@ function AI_Entity(level, position, width, height){
         var direction = self.getDirection();
         var moveLeft = canMoveLeft();
         var moveRight = canMoveRight();
-        var player = level.getPlayer();
 
         if(!idle){
             // le comportement classique de l'entité est altéré par le joueur
@@ -151,16 +164,24 @@ function AI_Entity(level, position, width, height){
     * COMBAT
     */
 
+    function isPlayerInSight(){
+        return (!player.isDead() && player.intersects(self.getViewBox()));
+    }
+
+    function isPlayerInRange(){
+        return (!player.isDead() && player.intersects(self.getRangeBox()));
+    }
+
     function combatLogic(){
         var selectedItem = self.getSelectedItem();
-        var player = level.getPlayer();
 
         if(!player.isDead() && hostile){
             var direction = self.getDirection();
             var lookDirection = (player.getDirection() == 0) ? 1 : 0;
 
-            playerInSight = (!player.isDead() && player.intersects(self.getViewBox()));
-            playerInRange = (!player.isDead() && player.intersects(self.getRangeBox()));
+            playerInSight = isPlayerInSight();
+            playerInRange = isPlayerInRange();
+            attacked = self.isAttacked();
 
             // on accélère le mouvement de l'IA si elle voit le player
             if(hasFocusPlayer && !selectedItem.property.projectile){
@@ -173,9 +194,15 @@ function AI_Entity(level, position, width, height){
             // on perd le joueur de vue
             if(!playerInSight && hasFocusPlayer){
                 // si l'entité perd le player de vue pendant trop longtemps elle perd le focus
-                level.getTimers().addTimer(function(){
+                timers.addTimer(function(){
                     if(!playerInSight) hasFocusPlayer = false;
                 }, 750);
+            }
+            else if(playerInSight && !hasFocusPlayer){
+                // si le player reste trop longtemps dans le champ de vision d'une entité elle le focus
+                timers.addTimer(function(){
+                    if(playerInSight) hasFocusPlayer = true;
+                }, 500);
             }
 
             if(playerInSight){
@@ -184,25 +211,21 @@ function AI_Entity(level, position, width, height){
                 }
             }
 
-
-            if(playerInSight && !hasFocusPlayer){
-                // si le player reste trop longtemps dans le champ de vision d'une entité elle le focus
-                level.getTimers().addTimer(function(){
-                    if(playerInSight) hasFocusPlayer = true;
-                }, 500);
-            }
-
-            if(self.isAttacked()){
-                hasFocusPlayer = true;
-            }
-
-            // le joueur est suffisamment près pour l'attaque
+            /*
+                Le joueur est suffisamment près pour l'attaque
+            */
             if(playerInRange){
                 // l'AI va focus le player et suivre ses mouvements
                 hasFocusPlayer = true;
-                self.attackPlayer();
+                attackPlayer();
             }
 
+            /*
+                Le joueur est attaqué
+            */
+            if(attacked){
+                isAttacked();
+            }
         }
         else{
             hasFocusPlayer = false;
@@ -212,10 +235,36 @@ function AI_Entity(level, position, width, height){
         }
     }
 
-    this.attackPlayer = function(){
-        var player = level.getPlayer();
+    function randomBehaviour(){
+        if(!self.isDead()){
+            if(!hasFocusPlayer && !playerInSight){
+                var rand = Math.random();
+
+                if(rand > 0.8){
+                    idle = !idle;
+                }
+            }
+            timers.addTimer(function(){
+                randomBehaviour();
+            }, 1000);
+        }
+    }
+
+    function isAttacked(){
+        // si l'entité est attaquée et qu'elle n'a pas focus le player, elle va chercher à le localiser et le cas échéant reprendra sa course normale
+        if(!hasFocusPlayer){
+            var direction = self.getDirection();
+            self.setDirection((direction == 0) ? 1 : 0);
+
+            if(!isPlayerInSight()){
+                self.setDirection(direction);
+            }
+        }
+    }
+
+    function attackPlayer(){
         // on tente une attaque
-        level.getTimers().addTimer(function(){
+        timers.addTimer(function(){
             if(!player.isDead() && playerInRange){
                 self.attack([ player ]);
             }

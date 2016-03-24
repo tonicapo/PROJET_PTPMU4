@@ -44,7 +44,7 @@ function Archer(level, position){
     this.property.baseRange = 100;
     this.property.bleedingChance = 0.3;
     this.property.attackCooldown = 1000;
-    this.property.reactionTime = 800;
+    this.property.reactionTime = 500;
     this.property.viewDistance = 500;
 
 
