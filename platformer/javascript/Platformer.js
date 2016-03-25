@@ -669,7 +669,7 @@ platformer.initWeapons = function(){
     });
     // fireball spell
     platformer.weapons.fireballSpell = new Weapon('fireBallSpell', platformer.textures.items.fireballSpell, {
-        damage : 12,
+        damage : 10,
         knockback : 50,
         bleeding : 6,
         range : 400,

@@ -46,11 +46,11 @@ function Game(){
         });
 
         window.addEventListener('blur', function(){
-            pause();
+            self.pause();
         });
 
         window.addEventListener('focus', function(){
-            resume();
+            self.resume();
         });
 
         /**
@@ -68,11 +68,11 @@ function Game(){
     * Pour plus de détails :
     * http://codeincomplete.com/posts/2013/12/4/javascript_game_foundations_the_game_loop/
     */
-    function pause(){
+    this.pause = function(){
         platformer.notify('PAUSE');
         running = false;
     }
-    function resume(){
+    this.resume = function(){
         if(!running){
             platformer.notify('RESUME');
             running = true;
@@ -80,7 +80,7 @@ function Game(){
     }
 
     this.togglePause = function(){
-        (!running) ? resume() : pause();
+        (!running) ? this.resume() : this.pause();
     }
 
     function start(){
