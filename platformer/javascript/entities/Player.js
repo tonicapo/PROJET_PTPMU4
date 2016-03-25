@@ -34,7 +34,7 @@ function Player(level){
     this.property.jumpHeight = 8;
     this.property.doubleJumpHeight = 4;
 
-    this.property.maxHealth = 50;
+    this.property.maxHealth = 20;
     this.property.baseRange = 25;
     this.property.bleedingChance = 0.1;
 

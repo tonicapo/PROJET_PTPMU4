@@ -13,7 +13,7 @@ function Boss(level, position){
     this.property.maxFallSpeed = 8;
     this.property.jumpHeight = 3;
     this.property.doubleJumpHeight = 4;
-    this.property.maxHealth = 50;
+    this.property.maxHealth = 100;
     this.property.baseRange = 50;
     this.property.bleedingChance = 0;
     this.property.attackCooldown = 0;
@@ -26,12 +26,14 @@ function Boss(level, position){
     this.animationList.laughing = new Animation('laughing', platformer.textures.boss.laughing, 350);
     this.animationList.falling = new Animation('falling', platformer.textures.boss.falling, 1000);
     this.animationList.fireBallAttack = new Animation('fireBallAttack', platformer.textures.boss.idle, 150, { cancelable : true });
+    this.animationList.deadIdle = new Animation('deadIdle', platformer.textures.boss.idle, 100, { loop : false, cancelable : false });
+    this.animationList.deadFalling = new Animation('deadFalling', platformer.textures.boss.idle, 0, { loop : false, cancelable : true });
 
     this.setColor('#D9828C');
     this.setCanDropCoin(false);
 
     this.setDeathParticle(Bone);
-    this.setBloodRatio(0);
+    this.setBloodRatio(0.1);
 
     this.setIdle(false);
     this.setHostile(true);
