@@ -331,6 +331,7 @@ platformer.getAssets = function(){
     }
     assets.push({ name : 'tilemap', type : 'image', path : IMAGES_PATH + 'tilemap.png', options : { width : 480, height : 480 } });
     assets.push({ name : 'player', type : 'image', path : IMAGES_PATH + 'player.png', options : { width : 480, height : 480 } });
+    assets.push({ name : 'boss', type : 'image', path : IMAGES_PATH + 'boss.png', options : { width : 244, height : 366 } });
     assets.push({ name : 'skeleton_knight', type : 'image', path : IMAGES_PATH + 'skeleton_knight.png', options : { width : 480, height : 480 } });
     assets.push({ name : 'skeleton_archer', type : 'image', path : IMAGES_PATH + 'skeleton_archer.png', options : { width : 480, height : 480 } });
     assets.push({ name : 'background', type : 'image', path : IMAGES_PATH + 'background.png', options : { width : 1920, height : 1080 } });
@@ -444,6 +445,27 @@ platformer.initTextures = function(resources){
     ];
 
 
+    platformer.textures.boss = { };
+
+    platformer.textures.boss.idle = [
+        platformer.getSubImage(resources.boss, 0, 0, 122, 122)
+    ];
+    platformer.textures.boss.falling = [
+        platformer.getSubImage(resources.boss, 0, 0, 122, 122)
+    ];
+    platformer.textures.boss.walking = [
+        platformer.getSubImage(resources.boss, 122 * 0, 122 * 2, 122, 122),
+        platformer.getSubImage(resources.boss, 122 * 1, 122 * 2, 122, 122)
+    ];
+    platformer.textures.boss.laughing = [
+        platformer.getSubImage(resources.boss, 122 * 0, 122 * 1, 122, 122),
+        platformer.getSubImage(resources.boss, 122 * 1, 122 * 1, 122, 122),
+        platformer.getSubImage(resources.boss, 122 * 0, 122 * 1, 122, 122),
+        platformer.getSubImage(resources.boss, 122 * 1, 122 * 1, 122, 122),
+        platformer.getSubImage(resources.boss, 122 * 0, 122 * 1, 122, 122),
+        platformer.getSubImage(resources.boss, 122 * 1, 122 * 1, 122, 122)
+    ];
+
 
     platformer.textures.skeleton_archer = { };
 
@@ -548,9 +570,9 @@ platformer.initTextures = function(resources){
         platformer.getSubImage(resources.tilemap, 96, 192, 32, 32)
     ];
     platformer.textures.items.fireBallMoving = [
-        platformer.getSubImage(resources.tilemap, 128, 192, 32, 32),
-        platformer.getSubImage(resources.tilemap, 160, 192, 32, 32),
-        platformer.getSubImage(resources.tilemap, 192, 192, 32, 32)
+        platformer.getSubImage(resources.tilemap, 32, 224, 32, 32),
+        platformer.getSubImage(resources.tilemap, 64, 224, 32, 32),
+        platformer.getSubImage(resources.tilemap, 96, 224, 32, 32)
     ];
 }
 
@@ -647,11 +669,11 @@ platformer.initWeapons = function(){
     });
     // fireball spell
     platformer.weapons.fireballSpell = new Weapon('fireBallSpell', platformer.textures.items.fireballSpell, {
-        damage : 10,
-        knockback : 25,
+        damage : 12,
+        knockback : 50,
         bleeding : 6,
-        range : 250,
-        delay : 1750,
+        range : 400,
+        delay : 1500,
         projectile : true
     });
 

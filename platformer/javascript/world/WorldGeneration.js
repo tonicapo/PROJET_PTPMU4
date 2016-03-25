@@ -1,4 +1,8 @@
-function WorldGeneration(level){
+function WorldGeneration(level, test){
+    if(typeof test === 'undefined'){
+        test = false;
+    }
+
     var seed,
         tilemap,
 
@@ -15,7 +19,7 @@ function WorldGeneration(level){
     var crateSpawnChance = 0.035;
     var spawnProtection = 5;
     var bossRoomProtection = 10;
-    var hostileSpawnRate = 0.2;
+    var hostileSpawnRate = 0; //0.2
     var hostileSpawnDistance = 4;
     var coinBridgeSpawnChance = 1;
     var bonusChestSpawnChance = 0.15;
@@ -73,6 +77,24 @@ function WorldGeneration(level){
         decoration : {
             outerLayer : platformer.tiletype.stone,
             innerLayer : platformer.tiletype.stone
+        }
+    };
+
+    var testWorldChunkType = {
+        minPtWidth : 10,
+        maxPtWidth : 10,
+
+        minGpWidth : 0,
+        maxGpWidth : 0,
+
+        minElevation : 0,
+        maxElevation : 0,
+
+        height : -1,
+
+        decoration : {
+            outerLayer : platformer.tiletype.grass,
+            innerLayer : platformer.tiletype.dirt
         }
     };
 
@@ -146,16 +168,21 @@ function WorldGeneration(level){
 
         while(cx < numCols){
             var offset;
-            if(cx == 0){
-                offset = createStructure(cx, spawnChunkType);
+            if(test){
+                offset = createStructure(cx, testWorldChunkType);
             }
             else{
-                var rand = Math.random();
-                if(rand > 0.5){
-                    offset = createStructure(cx, filledChunkTypeA);
+                if(cx == 0){
+                    offset = createStructure(cx, spawnChunkType);
                 }
                 else{
-                    offset = createStructure(cx, platformChunkType);
+                    var rand = Math.random();
+                    if(rand > 0.5){
+                        offset = createStructure(cx, filledChunkTypeA);
+                    }
+                    else{
+                        offset = createStructure(cx, platformChunkType);
+                    }
                 }
             }
             size += offset;
@@ -206,6 +233,9 @@ function WorldGeneration(level){
             var bottomTile = getTileAtCoord(x, niv + 1);
 
             if(typeof bottomTile !== 'undefined' && !bottomTile.isBreakable() && niv < numRows - 2 && entityCanMoveAt(x, niv)){
+                if(x == 10){
+                    entities.push(new Boss(level, getPositionAtCoord(x, niv - 2)));
+                }
                 var rand = Math.random();
 
                 if(rand > 1 - hostileSpawnRate){
@@ -303,7 +333,7 @@ function WorldGeneration(level){
                     tilemap[x][y].tiletype = tiletype;
                 }
             }
-            coinBridges.push({ start : startX, end :  startX + gpWidth });
+            if(gpWidth > 0) coinBridges.push({ start : startX - 1, end :  startX + gpWidth });
 
             return ptWidth + gpWidth;
         }
@@ -314,44 +344,34 @@ function WorldGeneration(level){
     // TODO : améliorer le code et l'agencement des pièces
     function createCoinBridges(){
         for(var i = 0, n = coinBridges.length; i < n; i++){
-            var startX = coinBridges[i].start - 1;
-            var endX = coinBridges[i].end + 1;
+            var startX = coinBridges[i].start;
+            var endX = coinBridges[i].end;
 
             var startLevel = getPlatformNiv(startX);
             var endLevel = getPlatformNiv(endX);
 
+
             var elevation = startLevel - endLevel;
+            var index = 0;
 
-            var rand = Math.random();
+            for(var x = startX + 2, y = 0; x < endX - 1; x++){
+                if(startLevel < endLevel){
+                    y = startLevel + index;
+                }
+                else if(startLevel > endLevel){
+                    y = startLevel - index;
+                }
+                else{
+                    y = startLevel;
+                }
 
-            var minDropX = startX + 2;
-            var maxDropX = endX - 1;
 
-            if(endX - startX >= 3 && coinBridgeSpawnChance > 1 - rand){
-                for(var x = minDropX; x < maxDropX; x++){
-                    var niv = startLevel;
+                var position = getPositionAtCoord(x, y - 2);
 
-                    if(x == minDropX){
-                        niv = startLevel;
-                    }
-                    else if( x > minDropX && x < maxDropX - 1){
-                        if(startLevel == endLevel){
-                            niv = startLevel - 1;
-                        }
-                        else{
-                            if(endLevel - startLevel < 0){
-                                niv = endLevel;
-                            }
-                            else{
-                                niv = startLevel;
-                            }
-                        }
-                    }
-                    else{
-                        niv = endLevel;
-                    }
+                level.spawnLoot(new Coin(level, new Position(position.x + platformer.tileSizeX / 2, position.y + platformer.tileSizeX / 2), -1, false));
 
-                    level.spawnLoot(new Coin(level, getPositionAtCoord(x, niv - 1), -1, false));
+                if(index < 1){
+                    index++
                 }
             }
         }
@@ -404,11 +424,13 @@ function WorldGeneration(level){
         }
 
         for(var y = 0; y < numRows; y++){
-            var tile = tilemap[x][y];
-            if(typeof tile !== 'undefined' && tile.tiletype.solid){
-                niv = y - 1;
-                break;
-            }
+            try{
+                var tile = tilemap[x][y];
+                if(typeof tile !== 'undefined' && tile.tiletype.solid){
+                    niv = y - 1;
+                    break;
+                }
+            }catch(e){}
         }
 
         return niv;

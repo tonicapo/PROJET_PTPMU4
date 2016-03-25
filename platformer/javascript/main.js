@@ -11,7 +11,7 @@ window.addEventListener('DOMContentLoaded', function(){
 
         fullscreen : false,
 
-        seed : 'caca',
+        seed : 'pipi',
 
         font : 'silkscreen',
 

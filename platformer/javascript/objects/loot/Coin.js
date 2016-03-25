@@ -38,7 +38,7 @@ function Ruby(level, position, delay, gravity){
 
 function Coin(level, position, delay, gravity){
     Valuable.call(this, level, position, delay, gravity);
-    this.animationList.idle = new Animation('idle', platformer.textures.items.coin, 200);
+    this.animationList.idle = new Animation('idle', platformer.textures.items.coin, 250);
 
     this.setDropAmount(1);
 }

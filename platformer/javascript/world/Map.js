@@ -27,7 +27,7 @@ function Map(level){
         targetPanX,
         targetPanY,
 
-        updateDistance = 750,
+        updateDistance,
 
         minDistance,
         maxDistance,
@@ -41,7 +41,7 @@ function Map(level){
     this.init = function(){
         player = level.getPlayer();
 
-        world = new WorldGeneration(level);
+        world = new WorldGeneration(level, true);
         world.init({ seed : platformer.seed, cols : 300, rows : 20 });
 
 
@@ -156,12 +156,15 @@ function Map(level){
         }
         */
 
+
     }
 
     function updateCamera(){
+        updateDistance = platformer.game.getScreenWidth();
+
         // calcul des positions min et max d'affichage entre lesquelles on met à jour les entités
-        maxDistance = player.x + player.width / 2 + updateDistance / 2 + platformer.game.getScreenWidth() / 2;
-        minDistance = player.x - updateDistance / 2 - platformer.game.getScreenWidth() / 2;
+        maxDistance = player.x + player.width / 2 + updateDistance;
+        minDistance = player.x - updateDistance;
 
         screenWidth = platformer.game.getScreenWidth();
         screenHeight = platformer.game.getScreenHeight();
@@ -191,8 +194,8 @@ function Map(level){
             panY = levelSizeY - screenHeight;
         }
 
-        startX = parseInt(panX / platformer.tileSizeX);
-        startY = parseInt(panY / platformer.tileSizeY);
+        startX = parseInt(panX / platformer.tileSizeX) - 1;
+        startY = parseInt(panY / platformer.tileSizeY) - 1;
 
 
         if(startX > numCols - tileAcrossX){
@@ -208,8 +211,8 @@ function Map(level){
             startY = 0;
         }
 
-        endX = startX + tileAcrossX;
-        endY = startY + tileAcrossY;
+        endX = startX + tileAcrossX + 1;
+        endY = startY + tileAcrossY + 1;
 
         if(endX > numCols){
             endX = numCols;
