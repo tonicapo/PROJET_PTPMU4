@@ -111,11 +111,7 @@ function Game(){
     */
 
     function initGameScreen(){
-        // le conteneur du jeu
-        gameWrapper = document.createElement('div');
-        gameWrapper.setAttribute('id', platformer.id);
-        gameWrapper.style.position = 'relative';
-        document.body.appendChild(gameWrapper);
+        gameWrapper = document.getElementById(platformer.id);
 
         if(typeof platformer.onready === 'function'){
             platformer.onready();
