@@ -11,6 +11,7 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
     var maxDistance;
     var destructOnStopped = false;
     var followTarget = true;
+    var deflectable = false;
 
     if(direction == 1){
         this.right = true;
@@ -139,6 +140,7 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
     }
 
     this.isDestructOnStopped = function(){ return destructOnStopped; }
+    this.isDeflectable = function(){ return deflectable; }
     this.getTarget = function(){ return targetEntity; }
     this.isStopped = function(){ return stopped; }
     this.getFollowingTarget = function(){ return followTarget; }
@@ -146,7 +148,12 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
     this.setMaxDistance = function(d){
         maxDistance = d;
     }
-
+    this.setDeflectable = function(b){
+        deflectable = b;
+    }
+    this.setStopped = function(b){
+        stopped = b;
+    }
     this.setDestructOnStopped = function(b){
         destructOnStopped = b;
     }

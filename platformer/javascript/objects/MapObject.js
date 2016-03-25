@@ -37,6 +37,8 @@ function MapObject(level, x, y, width, height, animated){
         hitBoxWidth,
         hitBoxHeight,
 
+        moveDisabled = false,
+
         bonus = {
             speed : 1,
             strength : 1,
@@ -123,7 +125,7 @@ function MapObject(level, x, y, width, height, animated){
 
     function move(){
         // mouvements horizontaux et verticaux
-        if(self.left && !blockedLeft){
+        if(self.left && !blockedLeft && !moveDisabled){
             vx -= self.property.speed;
             if(vx < -self.property.maxSpeed * self.getBonus('speed')){
                 vx = -self.property.maxSpeed * self.getBonus('speed');
@@ -134,11 +136,12 @@ function MapObject(level, x, y, width, height, animated){
                 vx += self.property.stopSpeed;
                 if(vx > 0){
                     vx = 0;
+                    self.left = false;
                 }
             }
         }
 
-        if(self.right && !blockedRight){
+        if(self.right && !blockedRight && !moveDisabled){
             vx += self.property.speed;
             if(vx > self.property.maxSpeed * self.getBonus('speed')){
                 vx = self.property.maxSpeed * self.getBonus('speed');
@@ -149,6 +152,7 @@ function MapObject(level, x, y, width, height, animated){
                 vx -= self.property.stopSpeed;
                 if(vx < 0){
                     vx = 0;
+                    self.right = false;
                 }
             }
         }
@@ -407,6 +411,8 @@ function MapObject(level, x, y, width, height, animated){
         canFall = b;
     }
     this.canFall = function(){ return canFall; }
+    this.disableMovement = function(b){ moveDisabled = b; }
+    this.isMovementDisabled = function(){ return moveDisabled; }
 
     this.getDirection = function(){ return direction; }
 
