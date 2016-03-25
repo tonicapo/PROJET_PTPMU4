@@ -38,14 +38,15 @@ function Player(level){
     this.property.baseRange = 25;
     this.property.bleedingChance = 0.1;
 
+
     var stats = { };
 
     this.setCanDropCoin(false);
     this.addInventory(platformer.weapons.sword);
     this.addInventory(platformer.weapons.bow);
     this.addInventory(platformer.weapons.knife);
-    this.setSelectedItem(2);
-    this.setBloodRatio(0.5);
+    this.setSelectedItem(0);
+    this.setBloodRatio(1);
 
     this.init = function(){
         stats.coins = 0;

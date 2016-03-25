@@ -11,12 +11,15 @@ function Entity(level, position, width, height){
     var selectedItemId = 0;
 
     var canAttack = true;
+    var useWeapon = true;
     var attacking = false;
 
     var dropCoin = false;
 
     var bloodRatio = 1;
     var DeathParticule = Blood;
+
+    var knockbackImmune = false;
 
     this.property.maxHealth = 0;
     this.property.baseRange = 0;
@@ -64,9 +67,13 @@ function Entity(level, position, width, height){
 
     this.animate = function(){
         if(!this.isDead()){
-            if(this.isAttacking()){
+            if(this.constructor.name == 'Boss' && this.isLaughing()){
+                this.setAnimation(this.animationList.laughing);
+            }
+            else if(this.isAttacking()){
                 var selectedWeapon = this.getSelectedItem();
-
+                this.setAttacking(false);
+                
                 if(selectedWeapon.getName() == 'bow'){
                     this.setAnimation(this.animationList.bowAttack);
                 }
@@ -79,8 +86,6 @@ function Entity(level, position, width, height){
                 else if(selectedWeapon.getName() == 'fireBallSpell'){
                     this.setAnimation(this.animationList.fireBallAttack);
                 }
-
-                this.setAttacking(false);
             }
             else if(this.isJumping()){
                 if(this.isDoubleJumping()){
@@ -130,7 +135,7 @@ function Entity(level, position, width, height){
     }
 
     this.attack = function(targets){
-        if(!canAttack || dead){
+        if(!canAttack || dead || !useWeapon){
             return;
         }
 
@@ -141,26 +146,33 @@ function Entity(level, position, width, height){
             canAttack = false;
             attacking = true;
 
-
             if(!weapon.property.projectile){
-                    for(var i in targets){
-                        if(rangeBox.intersects(targets[i]) && !targets[i].isDead() && targets[i] !== this){
-                            this.hit(targets[i], weapon, 0, this.getDirection());
+                var projectiles = level.getMap().getVisibleItems();
+
+                for(var i in targets){
+                    if(!(!rangeBox.intersects(targets[i]) || targets[i].isDead() || targets[i] === this)){
+                        this.hit(targets[i], weapon, 0, this.getDirection());
+                    }
+                }
+
+                for(var i in projectiles){
+                    if(rangeBox.intersects(projectiles[i]) && projectiles[i].isDeflectable()){
+                        projectiles[i].setStopped(true);
+                    }
+                }
+
+                // on boucle dans la liste des tiles visibles pour savoir si on a touché un tile cassable
+                var tiles = level.getMap().getVisibleTiles();
+
+                for(var i = 0, n = tiles.length; i < n; i++){
+                    var tile = tiles[i];
+                    if(tile.isBreakable()){
+                        if(this.getRangeBox().intersects(tile)){
+                            tile.break();
+                            break;
                         }
                     }
-
-                    // on boucle dans la liste des tiles visibles pour savoir si on a touché un tile cassable
-                    var tiles = level.getMap().getVisibleTiles();
-
-                    for(var i = 0, n = tiles.length; i < n; i++){
-                        var tile = tiles[i];
-                        if(tile.isBreakable()){
-                            if(this.getRangeBox().intersects(tile)){
-                                tile.break();
-                                break;
-                            }
-                        }
-                    }
+                }
             }
             else{
                 var animDelay = 0;
@@ -229,7 +241,7 @@ function Entity(level, position, width, height){
             knockback = this.property.jumpHeight;
         }
 
-        if(knockback > 0){
+        if(knockback > 0 && !entity.isKnockbackImmune()){
             entity.setVector((originDirection == 1) ? knockback : -knockback, -knockback);
         }
 
@@ -242,8 +254,10 @@ function Entity(level, position, width, height){
             var rand = Math.random();
 
             if(rand > 1 - entity.property.bleedingChance){
-                entity.setBleeding(true);
-                entity.bleed(amount);
+                level.getTimers().addTimer(function(){
+                    entity.setBleeding(true);
+                    entity.bleed(amount);
+                }, 2000);
             }
         }
 
@@ -279,7 +293,7 @@ function Entity(level, position, width, height){
         return parseInt(1 + ((this.width * this.height) / (platformer.tileSizeX * platformer.tileSizeY)) * 1, 10);
     }
     this.maxBloodAmount = function(){
-        return parseInt(1 + ((this.width * this.height) / (platformer.tileSizeX * platformer.tileSizeY)) * 12, 10);
+        return parseInt(1 + ((this.width * this.height) / (platformer.tileSizeX * platformer.tileSizeY)) * 8, 10);
     }
 
 
@@ -413,11 +427,20 @@ function Entity(level, position, width, height){
     this.setCanAttack = function(b){
         canAttack = b;
     }
+    this.setCanUseWeapon = function(b){
+        useWeapon = b;
+    }
 
+    this.setKnockbackImmune = function(b){
+        knockbackImmune = b;
+    }
+
+    this.isKnockbackImmune = function(){ return knockbackImmune; }
     this.getInventory = function(){ return inventory; }
     this.isDead = function(){ return dead; }
     this.getHealth = function(){ return health; }
     this.isBleeding = function(){ return bleeding; }
     this.isAttacking = function(){ return attacking; }
     this.canDropCoin = function(){ return dropCoin; }
+    this.canUseWeapon = function(){ return useWeapon; }
 }
