@@ -41,8 +41,8 @@ function Map(level){
     this.init = function(){
         player = level.getPlayer();
 
-        world = new WorldGeneration(level, true);
-        world.init({ seed : platformer.seed, cols : 300, rows : 20 });
+        world = new WorldGeneration(level, false);
+        world.init({ seed : platformer.seed, cols : 40, rows : 20 });
 
 
         numCols = world.getNumCols();

@@ -117,7 +117,7 @@ function Player(level){
     /*
     * TODO : durée de jeu
     */
-    onetime(document, 'playerdeath', function(e){
+    onetime(window, 'playerdeath', function(e){
         e.stopPropagation();
         /**
         - Ajoute une mort au compteur de mort du player

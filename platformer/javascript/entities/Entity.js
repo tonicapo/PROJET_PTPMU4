@@ -73,7 +73,7 @@ function Entity(level, position, width, height){
             else if(this.isAttacking()){
                 var selectedWeapon = this.getSelectedItem();
                 this.setAttacking(false);
-                
+
                 if(selectedWeapon.getName() == 'bow'){
                     this.setAnimation(this.animationList.bowAttack);
                 }
@@ -321,7 +321,7 @@ function Entity(level, position, width, height){
 
             if(this.constructor.name == 'Player'){
                 this.deathBleed();
-                document.dispatchEvent(platformer.events.playerdeath);
+                window.dispatchEvent(platformer.events.playerdeath);
             }
         }
     }

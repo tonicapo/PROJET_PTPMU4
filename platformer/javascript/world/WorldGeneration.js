@@ -43,6 +43,24 @@ function WorldGeneration(level, test){
         }
     };
 
+    var bossChunkType = {
+        minPtWidth : bossRoomProtection,
+        maxPtWidth : bossRoomProtection,
+
+        minGpWidth : 0,
+        maxGpWidth : 0,
+
+        minElevation : 0,
+        maxElevation : 0,
+
+        height : -1,
+
+        decoration : {
+            outerLayer : platformer.tiletype.stone,
+            innerLayer : platformer.tiletype.stone
+        }
+    };
+
     var filledChunkTypeA = {
         minPtWidth : 3,
         maxPtWidth : 14,
@@ -175,7 +193,7 @@ function WorldGeneration(level, test){
                 if(cx == 0){
                     offset = createStructure(cx, spawnChunkType);
                 }
-                else{
+                else if(cx < numRows - bossRoomProtection){
                     var rand = Math.random();
                     if(rand > 0.5){
                         offset = createStructure(cx, filledChunkTypeA);
@@ -184,6 +202,11 @@ function WorldGeneration(level, test){
                         offset = createStructure(cx, platformChunkType);
                     }
                 }
+                else if(cx >= numRows - bossRoomProtection){
+                    console.log('k');
+                    offset = createStructure(cx, bossChunkType);
+                }
+
             }
             size += offset;
             cx += offset;
