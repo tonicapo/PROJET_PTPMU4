@@ -2,6 +2,8 @@ function Particle(level, position, width, height, duration, animated){
     if(typeof animated === 'undefined'){
         animated = false;
     }
+
+
     MapObject.call(this, level, position.x, position.y, width, height, animated);
     var self = this;
 

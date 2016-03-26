@@ -59,7 +59,7 @@ function Entity(level, position, width, height){
         var amount = randomInt(self.minBloodAmount() * multiplier * bloodRatio, self.maxBloodAmount() * multiplier * bloodRatio);
 
         for(var i = 0; i < amount; i++){
-            level.spawnParticle(new DeathParticule(level, self.getCenter(), dir));
+            level.spawnParticle(new DeathParticule(level, this.getCenter(), dir));
         }
     }
 
@@ -73,7 +73,7 @@ function Entity(level, position, width, height){
             else if(this.isAttacking()){
                 var selectedWeapon = this.getSelectedItem();
                 this.setAttacking(false);
-                
+
                 if(selectedWeapon.getName() == 'bow'){
                     this.setAnimation(this.animationList.bowAttack);
                 }
@@ -227,6 +227,7 @@ function Entity(level, position, width, height){
             }
 
             knockback = toFloat(weapon.property.knockback / modifier);
+
             amount = toFloat(weapon.property.damage / modifier);
             bloodMultiplier = Math.round(weapon.property.bleeding / modifier);
         }
@@ -237,12 +238,10 @@ function Entity(level, position, width, height){
     }
 
     this.setDamage = function(entity, amount, knockback, bloodMultiplier, originDirection){
-        if(knockback > this.property.jumpHeight){
-            knockback = this.property.jumpHeight;
-        }
-
         if(knockback > 0 && !entity.isKnockbackImmune()){
-            entity.setVector((originDirection == 1) ? knockback : -knockback, -knockback);
+            var vectorX = (originDirection == 1) ? knockback : -knockback;
+            var vectorY = -knockback * 0.8;
+            entity.setVector(vectorX, vectorY);
         }
 
         damages = amount * this.getBonus('strength') / entity.getBonus('resistance');
@@ -261,7 +260,7 @@ function Entity(level, position, width, height){
             }
         }
 
-        if(entity.isDead() && this.constructor.name == 'Player'){
+        if(entity.isDead() && this.constructor.name == 'Player' && entity.constructor.name != 'Player'){
             this.addKill();
         }
     }
