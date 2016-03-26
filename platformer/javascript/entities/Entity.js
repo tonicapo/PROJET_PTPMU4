@@ -21,6 +21,10 @@ function Entity(level, position, width, height){
 
     var knockbackImmune = false;
 
+    var rangeBoxHeightRatio = 0.6;
+
+    var loot = Coin;
+
     this.property.maxHealth = 0;
     this.property.baseRange = 0;
     this.property.attackCooldown = 0;
@@ -85,6 +89,9 @@ function Entity(level, position, width, height){
                 }
                 else if(selectedWeapon.getName() == 'fireBallSpell'){
                     this.setAnimation(this.animationList.fireBallAttack);
+                }
+                else if(selectedWeapon.getName() == 'bossFeet'){
+                    this.setAnimation(this.animationList.bossFeet);
                 }
             }
             else if(this.isJumping()){
@@ -188,6 +195,7 @@ function Entity(level, position, width, height){
                 else if(weaponName == 'fireBallSpell'){
                     animDelay = this.animationList.fireBallAttack.getSpeed();
                 }
+                
 
                 level.getTimers().addTimer(function(){
                     var offset = (self.getDirection() == 1) ? self.width : 0;
@@ -396,7 +404,7 @@ function Entity(level, position, width, height){
 
         if(typeof selected !== 'undefined'){
             rangeWidth = selected.property.range + this.property.baseRange;
-            rangeHeight = this.height * 3/5;
+            rangeHeight = this.height * rangeBoxHeightRatio;
         }
 
         offset = (this.getDirection() == 1) ? this.width / 2 : -rangeWidth + this.width / 2;
@@ -434,6 +442,14 @@ function Entity(level, position, width, height){
         knockbackImmune = b;
     }
 
+    this.setRangeBoxHeightRatio = function(r){
+        rangeBoxHeightRatio = r;
+    }
+
+    this.setLoot = function(l){
+        loot = l;
+    }
+
     this.isKnockbackImmune = function(){ return knockbackImmune; }
     this.getInventory = function(){ return inventory; }
     this.isDead = function(){ return dead; }
@@ -442,4 +458,6 @@ function Entity(level, position, width, height){
     this.isAttacking = function(){ return attacking; }
     this.canDropCoin = function(){ return dropCoin; }
     this.canUseWeapon = function(){ return useWeapon; }
+    this.getRangeBoxHeightRatio = function(){ return rangeBoxHeightRatio; }
+    this.getLoot = function(){ return loot; }
 }

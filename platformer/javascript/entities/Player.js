@@ -5,6 +5,7 @@ function Player(level){
     var stats = { };
 
     this.setRenderBox(80 * platformer.scale, 64 * platformer.scale);
+    this.setRangeBoxHeightRatio(1);
 
     // events liés au player
     platformer.events.playerdeath = new CustomEvent('playerdeath');

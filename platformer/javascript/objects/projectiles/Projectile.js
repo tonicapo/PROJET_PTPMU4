@@ -37,6 +37,10 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
     this.setBoundToMap(false);
 
     this.update = function(){
+        this.updateProjectile();
+    }
+
+    this.updateProjectile = function(){
         this.updateMovement();
         this.updateObject();
 
@@ -71,7 +75,6 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
             self.setDirty(true);
         }
     }
-
 
     this.animate = function(){
         if(this.isStopped()){
