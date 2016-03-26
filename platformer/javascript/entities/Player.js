@@ -2,6 +2,8 @@ function Player(level){
     Entity.call(this, level, getPositionAtCoord(0, 0), 60, 85);
 
     var self = this;
+    var stats = { };
+
     this.setRenderBox(80 * platformer.scale, 64 * platformer.scale);
 
     // events liés au player
@@ -39,14 +41,13 @@ function Player(level){
     this.property.bleedingChance = 0.1;
 
 
-    var stats = { };
-
     this.setCanDropCoin(false);
     this.addInventory(platformer.weapons.sword);
     this.addInventory(platformer.weapons.bow);
     this.addInventory(platformer.weapons.knife);
     this.setSelectedItem(0);
     this.setBloodRatio(1);
+    this.isKnockbackImmune(false);
 
     this.init = function(){
         stats.coins = 0;

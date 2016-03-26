@@ -4,7 +4,7 @@ function Blood(level, position, direction){
     position.x += randomFloat(-8, 8);
     position.y += randomFloat(-8, 8);
 
-    Particle.call(this, level, position, 6, 6, 10000 + randomInt(0, 500));
+    Particle.call(this, level, position, 6, 6, 10000 + randomInt(0, 500), false);
 
     this.setRenderBox(platformer.tileSizeX, platformer.tileSizeY);
 

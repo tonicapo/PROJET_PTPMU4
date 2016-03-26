@@ -76,6 +76,10 @@ platformer.init = function(id, options){
 
         platformer.game = new Game;
         platformer.game.init();
+
+        if(typeof platformer.onready === 'function'){
+            platformer.onready();
+        }
     });
 }
 
@@ -643,7 +647,7 @@ platformer.initWeapons = function(){
     // épée
     platformer.weapons.sword = new Weapon('sword', platformer.textures.items.sword, {
         damage : 7.5,
-        knockback : 20,
+        knockback : 8,
         bleeding : 4,
         range : 50,
         delay : 400,
@@ -652,7 +656,7 @@ platformer.initWeapons = function(){
     // couteaux de lancé
     platformer.weapons.knife = new Weapon('knife', platformer.textures.items.knife, {
         damage : 7.5,
-        knockback : 5,
+        knockback : 4,
         bleeding : 2.5,
         range : 200,
         delay : 500,
@@ -661,7 +665,7 @@ platformer.initWeapons = function(){
     // arc
     platformer.weapons.bow = new Weapon('bow', platformer.textures.items.bow, {
         damage : 10,
-        knockback : 20,
+        knockback : 8,
         bleeding : 4,
         range : 225,
         delay : 1000,
@@ -670,7 +674,7 @@ platformer.initWeapons = function(){
     // fireball spell
     platformer.weapons.fireballSpell = new Weapon('fireBallSpell', platformer.textures.items.fireballSpell, {
         damage : 10,
-        knockback : 50,
+        knockback : 16,
         bleeding : 6,
         range : 400,
         delay : 1500,

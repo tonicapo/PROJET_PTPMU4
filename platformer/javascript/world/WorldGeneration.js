@@ -19,7 +19,7 @@ function WorldGeneration(level, test){
     var crateSpawnChance = 0.035;
     var spawnProtection = 5;
     var bossRoomProtection = 10;
-    var hostileSpawnRate = 0; //0.2
+    var hostileSpawnRate = 0.01; //0.2
     var hostileSpawnDistance = 4;
     var coinBridgeSpawnChance = 1;
     var bonusChestSpawnChance = 0.15;
