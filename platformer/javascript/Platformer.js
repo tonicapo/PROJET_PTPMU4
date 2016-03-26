@@ -469,6 +469,10 @@ platformer.initTextures = function(resources){
         platformer.getSubImage(resources.boss, 122 * 0, 122 * 1, 122, 122),
         platformer.getSubImage(resources.boss, 122 * 1, 122 * 1, 122, 122)
     ];
+    platformer.textures.boss.bossFeet = [
+        platformer.getSubImage(resources.boss, 122 * 0, 122 * 2, 122, 122),
+        platformer.getSubImage(resources.boss, 122 * 1, 122 * 2, 122, 122)
+    ];
 
 
     platformer.textures.skeleton_archer = { };
@@ -664,7 +668,7 @@ platformer.initWeapons = function(){
     });
     // arc
     platformer.weapons.bow = new Weapon('bow', platformer.textures.items.bow, {
-        damage : 10,
+        damage : 8,
         knockback : 8,
         bleeding : 4,
         range : 225,
@@ -672,7 +676,7 @@ platformer.initWeapons = function(){
         projectile : true
     });
     // fireball spell
-    platformer.weapons.fireballSpell = new Weapon('fireBallSpell', platformer.textures.items.fireballSpell, {
+    platformer.weapons.fireballSpell = new Weapon('fireBallSpell', undefined, {
         damage : 10,
         knockback : 16,
         bleeding : 6,
@@ -681,4 +685,12 @@ platformer.initWeapons = function(){
         projectile : true
     });
 
+    platformer.weapons.bossFeet = new Weapon('bossFeet', undefined, {
+        damage : 4,
+        knockback : 8,
+        bleeding : 4,
+        range : 25,
+        delay : 1000,
+        projectile : false
+    });
 }
