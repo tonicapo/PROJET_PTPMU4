@@ -42,13 +42,15 @@ function Player(level){
     this.property.bleedingChance = 0.1;
 
 
-    this.setCanDropCoin(false);
+    this.setCanDropLoot(false);
     this.addInventory(platformer.weapons.sword);
     this.addInventory(platformer.weapons.bow);
     this.addInventory(platformer.weapons.knife);
     this.setSelectedItem(0);
     this.setBloodRatio(1);
-    this.isKnockbackImmune(false);
+
+    this.setKnockbackImmune(false);
+    this.setDamageImmune(false);
 
     this.init = function(){
         stats.coins = 0;
@@ -109,7 +111,7 @@ function Player(level){
         var position = getPositionAtCoord(x, y);
 
         this.x = position.x;
-        this.y = position.y;
+        this.y = position.y - Math.abs(platformer.tileSizeY - this.height);
     }
 
     /**

@@ -4,6 +4,7 @@ function Enemy(level, position, skin){
     var self = this;
 
     this.setRenderBox(80 * platformer.scale, 64 * platformer.scale);
+    this.setViewBoxOffsetY(Math.abs(this.height - platformer.tileSizeY) + 1);
 
     this.animationList.idle = new Animation('idle', skin.idle, 1000, { random : true });
     this.animationList.walking = new Animation('walking', skin.walking, 100);
@@ -20,7 +21,7 @@ function Enemy(level, position, skin){
 
 
     this.setColor('#D9828C');
-    this.setCanDropCoin(true);
+    this.setCanDropLoot(true);
 
     this.setDeathParticle(Bone);
     this.setBloodRatio(0.05);
@@ -33,14 +34,14 @@ function Archer(level, position){
     Enemy.call(this, level, position, platformer.textures.skeleton_archer);
 
 
-    this.property.speed = 0.5;
+    this.property.speed = 0.1;
     this.property.stopSpeed = 0.25;
     this.property.maxSpeed = 2;
     this.property.fallSpeed = 2;
     this.property.maxFallSpeed = 8;
     this.property.jumpHeight = 3;
     this.property.doubleJumpHeight = 4;
-    this.property.maxHealth = 8;
+    this.property.maxHealth = 7.5;
     this.property.baseRange = 100;
     this.property.bleedingChance = 0.3;
     this.property.attackCooldown = 1000;

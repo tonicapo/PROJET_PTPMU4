@@ -14,12 +14,13 @@ function Entity(level, position, width, height){
     var useWeapon = true;
     var attacking = false;
 
-    var dropCoin = false;
+    var dropLoot = false;
 
     var bloodRatio = 1;
     var DeathParticule = Blood;
 
     var knockbackImmune = false;
+    var damageImmune = false;
 
     var rangeBoxHeightRatio = 0.6;
 
@@ -47,7 +48,7 @@ function Entity(level, position, width, height){
             if(currentTile.equals(platformer.tiletype.spike) && !this.isDead()){
                 this.property.fallSpeed = 0.1;
                 this.property.maxFallSpeed = 0.25;
-                this.setCanDropCoin(false);
+                this.setCanDropLoot(false);
                 this.setDamage(this, 1000, 0, 12, 2);
             }
         }
@@ -195,7 +196,7 @@ function Entity(level, position, width, height){
                 else if(weaponName == 'fireBallSpell'){
                     animDelay = this.animationList.fireBallAttack.getSpeed();
                 }
-                
+
 
                 level.getTimers().addTimer(function(){
                     var offset = (self.getDirection() == 1) ? self.width : 0;
@@ -246,6 +247,9 @@ function Entity(level, position, width, height){
     }
 
     this.setDamage = function(entity, amount, knockback, bloodMultiplier, originDirection){
+        if(entity.isDamageImmune()){
+            return;
+        }
         if(knockback > 0 && !entity.isKnockbackImmune()){
             var vectorX = (originDirection == 1) ? knockback : -knockback;
             var vectorY = -knockback * 0.8;
@@ -304,13 +308,14 @@ function Entity(level, position, width, height){
     }
 
 
-    this.setDead = function(dropCoin){
-        if(typeof dropCoin === 'undefined'){
-            dropCoin = false;
+    this.setDead = function(dropLoot){
+        if(typeof dropLoot === 'undefined'){
+            dropLoot = false;
         }
         if(!dead){
-            if(this.canDropCoin()){
-                level.spawnLoot(new Coin(level, this.getCenter(), 100, true));
+            if(this.canDropLoot()){
+                var loot = this.getLoot();
+                level.spawnLoot(new loot(level, this.getCenter(), 100, true));
             }
 
             dead = true;
@@ -386,8 +391,8 @@ function Entity(level, position, width, height){
         DeathParticule = particle;
     }
 
-    this.setCanDropCoin = function(b){
-        dropCoin = b;
+    this.setCanDropLoot = function(b){
+        dropLoot = b;
     }
 
     this.setBloodRatio = function(r){
@@ -438,10 +443,12 @@ function Entity(level, position, width, height){
         useWeapon = b;
     }
 
+    this.setDamageImmune = function(b){
+        damageImmune = b;
+    }
     this.setKnockbackImmune = function(b){
         knockbackImmune = b;
     }
-
     this.setRangeBoxHeightRatio = function(r){
         rangeBoxHeightRatio = r;
     }
@@ -451,12 +458,13 @@ function Entity(level, position, width, height){
     }
 
     this.isKnockbackImmune = function(){ return knockbackImmune; }
+    this.isDamageImmune = function(){ return damageImmune; }
     this.getInventory = function(){ return inventory; }
     this.isDead = function(){ return dead; }
     this.getHealth = function(){ return health; }
     this.isBleeding = function(){ return bleeding; }
     this.isAttacking = function(){ return attacking; }
-    this.canDropCoin = function(){ return dropCoin; }
+    this.canDropLoot = function(){ return dropLoot; }
     this.canUseWeapon = function(){ return useWeapon; }
     this.getRangeBoxHeightRatio = function(){ return rangeBoxHeightRatio; }
     this.getLoot = function(){ return loot; }

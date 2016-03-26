@@ -16,6 +16,7 @@ function AI_Entity(level, position, width, height){
     var timers;
 
     var viewBoxHeightRatio = 2/5;
+    var viewBoxOffsetY = 0;
 
     this.property.reactionTime = 350;
     this.property.attackCooldown = 500;
@@ -189,9 +190,7 @@ function AI_Entity(level, position, width, height){
             if(hasFocusPlayer && typeof selectedItem !== 'undefined' && !selectedItem.property.projectile){
                 self.setBonus('speed', 2.5, 5000);
             }
-            else{
-                self.setBonus('speed', 1, -1);
-            }
+
 
             // on perd le joueur de vue
             if(!playerInSight && hasFocusPlayer){
@@ -275,8 +274,8 @@ function AI_Entity(level, position, width, height){
 
 
     this.getViewBox = function(){
-        var offset = (this.getDirection() == 0) ? -this.property.viewDistance : this.width;
-        return new Rectangle(this.x + offset, this.y, this.property.viewDistance, this.height * viewBoxHeightRatio);
+        var viewBoxOffsetX = (this.getDirection() == 0) ? -this.property.viewDistance : this.width;
+        return new Rectangle(this.x + viewBoxOffsetX, this.y + viewBoxOffsetY, this.property.viewDistance, this.height * viewBoxHeightRatio);
     }
 
     this.setIdle = function(b){
@@ -288,7 +287,11 @@ function AI_Entity(level, position, width, height){
     this.setViewBoxHeightRatio = function(r){
         viewBoxHeightRatio = r;
     }
+    this.setViewBoxOffsetY = function(v){
+        viewBoxOffsetY = v;
+    }
 
+    this.isPlayerInRange = function(){ return playerInRange; }
     this.isIdle = function(){ return idle; }
     this.getHostile = function(){ return hostile; }
 }

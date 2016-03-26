@@ -11,11 +11,11 @@ function Boss(level, position){
     this.property.speed = 0.1;
     this.property.stopSpeed = 0.1;
     this.property.maxSpeed = 0.3;
-    this.property.fallSpeed = 2;
+    this.property.fallSpeed = 0.5;
     this.property.maxFallSpeed = 8;
-    this.property.jumpHeight = 3;
+    this.property.jumpHeight = 2;
     this.property.doubleJumpHeight = 4;
-    this.property.maxHealth = 100;
+    this.property.maxHealth = 75;
     this.property.baseRange = 50;
     this.property.bleedingChance = 0;
     this.property.attackCooldown = 0;
@@ -30,10 +30,10 @@ function Boss(level, position){
     this.animationList.fireBallAttack = new Animation('fireBallAttack', platformer.textures.boss.idle, 150, { cancelable : true });
     this.animationList.deadIdle = new Animation('deadIdle', platformer.textures.boss.idle, 100, { loop : false, cancelable : false });
     this.animationList.deadFalling = new Animation('deadFalling', platformer.textures.boss.idle, 0, { loop : false, cancelable : true });
-    this.animationList.bossFeet = new Animation('bossFeet', platformer.textures.boss.bossFeet, 0, { cancelable : true });
+    this.animationList.bossFeet = new Animation('bossFeet', platformer.textures.boss.bossFeet, 400, { cancelable : false });
 
     this.setColor('#D9828C');
-    this.setCanDropCoin(false);
+    this.setCanDropLoot(true);
 
     this.setDeathParticle(Bone);
     this.setBloodRatio(0.025);
@@ -55,12 +55,13 @@ function Boss(level, position){
         var entityPos = this.getCenter();
         var playerPos = player.getCenter();
 
-        if(Math.abs(playerPos.x - entityPos.x) < 96){
+        if(Math.abs(playerPos.x - entityPos.x) < 128){
             this.setSelectedItem(1);
         }
         else{
             this.setSelectedItem(0);
         }
+
 
         this.updateMovement();
         this.updateInteraction();
@@ -68,12 +69,17 @@ function Boss(level, position){
 
         if(!self.isDead()){
             this.updateLogic();
+
+            if(!laughing && this.getVector().y >= 0){
+                self.disableMovement(false);
+                self.setCanUseWeapon(true);
+            }
         }
     }
 
     function giggle(){
         if(!self.isDead()){
-            var delay = (!laughing) ? 2000 : 5000;
+            var delay = (!laughing) ? 2000 : 5500;
 
             level.getTimers().addTimer(function(){
                 var rand = Math.random();
@@ -83,9 +89,12 @@ function Boss(level, position){
                     self.setCanUseWeapon(false);
                 }
                 else{
+                    if(self.getSelectedItem() == platformer.weapons.bossFeet){
+                        self.setJumping();
+                        self.disableMovement(false);
+                        self.setCanUseWeapon(true);
+                    }
                     laughing = false;
-                    self.disableMovement(false);
-                    self.setCanUseWeapon(true);
                 }
 
                 giggle();
