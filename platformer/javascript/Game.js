@@ -113,10 +113,6 @@ function Game(){
     function initGameScreen(){
         gameWrapper = document.getElementById(platformer.id);
 
-        if(typeof platformer.onready === 'function'){
-            platformer.onready();
-        }
-
         // le premier plan pour le rendu dynamique
         foreground = createCanvas(options.id, 1);
 
