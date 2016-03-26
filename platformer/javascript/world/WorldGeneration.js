@@ -19,7 +19,7 @@ function WorldGeneration(level, test){
     var crateSpawnChance = 0.035;
     var spawnProtection = 5;
     var bossRoomProtection = 10;
-    var hostileSpawnRate = 0.01; //0.2
+    var hostileSpawnRate = 0.2; //0.2
     var hostileSpawnDistance = 4;
     var coinBridgeSpawnChance = 1;
     var bonusChestSpawnChance = 0.15;
@@ -63,7 +63,7 @@ function WorldGeneration(level, test){
 
     var filledChunkTypeA = {
         minPtWidth : 3,
-        maxPtWidth : 14,
+        maxPtWidth : 9,
 
         minGpWidth : 3,
         maxGpWidth : 6,
@@ -79,6 +79,23 @@ function WorldGeneration(level, test){
         }
     };
 
+    var filledChunkTypeB = {
+        minPtWidth : 5,
+        maxPtWidth : 10,
+
+        minGpWidth : 0,
+        maxGpWidth : 0,
+
+        minElevation : -3,
+        maxElevation : 2,
+
+        height : -1,
+
+        decoration : {
+            outerLayer : platformer.tiletype.grass,
+            innerLayer : platformer.tiletype.dirt
+        }
+    };
 
     var platformChunkType = {
         minPtWidth : 1,
@@ -183,31 +200,38 @@ function WorldGeneration(level, test){
     function generateTerrain(){
         var cx = 0;
         var size = 0;
+        var type;
+        var prevType;
 
         while(cx < numCols){
             var offset;
-            if(test){
-                offset = createStructure(cx, testWorldChunkType);
-            }
-            else{
+            prevType = type;
+
                 if(cx == 0){
-                    offset = createStructure(cx, spawnChunkType);
+                    type = spawnChunkType;
                 }
-                else if(cx < numRows - bossRoomProtection){
-                    var rand = Math.random();
-                    if(rand > 0.5){
-                        offset = createStructure(cx, filledChunkTypeA);
+                else{
+                    var rand;
+
+                    rand = Math.random();
+
+                    if(rand > 0.65){
+                        type = filledChunkTypeA;
                     }
                     else{
-                        offset = createStructure(cx, platformChunkType);
+                        type = platformChunkType;
+                    }
+
+                    rand = Math.random();
+
+                    if(prevType == filledChunkTypeA && rand > 0.8){
+                        type = filledChunkTypeB;
                     }
                 }
-                else if(cx >= numRows - bossRoomProtection){
-                    console.log('k');
-                    offset = createStructure(cx, bossChunkType);
-                }
 
-            }
+
+            offset = createStructure(cx, type);
+
             size += offset;
             cx += offset;
         }
@@ -257,18 +281,22 @@ function WorldGeneration(level, test){
 
             if(typeof bottomTile !== 'undefined' && !bottomTile.isBreakable() && niv < numRows - 2 && entityCanMoveAt(x, niv)){
                 if(x == 10){
-                    entities.push(new Boss(level, getPositionAtCoord(x, niv - 2)));
+                    //entities.push(new Boss(level, getPositionAtCoord(x, niv - 2)));
                 }
                 var rand = Math.random();
 
                 if(rand > 1 - hostileSpawnRate){
                     var entity;
                     var rand = Math.random();
+
                     if(rand > 0.75){
                         entity = new Archer(level, getPositionAtCoord(x, niv - 1));
                     }
-                    else{
+                    else if(rand > 0.3){
                         entity = new Knight(level, getPositionAtCoord(x, niv - 1));
+                    }
+                    else{
+                        entity = new Boss(level, getPositionAtCoord(x, niv - 2));
                     }
 
                     entities.push(entity);
