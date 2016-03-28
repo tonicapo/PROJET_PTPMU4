@@ -1,9 +1,12 @@
-function Projectile(level, originEntity, targets, weapon, position, direction, width, height){
+function Projectile(level, originEntity, targets, weapon, position, d, width, height){
     MapObject.call(this, level, position.x - width / 2, position.y - height / 2, width, height, true);
 
     var self = this;
     var targetEntity;
     var stopped = false;
+
+    var direction = d;
+
     var offsetX = 0;
     var offsetY = 0;
     var originPosition = this.getCenter();
@@ -59,20 +62,14 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
             }
 
             level.getTimers().addTimer(function(){
-                self.property.fallSpeed = 2;
-                self.property.maxFallSpeed = 8;
-                followTarget = false;
-            }, 5000);
+                self.setDirty(true);
+            }, 250);
         }
 
-        if(this.x - originPosition.x > maxDistance){
+        if(Math.abs(this.x - originPosition.x) > maxDistance){
             if(!stopped){
                 self.setDirty(true);
             }
-        }
-
-        if(stopped && destructOnStopped){
-            self.setDirty(true);
         }
     }
 
@@ -87,17 +84,17 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
 
     function updateStatus(){
         if(self.isBlockedLeft() || self.isBlockedRight()){
-            self.x += (direction == 1) ? self.width / 2 : -(self.width / 2);
-
+            if(!destructOnStopped) self.x += (direction == 1) ? self.width / 2 : -(self.width / 2);
+            self.setAnimation(self.animationList.idle);
             disableMovement();
 
             // on boucle dans la liste des tiles visibles pour savoir si on a touché un tile cassable
             var tiles = level.getMap().getVisibleTiles();
 
             for(var i = 0, n = tiles.length; i < n; i++){
-                if(tiles[i].isBreakable()){
+                if(!tiles[i].isBroken() && tiles[i].isBreakable()){
                     if(self.touch(tiles[i])){
-                        tiles[i].break();
+                        tiles[i].break(originEntity);
 
                         if(followTarget){
                             self.setDirty(true);
@@ -113,7 +110,8 @@ function Projectile(level, originEntity, targets, weapon, position, direction, w
             for(var i in targets){
                 // on a touché une des cibles
                 if(self.intersects(targets[i]) && !targets[i].isDead() && targets[i] !== originEntity){
-                    self.x += (direction == 1) ? self.width / 2 : -(self.width / 2);
+                    self.setAnimation(self.animationList.idle);
+                    if(!destructOnStopped) self.x += (direction == 1) ? self.width / 2 : -(self.width / 2);
 
                     var currentPosition = self.getCenter();
                     var distance = Math.abs(currentPosition.x - originPosition.x);
