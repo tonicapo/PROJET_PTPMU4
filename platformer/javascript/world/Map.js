@@ -35,14 +35,18 @@ function Map(level){
         player,
         spawn,
 
-        background;
+        background,
+
+        breakableTiles,
+
+        chest;
 
 
     this.init = function(){
         player = level.getPlayer();
 
         world = new WorldGeneration(level, false);
-        world.init({ seed : platformer.seed, cols : 40, rows : 20 });
+        world.init({ seed : platformer.seed });
 
 
         numCols = world.getNumCols();
@@ -55,6 +59,14 @@ function Map(level){
 
         spawn = world.getSpawn();
         player.setSpawn(spawn.x, spawn.y);
+        // arme par défaut
+        if(platformer.difficulty != platformer.mode.peaceful){
+            level.spawnLoot(new SwordItem(level, getPositionAtCoord(spawn.x + 1, spawn.y)));
+        }
+
+        breakableTiles = world.getBreakableTiles();
+
+        chest = world.getChest();
 
         // spawn des entités
         var entities = world.getEntities();
@@ -82,14 +94,13 @@ function Map(level){
         filterObjects('entities', level.getEntities());
         filterObjects('particles', level.getParticles());
         filterObjects('loots', level.getLoots(), true);
-
     }
 
     this.render = function(ctx){
-        renderObjects(ctx, renderlist.items);
         renderObjects(ctx, renderlist.tiles);
         renderObjects(ctx, renderlist.entities);
         player.render(ctx, panX, panY);
+        renderObjects(ctx, renderlist.items);
         renderObjects(ctx, renderlist.loots, true);
         renderObjects(ctx, renderlist.particles);
     }
@@ -98,7 +109,7 @@ function Map(level){
         var tempX = Math.round(posX / platformer.tileSizeX);
         var tempY = Math.round(posY / platformer.tileSizeY);
 
-        return !(tempX < startX || tempY < startY || tempX > endX || tempY > endY);
+        return !(tempX < startX || tempY < startY - 1 || tempX > endX || tempY > endY);
     }
 
     function filterTiles(){
@@ -114,6 +125,9 @@ function Map(level){
         }
     }
 
+    /**
+    * Purge les objects du niveau qui sont marqué comme obsolètes et gère la renderlist / update
+    */
     function filterObjects(filter, items, animate){
         // recréé une liste des éléments à afficher et update ceux qui doivent l'être
         delete renderlist[filter];
@@ -125,7 +139,7 @@ function Map(level){
             }
             else{
                 // update
-                if(!(typeof items[k] === 'undefined' || items[k].isDirty() || items[k].x > maxDistance || items[k].x < minDistance)){
+                if(!(typeof items[k] === 'undefined' || items[k].x > maxDistance || items[k].x < minDistance)){
                     items[k].update();
 
                     // render
@@ -138,6 +152,16 @@ function Map(level){
                     if(typeof items[k] !== 'undefined' && animate){
                         items[k].updateObject();
                     }
+
+                    /*
+                    * optimisation
+                    */
+                    if(filter == 'entities' && items[k].isDead()){
+                        delete items[k];
+                    }
+                    else if(filter == 'particles'){
+                        delete items[k];
+                    }
                 }
             }
         }
@@ -148,14 +172,14 @@ function Map(level){
             items[i].render(ctx, panX, panY);
             //items[i].draw(ctx, panX, panY);
         }
-        //renderBox(ctx, player);
 
         /*
+        renderBox(ctx, player);
         for(var i in renderlist.entities){
             renderBox(ctx, renderlist.entities[i]);
         }
-        */
 
+        */
 
     }
 
@@ -171,6 +195,9 @@ function Map(level){
 
         targetPanX = player.x - screenWidth / 2 + player.width / 2;
         targetPanY = player.y - screenHeight / 2 + player.height / 2;
+
+        if(panX == 0) panX = targetPanX;
+        if(panY == 0) panY = targetPanY;
 
         // test
         panX = parseInt(lerp(panX, targetPanX, 0.075), 10);
@@ -248,4 +275,8 @@ function Map(level){
     this.getVisibleItems = function(){ return renderlist.items; }
     this.getVisibleTiles = function(){ return renderlist.tiles; }
     this.getVisibleLoots = function(){ return renderlist.loots; }
+    this.getVisibleEntities = function(){ return renderlist.entities; }
+    this.getBreakableTiles = function(){ return breakableTiles; }
+
+    this.getChest = function(){ return chest; }
 }
