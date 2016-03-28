@@ -15,11 +15,11 @@ function Boss(level, position){
     this.property.maxFallSpeed = 8;
     this.property.jumpHeight = 2;
     this.property.doubleJumpHeight = 4;
-    this.property.maxHealth = 75;
+    this.property.maxHealth = 60;
     this.property.baseRange = 50;
     this.property.bleedingChance = 0;
     this.property.attackCooldown = 0;
-    this.property.reactionTime = 0;
+    this.property.reactionTime = 250;
     this.property.viewDistance = 750;
 
 
@@ -27,10 +27,12 @@ function Boss(level, position){
     this.animationList.walking = new Animation('walking', platformer.textures.boss.walking, 400);
     this.animationList.laughing = new Animation('laughing', platformer.textures.boss.laughing, 350);
     this.animationList.falling = new Animation('falling', platformer.textures.boss.falling, 1000);
-    this.animationList.fireBallAttack = new Animation('fireBallAttack', platformer.textures.boss.idle, 150, { cancelable : true });
-    this.animationList.deadIdle = new Animation('deadIdle', platformer.textures.boss.idle, 100, { loop : false, cancelable : false });
-    this.animationList.deadFalling = new Animation('deadFalling', platformer.textures.boss.idle, 0, { loop : false, cancelable : true });
+
+    this.animationList.fireBallAttack = new Animation('fireBallAttack', platformer.textures.boss.fireBallAttack, 250, { cancelable : false });
     this.animationList.bossFeet = new Animation('bossFeet', platformer.textures.boss.bossFeet, 400, { cancelable : false });
+
+    this.animationList.deadIdle = new Animation('deadIdle', platformer.textures.boss.deadIdle, 100, { loop : false, cancelable : false });
+    this.animationList.deadFalling = new Animation('deadFalling', platformer.textures.boss.deadFalling, 0, { loop : false, cancelable : true });
 
     this.setColor('#D9828C');
     this.setCanDropLoot(true);
@@ -42,10 +44,12 @@ function Boss(level, position){
     this.setHostile(true);
     this.setKnockbackImmune(true);
 
-    this.addInventory(platformer.weapons.fireballSpell);
-    this.addInventory(platformer.weapons.bossFeet);
+    this.addInventory(new FireBallSpellItem(level));
+    this.addInventory(new BossFeetItem(level));
 
     this.setLoot(Ruby);
+
+
 
     var laughing = false;
 
@@ -55,13 +59,12 @@ function Boss(level, position){
         var entityPos = this.getCenter();
         var playerPos = player.getCenter();
 
-        if(Math.abs(playerPos.x - entityPos.x) < 128){
+        if(Math.abs(playerPos.x - entityPos.x) < 160){
             this.setSelectedItem(1);
         }
         else{
             this.setSelectedItem(0);
         }
-
 
         this.updateMovement();
         this.updateInteraction();
@@ -69,17 +72,12 @@ function Boss(level, position){
 
         if(!self.isDead()){
             this.updateLogic();
-
-            if(!laughing && this.getVector().y >= 0){
-                self.disableMovement(false);
-                self.setCanUseWeapon(true);
-            }
         }
     }
 
     function giggle(){
         if(!self.isDead()){
-            var delay = (!laughing) ? 2000 : 5500;
+            var delay = (!laughing) ? 2000 : 4500;
 
             level.getTimers().addTimer(function(){
                 var rand = Math.random();
@@ -89,11 +87,8 @@ function Boss(level, position){
                     self.setCanUseWeapon(false);
                 }
                 else{
-                    if(self.getSelectedItem() == platformer.weapons.bossFeet){
-                        self.setJumping();
-                        self.disableMovement(false);
-                        self.setCanUseWeapon(true);
-                    }
+                    self.disableMovement(false);
+                    self.setCanUseWeapon(true);
                     laughing = false;
                 }
 

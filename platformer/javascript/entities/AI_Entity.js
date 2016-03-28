@@ -15,6 +15,8 @@ function AI_Entity(level, position, width, height){
     var player;
     var timers;
 
+    var canChangeDirection = true;
+
     var viewBoxHeightRatio = 2/5;
     var viewBoxOffsetY = 0;
 
@@ -63,12 +65,13 @@ function AI_Entity(level, position, width, height){
         var direction = self.getDirection();
         var moveLeft = canMoveLeft();
         var moveRight = canMoveRight();
+        var playerPosition = player.getCenter();
+        var aiPosition = self.getCenter();
+
 
         if(!idle){
             // le comportement classique de l'entité est altéré par le joueur
             if(hasFocusPlayer){
-                var playerPosition = player.getCenter();
-                var aiPosition = self.getCenter();
                 var currentDirection = direction;
 
                 if(currentDirection == 0 && playerPosition.x > aiPosition.x){
@@ -95,14 +98,14 @@ function AI_Entity(level, position, width, height){
                 if(direction == 0){
                     self.left = moveLeft;
                     self.right = false;
-                    if(!moveLeft && moveRight){
+                    if(!moveLeft && moveRight && canChangeDirection){
                         self.setDirection(1);
                     }
                 }
                 else if(direction == 1){
                     self.right = moveRight;
                     self.left = false;
-                    if(moveLeft && !moveRight){
+                    if(moveLeft && !moveRight && canChangeDirection){
                         self.setDirection(0);
                     }
                 }
@@ -181,13 +184,14 @@ function AI_Entity(level, position, width, height){
         if(!player.isDead() && hostile){
             var direction = self.getDirection();
             var lookDirection = (player.getDirection() == 0) ? 1 : 0;
+            var blockedByBreakable = self.isBlockedByBreakable();
 
-            playerInSight = isPlayerInSight();
-            playerInRange = isPlayerInRange();
+            playerInSight = (isPlayerInSight());
+            playerInRange = (isPlayerInRange());
             attacked = self.isAttacked();
 
             // on accélère le mouvement de l'IA si elle voit le player
-            if(hasFocusPlayer && typeof selectedItem !== 'undefined' && !selectedItem.property.projectile){
+            if(hasFocusPlayer && typeof selectedItem !== 'undefined' && !selectedItem.property.projectile && self.getBonus('speed') == 1){
                 self.setBonus('speed', 2.5, 5000);
             }
 
@@ -206,19 +210,21 @@ function AI_Entity(level, position, width, height){
                 }, 500);
             }
 
-            if(playerInSight){
-                if(self.isBlockedByBreakable()){
-                    self.attack([ ]);
-                }
+            if(playerInSight && blockedByBreakable && !playerInRange && self.getCanAttack()){
+                canChangeDirection = false;
+                self.attack([ ]);
             }
-
             /*
                 Le joueur est suffisamment près pour l'attaque
             */
             if(playerInRange){
-                // l'AI va focus le player et suivre ses mouvements
-                hasFocusPlayer = true;
-                attackPlayer();
+                timers.addTimer(function(){
+                    // l'AI va focus le player et suivre ses mouvements
+                    if(playerInRange){
+                        hasFocusPlayer = true;
+                        attackPlayer();
+                    }
+                }, 100);
             }
 
             /*
@@ -229,6 +235,7 @@ function AI_Entity(level, position, width, height){
             }
         }
         else{
+            canChangeDirection = true;
             hasFocusPlayer = false;
             playerInRange = false;
             playerInSight = false;
@@ -254,12 +261,14 @@ function AI_Entity(level, position, width, height){
     function isAttacked(){
         // si l'entité est attaquée et qu'elle n'a pas focus le player, elle va chercher à le localiser et le cas échéant reprendra sa course normale
         if(!hasFocusPlayer){
-            var direction = self.getDirection();
-            self.setDirection((direction == 0) ? 1 : 0);
+            timers.addTimer(function(){
+                var direction = self.getDirection();
+                self.setDirection((direction == 0) ? 1 : 0);
 
-            if(!isPlayerInSight()){
-                self.setDirection(direction);
-            }
+                if(!isPlayerInSight()){
+                    self.setDirection(direction);
+                }
+            }, 350);
         }
     }
 
@@ -267,7 +276,11 @@ function AI_Entity(level, position, width, height){
         // on tente une attaque
         timers.addTimer(function(){
             if(!player.isDead() && playerInRange){
-                self.attack([ player ]);
+                var targets = [ player ];
+                //if(self.constructor.name == 'Boss'){
+                    targets = targets.concat(level.getMap().getVisibleEntities());
+                //}
+                self.attack(targets);
             }
         }, self.property.reactionTime);
     }
