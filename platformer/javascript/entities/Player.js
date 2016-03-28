@@ -3,6 +3,7 @@ function Player(level){
 
     var self = this;
     var stats = { };
+    var levelCompleted = false;
 
     this.setRenderBox(80 * platformer.scale, 64 * platformer.scale);
     this.setRangeBoxHeightRatio(1);
@@ -27,6 +28,7 @@ function Player(level){
     this.animationList.swordAttack = new Animation('swordAttack', platformer.textures.player.swordAttack, 75, { cancelable : false });
     this.animationList.fireBallAttack = new Animation('fireBallAttack', platformer.textures.player.knifeAttack, 150, { cancelable : false });
 
+    this.animationList.victory = new Animation('victory', platformer.textures.player.victory, 750, { loop : true });
 
 
     this.property.speed = 1;
@@ -43,12 +45,8 @@ function Player(level){
 
 
     this.setCanDropLoot(false);
-    this.addInventory(platformer.weapons.sword);
-    this.addInventory(platformer.weapons.bow);
-    this.addInventory(platformer.weapons.knife);
     this.setSelectedItem(0);
     this.setBloodRatio(1);
-
     this.setKnockbackImmune(false);
     this.setDamageImmune(false);
 
@@ -70,7 +68,7 @@ function Player(level){
     }
 
     this.keyDown = function(key){
-        if(this.isDead()){
+        if(this.isDead() || this.isLevelCompleted()){
             return;
         }
 
@@ -114,18 +112,12 @@ function Player(level){
         this.y = position.y - Math.abs(platformer.tileSizeY - this.height);
     }
 
-    /**
-    * Events
-    */
-
-    /*
-    * TODO : durée de jeu
-    */
-    onetime(window, 'playerdeath', function(e){
-        e.stopPropagation();
-        /**
-        - Ajoute une mort au compteur de mort du player
-        */
-        console.log(stats);
-    });
+    this.isLevelCompleted = function(){
+        return levelCompleted;
+    }
+    this.setLevelCompleted = function(){
+        levelCompleted = true;
+        this.left = false;
+        this.right = false;
+    }
 }
