@@ -261,7 +261,7 @@ function Entity(level, position, width, height){
             }
         }
 
-        if(entity.isDead() && this.constructor.name == 'Player'){
+        if(entity.isDead() && this.constructor.name == 'Player' && entity.constructor.name != 'Player'){
             this.addKill();
         }
     }
@@ -321,7 +321,7 @@ function Entity(level, position, width, height){
 
             if(this.constructor.name == 'Player'){
                 this.deathBleed();
-                document.dispatchEvent(platformer.events.playerdeath);
+                window.dispatchEvent(platformer.events.playerdeath);
             }
         }
     }

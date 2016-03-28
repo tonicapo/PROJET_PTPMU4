@@ -67,7 +67,7 @@ platformer.init = function(id, options){
 
     platformer.loadAssets(platformer.getAssets(), function(resources){
         if(platformer.debug) console.timeEnd('ASSETS_LOAD_TIME');
-
+        
         platformer.initTextures(resources);
         platformer.initEffects(resources);
         platformer.initBackgrounds(resources);
@@ -76,6 +76,10 @@ platformer.init = function(id, options){
 
         platformer.game = new Game;
         platformer.game.init();
+        
+        if(typeof platformer.onready === 'function'){
+            platformer.onready();
+        }
     });
 }
 

@@ -2,10 +2,12 @@ function Player(level){
     Entity.call(this, level, getPositionAtCoord(0, 0), 60, 85);
 
     var self = this;
+    var stats = { };
+
     this.setRenderBox(80 * platformer.scale, 64 * platformer.scale);
 
     // events liés au player
-    platformer.events.playerdeath = new CustomEvent('playerdeath');
+    platformer.events.playerdeath = new CustomEvent('playerdeath', {'detail':{'stats':stats}});
     platformer.events.playerkill = new CustomEvent('playerkill');
 
 
@@ -37,9 +39,6 @@ function Player(level){
     this.property.maxHealth = 20;
     this.property.baseRange = 25;
     this.property.bleedingChance = 0.1;
-
-
-    var stats = { };
 
     this.setCanDropCoin(false);
     this.addInventory(platformer.weapons.sword);

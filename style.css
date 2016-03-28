@@ -15,3 +15,39 @@ body{
     font-weight: bold;
     src: url(./platformer/resources/fonts/slkscreb.ttf);
 }
+
+#form_log
+{
+    width:40vw;
+    margin-left:30vw;
+    margin-top:40vh;
+    height:auto;
+    padding:20px;
+    background:black;
+}
+
+#form_log input
+{
+    width:80%;
+    margin-bottom: 2vh;
+    font-size:20px;
+    float:left;
+}
+
+#titre_form
+{
+    color:white;
+    font-size: 2vw;
+    font-family: Arial;
+}
+
+#change_titre
+{
+    color:white;
+    float:left;
+}
+
+#motdepasse_confirm
+{
+    display:none;
+}

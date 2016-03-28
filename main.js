@@ -32,7 +32,44 @@ window.addEventListener('DOMContentLoaded', function(){
         });
 
         function gameReady(){
-            gameWrapper = document.getElementById(gameID);
+            window.addEventListener('playerdeath', function(e){
+              
+                addValueOnDeath(e.detail.stats);
+              console.log(e.detail.stats);
+            });
+        }
+      
+        function tab_element_object(objet)
+        {
+            var nb_elements = Object.keys(objet).length;
+            var val_object=['coins','kills'];
+            var tab=[];
+            
+            for(var i=0;i<nb_elements;i++)
+            {
+                tab.push(objet[val_object[i]]);
+            }
+            return tab;
+        }
+      
+        function addValueOnDeath(stats)
+        {
+          var xhr = new XMLHttpRequest();
+          var tab_stats = tab_element_object(stats);
+          xhr.open('GET', 'onplayerdeath.php?valeur='+tab_stats);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+          xhr.send(JSON.stringify({
+              value: stats
+          }));
+
+          xhr.addEventListener('readystatechange', function() {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) { // La constante DONE appartient à l'objet XMLHttpRequest, elle n'est pas globale
+            console.log('FONCTIONNE ON DEATH');
+            document.getElementById('test').innerHTML = xhr.responseText;
+            }
+          });
         }
 
         function gameResize(width, height){
