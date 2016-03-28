@@ -7,6 +7,7 @@ function Tile(level, tiletype, position, opacity, metadata){
     this.metadata = metadata;
 
     var breakable = false;
+    var broken = false;
 
     this.equals = function(tiletype){
         return (this.tiletype.name == tiletype.name);
@@ -36,6 +37,10 @@ function Tile(level, tiletype, position, opacity, metadata){
     this.setBreakable = function(b){
         breakable = b;
     }
+    this.setBroken = function(b){
+        broken = b;
+    }
 
+    this.isBroken = function(){ return broken; }
     this.isBreakable = function(){ return breakable; }
 }

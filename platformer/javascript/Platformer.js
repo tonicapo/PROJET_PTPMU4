@@ -7,6 +7,9 @@ platformer.init = function(id, options){
     // Activer / désactiver l'affichage des informations de debug
     platformer.debug = (typeof options.debug !== 'undefined') ? options.debug: true;
 
+    // l'utilisateur peut redimensionner le jeu lui même
+    platformer.resizeable = (typeof options.resizeable !== 'undefined') ? options.resizeable: true;
+
     // Dimension de la canvas
     platformer.dimension = { };
     platformer.dimension.w = (typeof options.width !== 'undefined') ? options.width : 1200;
@@ -14,7 +17,6 @@ platformer.init = function(id, options){
 
     platformer.scale = (typeof options.scale !== 'undefined') ? options.scale : 2;
     platformer.fullscreen = (typeof options.fullscreen !== 'undefined') ? options.fullscreen : false;
-
 
     platformer.seed = (typeof options.seed !== 'undefined') ? options.seed : undefined;
 
@@ -41,6 +43,11 @@ platformer.init = function(id, options){
         toggle_restart : 82,
         toggle_pause : 27
     };
+
+    // niveau de difficulté
+    platformer.mode = { };
+    platformer.difficulty;
+
     // Liste des touches a utiliser
     platformer.keylist = platformer.getKeyList();
 
@@ -69,10 +76,13 @@ platformer.init = function(id, options){
         if(platformer.debug) console.timeEnd('ASSETS_LOAD_TIME');
 
         platformer.initTextures(resources);
-        platformer.initEffects(resources);
         platformer.initBackgrounds(resources);
         platformer.initTiletypes(resources);
-        platformer.initWeapons();
+        platformer.initModes();
+
+        if(typeof platformer.difficulty === 'undefined'){
+            platformer.difficulty = platformer.mode['normal'];
+        }
 
         platformer.game = new Game;
         platformer.game.init();
@@ -322,11 +332,10 @@ platformer.getAssets = function(){
         'objects/projectiles/Arrow.js',
         'objects/projectiles/Knife.js',
         'objects/projectiles/FireBall.js',
-        'objects/loot/Loot.js',
-        'objects/loot/Potion.js',
-        'objects/loot/Coin.js',
-        'objects/Crate.js',
-        'objects/effects/Effect.js'
+        'objects/items/Loot.js',
+        'objects/items/Potion.js',
+        'objects/items/Coin.js',
+        'objects/Crate.js'
     ];
 
     // file d'attente de fichiers à charger
@@ -335,10 +344,11 @@ platformer.getAssets = function(){
     }
     assets.push({ name : 'tilemap', type : 'image', path : IMAGES_PATH + 'tilemap.png', options : { width : 480, height : 480 } });
     assets.push({ name : 'player', type : 'image', path : IMAGES_PATH + 'player.png', options : { width : 480, height : 480 } });
-    assets.push({ name : 'boss', type : 'image', path : IMAGES_PATH + 'boss.png', options : { width : 244, height : 366 } });
+    assets.push({ name : 'boss', type : 'image', path : IMAGES_PATH + 'boss.png', options : { width : 244, height : 488 } });
     assets.push({ name : 'skeleton_knight', type : 'image', path : IMAGES_PATH + 'skeleton_knight.png', options : { width : 480, height : 480 } });
     assets.push({ name : 'skeleton_archer', type : 'image', path : IMAGES_PATH + 'skeleton_archer.png', options : { width : 480, height : 480 } });
     assets.push({ name : 'background', type : 'image', path : IMAGES_PATH + 'background.png', options : { width : 1920, height : 1080 } });
+    assets.push({ name : 'logo', type : 'image', path : IMAGES_PATH + 'logo.png', options : { width : 355, height : 122 } });
 
     return assets;
 }
@@ -346,14 +356,21 @@ platformer.getAssets = function(){
 
 platformer.initTextures = function(resources){
     // textures
+    platformer.textures.gui = { };
+    platformer.textures.gui.healthbar = platformer.getSubImage(resources.tilemap, 0, 256, 160, 20);
+
     platformer.textures.entity = { };
-
-
-
     platformer.textures.player = { };
 
     platformer.textures.player.jumping = [
         platformer.getSubImage(resources.player, 80, 0, 80, 64)
+    ];
+    platformer.textures.player.victory = [
+        platformer.getSubImage(resources.player, 0, 384, 80, 64),
+        platformer.getSubImage(resources.player, 0, 0, 80, 64),
+        platformer.getSubImage(resources.player, 0, 0, 80, 64),
+        platformer.getSubImage(resources.player, 0, 384, 80, 64),
+        platformer.getSubImage(resources.player, 0, 0, 80, 64)
     ];
     platformer.textures.player.doubleJumping = [
         platformer.getSubImage(resources.player, 0, 0, 80, 64),
@@ -454,8 +471,18 @@ platformer.initTextures = function(resources){
     platformer.textures.boss.idle = [
         platformer.getSubImage(resources.boss, 0, 0, 122, 122)
     ];
+    platformer.textures.boss.fireBallAttack = [
+        platformer.getSubImage(resources.boss, 122, 0, 122, 122)
+    ];
     platformer.textures.boss.falling = [
         platformer.getSubImage(resources.boss, 0, 0, 122, 122)
+    ];
+    platformer.textures.boss.deadIdle = [
+        platformer.getSubImage(resources.boss, 0, 366, 122, 122),
+        platformer.getSubImage(resources.boss, 122, 366, 122, 122)
+    ];
+    platformer.textures.boss.deadFalling = [
+        platformer.getSubImage(resources.boss, 0, 366, 122, 122)
     ];
     platformer.textures.boss.walking = [
         platformer.getSubImage(resources.boss, 122 * 0, 122 * 2, 122, 122),
@@ -470,8 +497,10 @@ platformer.initTextures = function(resources){
         platformer.getSubImage(resources.boss, 122 * 1, 122 * 1, 122, 122)
     ];
     platformer.textures.boss.bossFeet = [
+        platformer.getSubImage(resources.boss, 0, 0, 122, 122),
         platformer.getSubImage(resources.boss, 122 * 0, 122 * 2, 122, 122),
-        platformer.getSubImage(resources.boss, 122 * 1, 122 * 2, 122, 122)
+        platformer.getSubImage(resources.boss, 122 * 1, 122 * 2, 122, 122),
+        platformer.getSubImage(resources.boss, 0, 0, 122, 122)
     ];
 
 
@@ -525,6 +554,12 @@ platformer.initTextures = function(resources){
         platformer.getSubImage(resources.tilemap, 0, 192, 32, 32),
         platformer.getSubImage(resources.tilemap, 0, 224, 32, 32)
     ];
+    platformer.textures.items.saphir = [
+        platformer.getSubImage(resources.tilemap, 192, 96, 32, 32),
+        platformer.getSubImage(resources.tilemap, 192, 128, 32, 32),
+        platformer.getSubImage(resources.tilemap, 192, 160, 32, 32),
+        platformer.getSubImage(resources.tilemap, 192, 192, 32, 32)
+    ];
     platformer.textures.items.strengthPotion = [
         platformer.getSubImage(resources.tilemap, 32, 32, 32, 32),
         platformer.getSubImage(resources.tilemap, 32, 64, 32, 32),
@@ -560,19 +595,22 @@ platformer.initTextures = function(resources){
     platformer.textures.items.bow = [
         platformer.getSubImage(resources.tilemap, 128, 160, 32, 32)
     ];
-    platformer.textures.items.fireballSpell = [
-        platformer.getSubImage(resources.tilemap, 160, 160, 32, 32)
+    platformer.textures.items.fireBallSpell = [
+        platformer.getSubImage(resources.tilemap, 0, 0, 32, 32)
+    ];
+    platformer.textures.items.bossFeet = [
+        platformer.getSubImage(resources.tilemap, 0, 0, 32, 32)
     ];
 
     platformer.textures.items.arrowIdle = [
-        platformer.getSubImage(resources.tilemap, 32, 192, 32, 32)
+        platformer.getSubImage(resources.tilemap, 128, 192, 32, 32)
     ];
     platformer.textures.items.arrowMoving = [
         platformer.getSubImage(resources.tilemap, 32, 192, 32, 32),
         platformer.getSubImage(resources.tilemap, 64, 192, 32, 32)
     ];
     platformer.textures.items.knifeIdle = [
-        platformer.getSubImage(resources.tilemap, 96, 192, 32, 32)
+        platformer.getSubImage(resources.tilemap, 160, 192, 32, 32)
     ];
     platformer.textures.items.knifeMoving = [
         platformer.getSubImage(resources.tilemap, 96, 192, 32, 32)
@@ -580,21 +618,21 @@ platformer.initTextures = function(resources){
     platformer.textures.items.fireBallMoving = [
         platformer.getSubImage(resources.tilemap, 32, 224, 32, 32),
         platformer.getSubImage(resources.tilemap, 64, 224, 32, 32),
-        platformer.getSubImage(resources.tilemap, 96, 224, 32, 32)
+        platformer.getSubImage(resources.tilemap, 96, 224, 32, 32),
+        platformer.getSubImage(resources.tilemap, 128, 224, 32, 32),
+        platformer.getSubImage(resources.tilemap, 160, 224, 32, 32),
+        platformer.getSubImage(resources.tilemap, 192, 224, 32, 32)
     ];
-}
-
-platformer.initEffects = function(resources){
-    platformer.textures.effects = { };
-    platformer.textures.effects.fireBallExploding = [
-        platformer.getSubImage(resources.tilemap, 224, 32, 32, 32),
-        platformer.getSubImage(resources.tilemap, 256, 32, 32, 32)
+    platformer.textures.items.fireBallIdle = [
+        platformer.getSubImage(resources.tilemap, 224, 224, 32, 32),
+        platformer.getSubImage(resources.tilemap, 256, 224, 32, 32)
     ];
 }
 
 platformer.initBackgrounds = function(resources){
     // backgrounds
     platformer.textures.background = platformer.getSubImage(resources.background, 0, 0, 1920, 1080);
+    platformer.textures.logo = platformer.getSubImage(resources.logo, 0, 0, 355, 122);
 }
 
 
@@ -606,6 +644,13 @@ platformer.initTiletypes = function(resources){
     platformer.tiletype.test = new TileType('test', [
         platformer.getSubImage(resources.tilemap, 0, 0, 32, 32)
     ], true);
+    platformer.tiletype.door = new TileType('door', [
+        platformer.getSubImage(resources.tilemap, 224, 128, 32, 32),
+        platformer.getSubImage(resources.tilemap, 224, 96, 32, 32)
+    ], true, false);
+    platformer.tiletype.chest = new TileType('chest', [
+        platformer.getSubImage(resources.tilemap, 224, 160, 32, 32)
+    ], false, false);
     platformer.tiletype.stone = new TileType('stone', [
         platformer.getSubImage(resources.tilemap, 256, 64, 32, 32),
         platformer.getSubImage(resources.tilemap, 288, 64, 32, 32),
@@ -614,7 +659,9 @@ platformer.initTiletypes = function(resources){
     ], true);
     platformer.tiletype.grassClump = new TileType('grassClump', [
         platformer.getSubImage(resources.tilemap, 352, 0, 32, 32),
-        platformer.getSubImage(resources.tilemap, 384, 0, 32, 32)
+        platformer.getSubImage(resources.tilemap, 384, 0, 32, 32),
+        platformer.getSubImage(resources.tilemap, 416, 0, 32, 32),
+        platformer.getSubImage(resources.tilemap, 448, 0, 32, 32)
     ], false);
     platformer.tiletype.dirt = new TileType('dirt', [
         platformer.getSubImage(resources.tilemap, 160, 32, 32, 32),
@@ -634,63 +681,83 @@ platformer.initTiletypes = function(resources){
         platformer.getSubImage(resources.tilemap, 288, 0, 32, 32),
         platformer.getSubImage(resources.tilemap, 320, 0, 32, 32)
     ], true);
+    platformer.tiletype.grassEdge = new TileType('grassEdge', [
+        platformer.getSubImage(resources.tilemap, 352, 32, 32, 32),
+        platformer.getSubImage(resources.tilemap, 384, 32, 32, 32)
+    ], false, false);
     platformer.tiletype.spike = new TileType('spike', [
-        platformer.getSubImage(resources.tilemap, 32, 0, 32, 32)
+        platformer.getSubImage(resources.tilemap, 160, 96, 32, 32)
     ], false);
     platformer.tiletype.crate = new TileType('crate', [
-        platformer.getSubImage(resources.tilemap, 64, 0, 32, 32)
+        platformer.getSubImage(resources.tilemap, 64, 0, 32, 32),
+        platformer.getSubImage(resources.tilemap, 32, 0, 32, 32),
+        platformer.getSubImage(resources.tilemap, 96, 0, 32, 32),
+        platformer.getSubImage(resources.tilemap, 128, 0, 32, 32),
+        platformer.getSubImage(resources.tilemap, 256, 96, 32, 32),
+        platformer.getSubImage(resources.tilemap, 288, 96, 32, 32)
     ], true);
     platformer.tiletype.brick = new TileType('brick', [
         platformer.getSubImage(resources.tilemap, 160, 64, 32, 32),
         platformer.getSubImage(resources.tilemap, 192, 64, 32, 32),
         platformer.getSubImage(resources.tilemap, 224, 64, 32, 32)
     ], true);
+    /*
+    platformer.tiletype.brickUnder = new TileType('brickUnder', [
+        platformer.getSubImage(resources.tilemap, 256, 96, 32, 32),
+        platformer.getSubImage(resources.tilemap, 288, 96, 32, 32),
+        platformer.getSubImage(resources.tilemap, 300, 96, 32, 32)
+    ], true);
+    */
 }
 
-platformer.initWeapons = function(){
-    // épée
-    platformer.weapons.sword = new Weapon('sword', platformer.textures.items.sword, {
-        damage : 7.5,
-        knockback : 8,
-        bleeding : 4,
-        range : 50,
-        delay : 400,
-        projectile : false
-    });
-    // couteaux de lancé
-    platformer.weapons.knife = new Weapon('knife', platformer.textures.items.knife, {
-        damage : 7.5,
-        knockback : 4,
-        bleeding : 2.5,
-        range : 200,
-        delay : 500,
-        projectile : true
-    });
-    // arc
-    platformer.weapons.bow = new Weapon('bow', platformer.textures.items.bow, {
-        damage : 8,
-        knockback : 8,
-        bleeding : 4,
-        range : 225,
-        delay : 1000,
-        projectile : true
-    });
-    // fireball spell
-    platformer.weapons.fireballSpell = new Weapon('fireBallSpell', undefined, {
-        damage : 10,
-        knockback : 16,
-        bleeding : 6,
-        range : 400,
-        delay : 1500,
-        projectile : true
-    });
 
-    platformer.weapons.bossFeet = new Weapon('bossFeet', undefined, {
-        damage : 4,
-        knockback : 8,
-        bleeding : 4,
-        range : 25,
-        delay : 1000,
-        projectile : false
-    });
+platformer.initModes = function(){
+    platformer.mode.peaceful = {
+        numCols : 100,
+        numRows : 20,
+
+        crateSpawnChance : 0,
+        hostileSpawnRate : 0,
+        coinBridgeSpawnChance : 0.1,
+        bonusChestSpawnChance : 0.1,
+
+        archerSpawnChance : 0,
+        bossSpawnChance : 0
+    };
+    platformer.mode.easy = {
+        numCols : 100,
+        numRows : 20,
+
+        crateSpawnChance : 0.1,
+        hostileSpawnRate : 0.1,
+        coinBridgeSpawnChance : 0.75,
+        bonusChestSpawnChance : 0.4,
+
+        archerSpawnChance : 0.2,
+        bossSpawnChance : 0
+    };
+    platformer.mode.normal = {
+        numCols : 175,
+        numRows : 20,
+
+        crateSpawnChance : 0.075,
+        hostileSpawnRate : 0.15,
+        coinBridgeSpawnChance : 0.75,
+        bonusChestSpawnChance : 0.4,
+
+        archerSpawnChance : 0.3,
+        bossSpawnChance : 0.1
+    };
+    platformer.mode.hard = {
+        numCols : 275,
+        numRows : 20,
+
+        crateSpawnChance : 0.05,
+        hostileSpawnRate : 0.2,
+        coinBridgeSpawnChance : 0.75,
+        bonusChestSpawnChance : 0.5,
+
+        archerSpawnChance : 0.4,
+        bossSpawnChance : 0.15
+    };
 }
