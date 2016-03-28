@@ -10,7 +10,6 @@ function Game(){
             width : platformer.dimension.w,
             height : platformer.dimension.h
         },
-        fullscreen : platformer.fullscreen,
         scale : true
     };
 
@@ -37,7 +36,7 @@ function Game(){
 
 
         window.addEventListener('resize', function(){
-            if(options.fullscreen){
+            if(platformer.fullscreen){
                 self.fullscreen();
             }
             else{
@@ -117,7 +116,7 @@ function Game(){
         foreground = createCanvas(options.id, 1);
 
 
-        if(options.fullscreen){
+        if(platformer.fullscreen){
             self.fullscreen();
         }
         else{
@@ -168,7 +167,7 @@ function Game(){
         gameWrapper.style.width = width + 'px';
         gameWrapper.style.height = height + 'px';
 
-        if(options.fullscreen){
+        if(platformer.fullscreen){
             document.body.style.overflow = 'hidden';
         }
         else{
@@ -184,24 +183,25 @@ function Game(){
         screenWidth = parseInt(window.getComputedStyle(foreground).width, 10);
         screenHeight = parseInt(window.getComputedStyle(foreground).height, 10);
 
+
         if(typeof platformer.onresize === 'function'){
             platformer.onresize(width, height);
         }
     }
 
     this.toggleFullscreen = function(){
-        (!options.fullscreen) ? this.fullscreen() : this.windowed();
+        (!platformer.fullscreen) ? this.fullscreen() : this.windowed();
     }
 
     this.fullscreen = function(){
         platformer.notify('FULLSCREEN MODE');
-        options.fullscreen = true;
+        platformer.fullscreen = true;
         resizeGameScreen(window.innerWidth, window.innerHeight);
     }
 
     this.windowed = function(){
         platformer.notify('WINDOWED MODE');
-        options.fullscreen = false;
+        platformer.fullscreen = false;
         resizeGameScreen(options.dimension.width, options.dimension.height);
     }
 
