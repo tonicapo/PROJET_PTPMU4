@@ -22,7 +22,8 @@ function Entity(level, position, width, height){
     var knockbackImmune = false;
     var damageImmune = false;
 
-    var rangeBoxHeightRatio = 0.6;
+    var rangeBoxHeightRatio = 3/5;
+    var rangeBoxOffsetY = 0;
 
     var loot = Coin;
 
@@ -75,6 +76,9 @@ function Entity(level, position, width, height){
             if(this.constructor.name == 'Boss' && this.isLaughing()){
                 this.setAnimation(this.animationList.laughing);
             }
+            else if(this.constructor.name == 'Player' && this.isLevelCompleted()){
+                this.setAnimation(this.animationList.victory);
+            }
             else if(this.isAttacking()){
                 var selectedWeapon = this.getSelectedItem();
                 this.setAttacking(false);
@@ -88,7 +92,7 @@ function Entity(level, position, width, height){
                 else if(selectedWeapon.getName() == 'sword'){
                     this.setAnimation(this.animationList.swordAttack);
                 }
-                else if(selectedWeapon.getName() == 'fireBallSpell'){
+                else if(selectedWeapon.getName() == 'fireballSpell'){
                     this.setAnimation(this.animationList.fireBallAttack);
                 }
                 else if(selectedWeapon.getName() == 'bossFeet'){
@@ -150,37 +154,42 @@ function Entity(level, position, width, height){
         var weapon = this.getSelectedItem();
         var rangeBox = this.getRangeBox();
 
-        if(weapon.constructor.name == 'Weapon'){
+        if(typeof weapon !== 'undefined'){
             canAttack = false;
             attacking = true;
 
             if(!weapon.property.projectile){
                 var projectiles = level.getMap().getVisibleItems();
+                var landed = false;
 
                 for(var i in targets){
                     if(!(!rangeBox.intersects(targets[i]) || targets[i].isDead() || targets[i] === this)){
                         this.hit(targets[i], weapon, 0, this.getDirection());
+                        landed = true;
                     }
                 }
 
-                for(var i in projectiles){
-                    if(rangeBox.intersects(projectiles[i]) && projectiles[i].isDeflectable()){
-                        projectiles[i].setStopped(true);
+                if(!landed){
+                    for(var i in projectiles){
+                        if(rangeBox.intersects(projectiles[i]) && projectiles[i].isDeflectable()){
+                            projectiles[i].setStopped(true);
+                        }
                     }
-                }
 
-                // on boucle dans la liste des tiles visibles pour savoir si on a touché un tile cassable
-                var tiles = level.getMap().getVisibleTiles();
+                    // on boucle dans la liste des tiles visibles pour savoir si on a touché un tile cassable
+                    var tiles = level.getMap().getVisibleTiles();
 
-                for(var i = 0, n = tiles.length; i < n; i++){
-                    var tile = tiles[i];
-                    if(tile.isBreakable()){
-                        if(this.getRangeBox().intersects(tile)){
-                            tile.break();
-                            break;
+                    for(var i = 0, n = tiles.length; i < n; i++){
+                        var tile = tiles[i];
+                        if(tile.isBreakable() && !tile.isBroken()){
+                            if(this.getRangeBox().intersects(tile)){
+                                tile.break(self);
+                                break;
+                            }
                         }
                     }
                 }
+
             }
             else{
                 var animDelay = 0;
@@ -230,7 +239,7 @@ function Entity(level, position, width, height){
             amount = 0,
             knockback = 0;
 
-        if(weapon.constructor.name == 'Weapon'){
+        if(typeof weapon !== 'undefined'){
             if(distance > weapon.property.range){
                 modifier = toFloat(distance / weapon.property.range);
             }
@@ -246,13 +255,15 @@ function Entity(level, position, width, height){
         this.setDamage(target, amount, knockback, bloodMultiplier, originDirection);
     }
 
+
     this.setDamage = function(entity, amount, knockback, bloodMultiplier, originDirection){
         if(entity.isDamageImmune()){
             return;
         }
         if(knockback > 0 && !entity.isKnockbackImmune()){
             var vectorX = (originDirection == 1) ? knockback : -knockback;
-            var vectorY = -knockback * 0.8;
+            var vectorY = (!entity.isFalling()) ? -knockback * 0.8 : 0;
+
             entity.setVector(vectorX, vectorY);
         }
 
@@ -365,6 +376,11 @@ function Entity(level, position, width, height){
     * Inventory
     */
 
+    this.clearInventory = function(){
+        inventory = [];
+        this.setSelectedItem(0);
+    }
+
     this.addInventory = function(item){
         inventory.push(item);
     }
@@ -414,7 +430,7 @@ function Entity(level, position, width, height){
 
         offset = (this.getDirection() == 1) ? this.width / 2 : -rangeWidth + this.width / 2;
 
-        return new Rectangle(this.x + offset, this.y, rangeWidth, rangeHeight);
+        return new Rectangle(this.x + offset, this.y + rangeBoxOffsetY, rangeWidth, rangeHeight);
     }
 
     this.renderBox = function(box, ctx, panX, panY){
@@ -452,6 +468,9 @@ function Entity(level, position, width, height){
     this.setRangeBoxHeightRatio = function(r){
         rangeBoxHeightRatio = r;
     }
+    this.setRangeBoxOffsetY = function(r){
+        rangeBoxOffsetY = r;
+    }
 
     this.setLoot = function(l){
         loot = l;
@@ -468,4 +487,5 @@ function Entity(level, position, width, height){
     this.canUseWeapon = function(){ return useWeapon; }
     this.getRangeBoxHeightRatio = function(){ return rangeBoxHeightRatio; }
     this.getLoot = function(){ return loot; }
+    this.getCanAttack = function(){ return canAttack; }
 }

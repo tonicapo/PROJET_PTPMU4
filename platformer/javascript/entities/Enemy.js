@@ -4,7 +4,8 @@ function Enemy(level, position, skin){
     var self = this;
 
     this.setRenderBox(80 * platformer.scale, 64 * platformer.scale);
-    this.setViewBoxOffsetY(Math.abs(this.height - platformer.tileSizeY) + 1);
+    this.setViewBoxOffsetY(Math.abs(this.height - platformer.tileSizeY) + 2);
+    this.setRangeBoxOffsetY(Math.abs(this.height - platformer.tileSizeY) + 2);
 
     this.animationList.idle = new Animation('idle', skin.idle, 1000, { random : true });
     this.animationList.walking = new Animation('walking', skin.walking, 100);
@@ -35,7 +36,7 @@ function Archer(level, position){
 
 
     this.property.speed = 0.1;
-    this.property.stopSpeed = 0.25;
+    this.property.stopSpeed = 0.75;
     this.property.maxSpeed = 2;
     this.property.fallSpeed = 2;
     this.property.maxFallSpeed = 8;
@@ -49,7 +50,7 @@ function Archer(level, position){
     this.property.viewDistance = 500;
 
 
-    this.addInventory(platformer.weapons.bow);
+    this.addInventory(new BowItem(level));
     this.setSelectedItem(0);
 }
 
@@ -64,12 +65,12 @@ function Knight(level, position){
     this.property.jumpHeight = 3;
     this.property.doubleJumpHeight = 4;
     this.property.maxHealth = 12;
-    this.property.baseRange = 20;
+    this.property.baseRange = 25;
     this.property.bleedingChance = 0.15;
     this.property.attackCooldown = 750;
     this.property.reactionTime = 500;
     this.property.viewDistance = 350;
 
-    this.addInventory(platformer.weapons.sword);
+    this.addInventory(new SwordItem(level));
     this.setSelectedItem(0);
 }
