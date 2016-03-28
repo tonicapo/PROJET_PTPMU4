@@ -15,6 +15,7 @@ function BackEnd()
           {
              window.dispatchEvent(playerLogged);
           };
+            console.log('LE COOKIE EXISTE');
     }
     else
     {
@@ -48,6 +49,7 @@ function BackEnd()
 
         };
       } 
+            console.log('LE COOKIE EXISTE PAS');
     }
     
     
