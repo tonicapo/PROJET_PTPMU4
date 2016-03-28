@@ -276,6 +276,15 @@ function MapObject(level, x, y, width, height, animated){
 
             if((typeof topLeftTile !== 'undefined' && topLeftTile.tiletype.solid) || (typeof topRightTile !== 'undefined' && topRightTile.tiletype.solid)){
                 blockedUp = true;
+
+                if(self.constructor.name == 'Player'){
+                    var centerTile = self.getTileAt(self.x + self.width / 2, destY - 1);
+
+                    if(typeof centerTile !== 'undefined' && centerTile.equals(platformer.tiletype.crate)){
+                        centerTile.break();
+                    }
+                }
+
                 self.y = topLeftTile.y + platformer.tileSizeY || topRightTile.y - platformer.tileSizeY;
                 vy = 0;
             }

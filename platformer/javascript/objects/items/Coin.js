@@ -20,7 +20,7 @@ function Valuable(level, position, delay, gravity){
     }
 
 
-    this.setHitBox(11 * platformer.scale, 10 * platformer.scale);
+    this.setHitBox(12 * platformer.scale, 12 * platformer.scale);
     this.setRenderBox(platformer.tileSizeX, platformer.tileSizeY);
 
     this.pickLoot = function(entity){
@@ -34,6 +34,13 @@ function Ruby(level, position, delay, gravity){
     this.animationList.idle = new Animation('idle', platformer.textures.items.ruby, 250);
 
     this.setDropAmount(10);
+}
+
+function Saphir(level, position, delay, gravity){
+    Valuable.call(this, level, position, delay, gravity);
+    this.animationList.idle = new Animation('idle', platformer.textures.items.saphir, 250);
+
+    this.setDropAmount(5);
 }
 
 function Coin(level, position, delay, gravity){

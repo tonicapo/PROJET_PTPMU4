@@ -43,7 +43,7 @@ function Loot(level, position, delay){
     this.render = function(ctx, panX, panY){
         var renderBox = this.getRenderBox();
         ctx.drawImage(this.getTexture(), renderBox.x - panX, renderBox.y - panY, renderBox.width, renderBox.height);
-
+        //this.renderHitBox(ctx, panX, panY);
         //ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
         //ctx.strokeRect(this.x - panX, this.y - panY, this.width, this.height);
     }
