@@ -292,7 +292,7 @@ function LevelState(gsh){
             ctx.save();
             var txt = '+ ' + player.getStat('coins') + ' pièces !';
 
-            ctx.fillStyle = '#40c766';
+            ctx.fillStyle = '#2585b7';
             ctx.fillRect(0, platformer.game.getScreenHeight() / 2 - 40, platformer.game.getScreenWidth(), 80);
 
 
@@ -301,7 +301,7 @@ function LevelState(gsh){
             ctx.lineWidth = 6;
 
 
-            ctx.strokeRect = '#000000';
+            ctx.strokeStyle = '#000000';
             ctx.strokeText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() / 2 + 32);
             ctx.fillStyle = '#FFFFFF';
             ctx.fillText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() / 2 + 32);
@@ -332,7 +332,7 @@ function LevelState(gsh){
 
         timers.addTimer(function(){
             showVictoryMessage = true;
-        }, 1000);
+        }, 3000);
 
         var stats = player.getStats();
         console.log(stats);
@@ -343,7 +343,7 @@ function LevelState(gsh){
 
         timers.addTimer(function(){
             showDeathMessage = true;
-        }, 1000);
+        }, 1500);
 
         /**
         - Ajoute une mort au compteur de mort du player

@@ -19,7 +19,7 @@ window.addEventListener('DOMContentLoaded', function(){
         width : 1378 ,
         height : 700,
 
-        resizeable : false,
+        resizeable : true,
         fullscreen : false,
 
         seed : undefined,
