@@ -35,7 +35,21 @@ window.addEventListener('DOMContentLoaded', function(){
             window.addEventListener('playerdeath', function(e){
               
                 addValueOnDeath(e.detail.stats);
-              console.log(e.detail.stats);
+                
+                exec_request('POST', 'wesh.php',{user_id:42}, function(xhr){
+                    console.log(xhr);
+                });
+             // console.log(e.detail.stats);
+            });
+            
+            document.addEventListener('levelcomplete', function(e){
+              
+                addValueOnDeath(e.detail.stats);
+                
+                exec_request('POST', 'wesh.php',{user_id:42}, function(xhr){
+                    console.log(xhr);
+                });
+             // console.log(e.detail.stats);
             });
         }
       
@@ -57,17 +71,37 @@ window.addEventListener('DOMContentLoaded', function(){
           var xhr = new XMLHttpRequest();
           var tab_stats = tab_element_object(stats);
           xhr.open('GET', 'onplayerdeath.php?valeur='+tab_stats);
-          xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-          xhr.send(JSON.stringify({
-              value: stats
-          }));
+          xhr.send(null);
 
           xhr.addEventListener('readystatechange', function() {
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) { // La constante DONE appartient à l'objet XMLHttpRequest, elle n'est pas globale
-            console.log('FONCTIONNE ON DEATH');
-            document.getElementById('test').innerHTML = xhr.responseText;
+                //console.log('mooooort');
+                return stats;
+                
+            }
+          });
+        }
+      
+        function exec_request(method, file, values, callback)
+        {
+          var xhr = new XMLHttpRequest();
+          xhr.open(method, file);
+            
+            // transformer object avec cle/valeur
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            
+          //xhr.setRequestHeader('Content-Type', 'application/json');
+
+          xhr.send("data="+JSON.stringify(values));
+
+          xhr.addEventListener('readystatechange', function() {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) { // La constante DONE appartient à l'objet XMLHttpRequest, elle n'est pas globale
+                if(typeof callback === 'function')
+                {
+                    callback(xhr);
+                }
             }
           });
         }

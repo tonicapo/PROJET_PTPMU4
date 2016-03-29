@@ -4,7 +4,6 @@ session_start();
 $session = new OnDeath;
 if(isset($_COOKIE['email']) && isset($_GET['valeur']))
 {
-    echo "VOUS ÊTES MORTS.";
     $email = htmlentities($_COOKIE['email']);
     $valeur = htmlentities($_GET['valeur']);
     $session->insert($valeur);

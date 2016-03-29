@@ -1,4 +1,3 @@
-<meta charset="utf-8">
 <?php
 $session = new Session;
 if(isset($_GET['pseudo']) && isset($_GET['motdepasse']) && isset($_GET['type_form']))
@@ -6,7 +5,7 @@ if(isset($_GET['pseudo']) && isset($_GET['motdepasse']) && isset($_GET['type_for
     $email = htmlentities($_GET['pseudo']);
     $type = htmlentities($_GET['type_form']);
     $password = sha1(Session::PWD_SALT.'/'.$email.'/'.htmlentities($_GET['motdepasse']));
-    echo $email.' et mot de passe : '.$password;
+    
     if($session->login($type, $email, $password))
     {
         return true;
@@ -87,6 +86,7 @@ class Session
             
             $select = $pdo->query("SELECT * FROM game_users WHERE email=$email_quote");
             $info_user = $select->fetch();
+            $etat='';
             
             if($type == 'register')
           	{
@@ -94,7 +94,14 @@ class Session
                 echo $password;
                 echo $email_quote;
                 $pdo->query("INSERT INTO game_users SET email=$email_quote, password=$crypt_password");
-                return true;
+                $etat='true';
+                return $etat;
+                session_start();
+                $_SESSION['user_id'] = $info_user['user_id'];
+                $_SESSION['email'] = $email;
+
+                setcookie("email", $_SESSION['email'], time()+3600*24*30*12);  /* expire dans 12 mois */
+                setcookie("id", $_SESSION['user_id'], time()+3600*24*30*12);  /* expire dans 12 mois */
           	}
             elseif($type == 'connexion')
             {
@@ -102,19 +109,31 @@ class Session
                 $info_user = $req->fetch();
                 if($password == $info_user['password'])
                 {
-                    echo "Connexion effectuée";
-                    return true;
+                    session_start();
+                    $_SESSION['user_id'] = $info_user['user_id'];
+                    $_SESSION['email'] = $email;
+
+                    setcookie("email", $_SESSION['email'], time()+3600);  /* expire dans 1 heure */
+                    setcookie("id", $_SESSION['user_id'], time()+3600);  /* expire dans 1 heure */
+                    $etat='true';
+                    echo $etat;
+                }
+                else
+                {
+                    if($info_user['email'])
+                    {
+                        echo "Le mot de passe correspondant à ".$info_user['email']." est inexistant.";
+                    }
+                    else
+                    {
+                        echo "Cette adresse mail est inconnue, veuillez vous inscrire.";
+                    }
+                    $etat='false';
                 }
                 
+                // Faire fichier PHP avec si on l'appelle comme argument l'id du membre, nb victime, nb piece, classement, et adresse mail converti en JSON et echo puis die()
                 
             }
-            
-            session_start();
-            $_SESSION['user_id'] = $info_user['user_id'];
-            $_SESSION['email'] = $email;
-            
-            setcookie("email", $_SESSION['email'], time()+3600);  /* expire dans 1 heure */
-            setcookie("id", $_SESSION['user_id'], time()+3600);  /* expire dans 1 heure */
         }
     }
     

@@ -15,7 +15,6 @@ function BackEnd()
           {
              window.dispatchEvent(playerLogged);
           };
-            console.log('LE COOKIE EXISTE');
     }
     else
     {
@@ -33,23 +32,28 @@ function BackEnd()
           var email = document.getElementById('pseudo_champs').value;
           var motdepasse = document.getElementById('motdepasse_champs').value;
           var type_form = document.getElementById('champs_cache').value;
+        
 
-
-          if(ajaxSend(email,motdepasse,type_form))
-          {
-              console.log('AUCUNE ERREUR');
-            window.dispatchEvent(playerLogged);  
-              this.style.display = 'none';
-          }
-          else
-          {
-              console.log('ERROR');
-              this.reset();
-          }
+          ajaxSend(email,motdepasse,type_form, function(answer){
+              // reponse
+              if(answer.responseText == 'true'){
+                  
+                window.dispatchEvent(playerLogged);  
+                document.getElementById('form_log').style.display = 'none';
+              }
+              else
+              {
+                  document.getElementById('form_log').reset();
+                  var new_ligne = document.createElement('p');
+                  new_ligne.id = "texte_error";
+                  new_ligne.innerHTML = "<p>"+answer.responseText+"</p>";
+                  document.getElementById('form_log').appendChild(new_ligne);
+              }
+          });
+          
 
         };
-      } 
-            console.log('LE COOKIE EXISTE PAS');
+      }
     }
     
     
@@ -88,12 +92,12 @@ function BackEnd()
       change_form();
   }
   
-    function ajaxSend(email, motdepasse, type_form)
+    function ajaxSend(email, motdepasse, type_form, callback)
     {
+        var reponse;
       var xhr = new XMLHttpRequest();
       xhr.open('GET', 'connexion.php?pseudo='+email+'&motdepasse='+motdepasse+'&type_form='+type_form);
       xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
       
       xhr.send(JSON.stringify({
           pseudo_user: email,
@@ -102,10 +106,8 @@ function BackEnd()
       
       xhr.addEventListener('readystatechange', function() {
         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) { // La constante DONE appartient à l'objet XMLHttpRequest, elle n'est pas globale
-        console.log('FONCTIONNE BIEN');
-        document.getElementById('test').innerHTML = xhr.responseText;
             
-        return true;
+        if(typeof callback === 'function') callback(xhr);
         }
       });
     }

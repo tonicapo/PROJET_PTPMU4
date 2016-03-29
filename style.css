@@ -51,3 +51,13 @@ body{
 {
     display:none;
 }
+
+#texte_error
+{
+    color:red;
+    font-weight: 700;
+    font-size: 2vw;
+    font-family: Arial;
+    float:left;
+    
+}
