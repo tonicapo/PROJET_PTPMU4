@@ -80,12 +80,12 @@ function LevelState(gsh){
             if(player.getBonus(bonusNames[i]) > 1){
                 var texture;
                 switch(bonusNames[i]){
-                    case 'speed' : texture = platformer.textures.items.speedPotion[0]; break;
-                    case 'resistance' : texture = platformer.textures.items.resistancePotion[0]; break;
-                    case 'strength' : texture = platformer.textures.items.strengthPotion[0]; break;
+                    case 'speed' : texture = platformer.textures.items.speedPotion[0]; name = 'Vitesse'; break;
+                    case 'resistance' : texture = platformer.textures.items.resistancePotion[0]; name = 'Résistance'; break;
+                    case 'strength' : texture = platformer.textures.items.strengthPotion[0]; name = 'Force'; break;
                 }
                 if(typeof texture !== 'undefined'){
-                    activeEffects.push(texture);
+                    activeEffects.push({ texture : texture, name : name });
                 }
             }
         }
@@ -232,7 +232,15 @@ function LevelState(gsh){
         */
         var y = 48;
         for(var i = 0; i < activeEffects.length; i++){
-            ctx.drawImage(activeEffects[i], 48 - 10 * platformer.scale, 32 * platformer.scale + 48 * 4 + 48 * i, 32 * platformer.scale, 32 * platformer.scale);
+            ctx.drawImage(activeEffects[i].texture, 48 - 10 * platformer.scale, 32 * platformer.scale + 48 * 4 + 48 * i, 32 * platformer.scale, 32 * platformer.scale);
+            ctx.save();
+            ctx.font = '12pt ' + platformer.font;
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 4;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.strokeText(activeEffects[i].name, 48 - 10 * platformer.scale + 32 * platformer.scale + 12, 32 * platformer.scale + 48 * 4 + 48 * i + 32 * platformer.scale / 2 + 14);
+            ctx.fillText(activeEffects[i].name, 48 - 10 * platformer.scale + 32 * platformer.scale + 12, 32 * platformer.scale + 48 * 4 + 48 * i + 32 * platformer.scale / 2 + 14);
+            ctx.restore();
         }
     }
 

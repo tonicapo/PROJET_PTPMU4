@@ -1,4 +1,4 @@
-function Potion(level, position, delay, animationFrames){
+function Potion(level, name, position, delay, animationFrames){
     Loot.call(this, level, position, delay);
 
     this.setHitBox(13 * platformer.scale, 16 * platformer.scale);
@@ -52,21 +52,23 @@ function Potion(level, position, delay, animationFrames){
 
         return false;
     }
+
+    this.getName = function(){ return name; }
 }
 
 
 function HealthPotion(level, position){
-    Potion.call(this, level, position, 100, platformer.textures.items.healthPotion);
+    Potion.call(this, level, 'Santé', position, 100, platformer.textures.items.healthPotion);
 }
 
 function SpeedPotion(level, position){
-    Potion.call(this, level, position, 100, platformer.textures.items.speedPotion);
+    Potion.call(this, level, 'Vitesse', position, 100, platformer.textures.items.speedPotion);
 }
 
 function StrengthPotion(level, position){
-    Potion.call(this, level, position, 100, platformer.textures.items.strengthPotion);
+    Potion.call(this, level, 'Force', position, 100, platformer.textures.items.strengthPotion);
 }
 
 function ResistancePotion(level, position){
-    Potion.call(this, level, position, 100, platformer.textures.items.resistancePotion);
+    Potion.call(this, level, 'Résistance', position, 100, platformer.textures.items.resistancePotion);
 }
