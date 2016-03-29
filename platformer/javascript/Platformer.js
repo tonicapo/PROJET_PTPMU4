@@ -74,7 +74,7 @@ platformer.init = function(id, options){
 
     platformer.loadAssets(platformer.getAssets(), function(resources){
         if(platformer.debug) console.timeEnd('ASSETS_LOAD_TIME');
-
+        
         platformer.initTextures(resources);
         platformer.initBackgrounds(resources);
         platformer.initTiletypes(resources);
@@ -86,7 +86,11 @@ platformer.init = function(id, options){
 
         platformer.game = new Game;
         platformer.game.init();
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> refs/remotes/origin/backend
         if(typeof platformer.onready === 'function'){
             platformer.onready();
         }

@@ -26,6 +26,10 @@ function WorldGeneration(level, test){
 
     var spawnProtection = 5;
     var bossRoomProtection = 10;
+<<<<<<< HEAD
+=======
+    var hostileSpawnRate = 0.2;
+>>>>>>> refs/remotes/origin/backend
     var hostileSpawnDistance = 4;
 
     // paramètres de la carte

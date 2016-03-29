@@ -46,7 +46,11 @@ function Map(level){
         player = level.getPlayer();
 
         world = new WorldGeneration(level, false);
+<<<<<<< HEAD
         world.init({ seed : platformer.seed });
+=======
+        world.init({ seed : platformer.seed, cols : 300, rows : 20 });
+>>>>>>> refs/remotes/origin/backend
 
 
         numCols = world.getNumCols();

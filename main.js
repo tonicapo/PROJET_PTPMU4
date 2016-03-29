@@ -52,6 +52,7 @@ window.addEventListener('DOMContentLoaded', function(){
 
         font : 'silkscreen',
 
+<<<<<<< HEAD
         onready : gameReady,
         onresize : gameResize
     });
@@ -64,6 +65,81 @@ window.addEventListener('DOMContentLoaded', function(){
         // mobile & tablet & support plus petits
         if(window.innerWidth < width || window.innerHeight < height){
             platformer.game.fullscreen();
+=======
+        function gameReady(){
+            window.addEventListener('playerdeath', function(e){
+              
+                addValueOnDeath(e.detail.stats);
+                
+                exec_request('POST', 'wesh.php',{user_id:42}, function(xhr){
+                    console.log(xhr);
+                });
+             // console.log(e.detail.stats);
+            });
+            
+            document.addEventListener('levelcomplete', function(e){
+              
+                addValueOnDeath(e.detail.stats);
+                
+                exec_request('POST', 'wesh.php',{user_id:42}, function(xhr){
+                    console.log(xhr);
+                });
+             // console.log(e.detail.stats);
+            });
+        }
+      
+        function tab_element_object(objet)
+        {
+            var nb_elements = Object.keys(objet).length;
+            var val_object=['coins','kills'];
+            var tab=[];
+            
+            for(var i=0;i<nb_elements;i++)
+            {
+                tab.push(objet[val_object[i]]);
+            }
+            return tab;
+        }
+      
+        function addValueOnDeath(stats)
+        {
+          var xhr = new XMLHttpRequest();
+          var tab_stats = tab_element_object(stats);
+          xhr.open('GET', 'onplayerdeath.php?valeur='+tab_stats);
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+          xhr.send(null);
+
+          xhr.addEventListener('readystatechange', function() {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) { // La constante DONE appartient à l'objet XMLHttpRequest, elle n'est pas globale
+                //console.log('mooooort');
+                return stats;
+                
+            }
+          });
+        }
+      
+        function exec_request(method, file, values, callback)
+        {
+          var xhr = new XMLHttpRequest();
+          xhr.open(method, file);
+            
+            // transformer object avec cle/valeur
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            
+          //xhr.setRequestHeader('Content-Type', 'application/json');
+
+          xhr.send("data="+JSON.stringify(values));
+
+          xhr.addEventListener('readystatechange', function() {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) { // La constante DONE appartient à l'objet XMLHttpRequest, elle n'est pas globale
+                if(typeof callback === 'function')
+                {
+                    callback(xhr);
+                }
+            }
+          });
+>>>>>>> refs/remotes/origin/backend
         }
 
         // centrage sur l'écran pour le mode fenêtré

@@ -3,13 +3,16 @@ function Player(level){
 
     var self = this;
     var stats = { };
+<<<<<<< HEAD
     var levelCompleted = false;
+=======
+>>>>>>> refs/remotes/origin/backend
 
     this.setRenderBox(80 * platformer.scale, 64 * platformer.scale);
     this.setRangeBoxHeightRatio(1);
 
     // events liés au player
-    platformer.events.playerdeath = new CustomEvent('playerdeath');
+    platformer.events.playerdeath = new CustomEvent('playerdeath', {'detail':{'stats':stats}});
     platformer.events.playerkill = new CustomEvent('playerkill');
 
 
@@ -43,8 +46,15 @@ function Player(level){
     this.property.baseRange = 25;
     this.property.bleedingChance = 0.1;
 
+<<<<<<< HEAD
 
     this.setCanDropLoot(false);
+=======
+    this.setCanDropCoin(false);
+    this.addInventory(platformer.weapons.sword);
+    this.addInventory(platformer.weapons.bow);
+    this.addInventory(platformer.weapons.knife);
+>>>>>>> refs/remotes/origin/backend
     this.setSelectedItem(0);
     this.setBloodRatio(1);
     this.setKnockbackImmune(false);
