@@ -357,7 +357,13 @@ platformer.getAssets = function(){
 platformer.initTextures = function(resources){
     // textures
     platformer.textures.gui = { };
-    platformer.textures.gui.healthbar = platformer.getSubImage(resources.tilemap, 0, 256, 160, 20);
+    platformer.textures.gui.healthbar = platformer.getSubImage(resources.tilemap, 0, 256, 192, 46);
+    platformer.textures.gui.arrows = [
+        platformer.getSubImage(resources.tilemap, 256, 128, 11, 6),
+        platformer.getSubImage(resources.tilemap, 256 + 11, 128, 11, 6),
+        platformer.getSubImage(resources.tilemap, 256 + 11 + 11, 128, 6, 11),
+        platformer.getSubImage(resources.tilemap, 256 + 11 + 11 + 6, 128, 6, 11)
+    ];
 
     platformer.textures.entity = { };
     platformer.textures.player = { };
@@ -713,18 +719,33 @@ platformer.initTiletypes = function(resources){
 
 platformer.initModes = function(){
     platformer.mode.peaceful = {
+        name : 'Paisible',
+        text : [
+            'PAISIBLE : Récupérer votre coffre sans risque d\'être troublé...',
+            'Ce mode n\'offre aucune récompense en chemin.'
+        ],
+        killAllMobsToComplete : false,
+
         numCols : 100,
         numRows : 20,
 
         crateSpawnChance : 0,
         hostileSpawnRate : 0,
-        coinBridgeSpawnChance : 0.1,
-        bonusChestSpawnChance : 0.1,
+        coinBridgeSpawnChance : 0,
+        bonusChestSpawnChance : 0,
 
         archerSpawnChance : 0,
-        bossSpawnChance : 0
+        bossSpawnChance : 0,
+        healthRatio : 1
     };
     platformer.mode.easy = {
+        name : 'Facile',
+        text : [
+            'FACILE : Votre or a été dérobé par des créatures maléfiques.',
+            'Vous devez récupérer un maximum de pièces, et retrouver votre coffre...'
+        ],
+        killAllMobsToComplete : false,
+
         numCols : 100,
         numRows : 20,
 
@@ -734,30 +755,48 @@ platformer.initModes = function(){
         bonusChestSpawnChance : 0.4,
 
         archerSpawnChance : 0.2,
-        bossSpawnChance : 0
+        bossSpawnChance : 0,
+        healthRatio : 1
     };
     platformer.mode.normal = {
+        name : 'Normal',
+        text : [
+            'NORMAL : Votre or a été dérobé par des créatures maléfiques.',
+            'Vous devez récupérer un maximum de pièces, éliminer TOUS les voleurs, et retrouver votre coffre...'
+        ],
+        killAllMobsToComplete : true,
+
         numCols : 175,
         numRows : 20,
 
-        crateSpawnChance : 0.075,
+        crateSpawnChance : 0.1,
         hostileSpawnRate : 0.15,
         coinBridgeSpawnChance : 0.75,
         bonusChestSpawnChance : 0.4,
 
         archerSpawnChance : 0.3,
-        bossSpawnChance : 0.1
+        bossSpawnChance : 0.1,
+        healthRatio : 1
     };
     platformer.mode.hard = {
+        name : 'Difficile',
+        text : [
+            'DIFFICILE : Votre or a été dérobé par des créatures maléfiques.',
+            'Vous devez récupérer un maximum de pièces, éliminer TOUS les voleurs, et retrouver votre coffre...',
+            'Ce mode offre le plus d\'opportunités de trouver de l\'or. Pour les plus expérimentés.'
+        ],
+        killAllMobsToComplete : true,
+
         numCols : 275,
         numRows : 20,
 
-        crateSpawnChance : 0.05,
+        crateSpawnChance : 0.1,
         hostileSpawnRate : 0.2,
-        coinBridgeSpawnChance : 0.75,
+        coinBridgeSpawnChance : 0.8,
         bonusChestSpawnChance : 0.5,
 
         archerSpawnChance : 0.4,
-        bossSpawnChance : 0.15
+        bossSpawnChance : 0.15,
+        healthRatio : 1.5
     };
 }

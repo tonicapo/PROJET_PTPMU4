@@ -11,7 +11,7 @@ function GameStateHandler(){
         // on charge les stages du jeu et on initialise le premier
         states.push(new MenuState(this));
         states.push(new LevelState(this));
-        this.setState(1);
+        this.setState(0);
 
 
         window.addEventListener('keyup', function(e){

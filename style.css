@@ -4,6 +4,12 @@ body{
 }
 
 @font-face{
+    font-family: 'Minecraftia-Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: url(./platformer/resources/fonts/Minecraftia-Regular.ttf);
+}
+@font-face{
     font-family: 'silkscreen';
     font-style: normal;
     font-weight: normal;
