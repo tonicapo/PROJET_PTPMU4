@@ -34,7 +34,6 @@ function Enemy(level, position, skin){
 function Archer(level, position){
     Enemy.call(this, level, position, platformer.textures.skeleton_archer);
 
-
     this.property.speed = 0.1;
     this.property.stopSpeed = 0.75;
     this.property.maxSpeed = 2;
@@ -45,8 +44,8 @@ function Archer(level, position){
     this.property.maxHealth = 7.5;
     this.property.baseRange = 100;
     this.property.bleedingChance = 0.3;
-    this.property.attackCooldown = 1000;
-    this.property.reactionTime = 500;
+    this.property.attackCooldown = 750;
+    this.property.reactionTime = 450;
     this.property.viewDistance = 500;
 
 
@@ -67,7 +66,7 @@ function Knight(level, position){
     this.property.maxHealth = 12;
     this.property.baseRange = 25;
     this.property.bleedingChance = 0.15;
-    this.property.attackCooldown = 750;
+    this.property.attackCooldown = 700;
     this.property.reactionTime = 500;
     this.property.viewDistance = 350;
 

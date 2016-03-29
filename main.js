@@ -1,31 +1,6 @@
-/**
-    TODO:
-    Animations :
-    - boss (mort / attaque)
-    - fond menu
-    - titre du jeu
-    - variantes de caisses
-    - boule de feu
-    - effets de potion / boule de feu
-    - animation victoire player ???
-
-    Génération de map :
-    - fin de niveau (passage dans une certaine zone)
-    - ajouter random boss sur le niveau
-
-    Gameplay :
-    - difficulté (facile, moyen, difficile)
-
-    Interface :
-    - menu et options
-    - changement des touches
-    - sélection de la difficulté
-
-    BackEnd :
-    - envoyer les stats
-    - se logger
+/****
+* Personnalisation du jeu
 */
-
 window.addEventListener('DOMContentLoaded', function(){
 
     var gameID = 'bloodAndGuts';
@@ -40,7 +15,7 @@ window.addEventListener('DOMContentLoaded', function(){
 
     platformer.init(gameID, {
         title : 'Blood & Guts',
-        debug : true,
+        debug : false,
 
         width : 1440,
         height : 700,
@@ -50,7 +25,7 @@ window.addEventListener('DOMContentLoaded', function(){
 
         seed : undefined,
 
-        font : 'silkscreen',
+        font : 'Minecraftia-Regular',
 
         onready : gameReady,
         onresize : gameResize

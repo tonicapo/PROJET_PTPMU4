@@ -39,7 +39,8 @@ function Map(level){
 
         breakableTiles,
 
-        chest;
+        chest,
+        entitiesCount;
 
 
     this.init = function(){
@@ -59,6 +60,7 @@ function Map(level){
 
         spawn = world.getSpawn();
         player.setSpawn(spawn.x, spawn.y);
+
         // arme par défaut
         if(platformer.difficulty != platformer.mode.peaceful){
             level.spawnLoot(new SwordItem(level, getPositionAtCoord(spawn.x + 1, spawn.y)));
@@ -70,7 +72,9 @@ function Map(level){
 
         // spawn des entités
         var entities = world.getEntities();
-        for(var i = 0, n = entities.length; i < n; i++){
+        entitiesCount = entities.length;
+
+        for(var i = 0; i < entitiesCount; i++){
             level.spawnEntity(entities[i]);
         }
 
@@ -271,6 +275,7 @@ function Map(level){
     this.getTilemap = function(){ return tilemap; }
     this.getNumCols = function(){ return numCols; }
     this.getNumRows = function(){ return numRows; }
+    this.getEntitiesCount = function(){ return entitiesCount; }
 
     this.getVisibleItems = function(){ return renderlist.items; }
     this.getVisibleTiles = function(){ return renderlist.tiles; }

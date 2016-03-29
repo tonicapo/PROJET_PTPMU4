@@ -13,6 +13,7 @@ function Animation(id, frames, speed, options){
     var time;
     var playedOnce;
 
+
     var size = frames.length;
 
     this.play = function(){
@@ -37,7 +38,7 @@ function Animation(id, frames, speed, options){
     }
 
     this.update = function(){
-        time = time || timestamp();
+        time = (typeof time !== 'undefined') ? time : timestamp();
 
         if(size > 1 && !paused && timestamp() - time >= speed && ((!playedOnce && cancelable == false) || (loop == true && cancelable == true))){
             time = timestamp();

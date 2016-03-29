@@ -4,7 +4,7 @@ function FireBall(level, originEntity, targets, position, direction){
     var self = this;
     var focusedEntity;
 
-    var range = 600;
+    var range = 700;
 
     this.animationList.moving = new Animation('moving', platformer.textures.items.fireBallMoving, 50);
     this.animationList.idle = new Animation('idle', platformer.textures.items.fireBallIdle, 50);

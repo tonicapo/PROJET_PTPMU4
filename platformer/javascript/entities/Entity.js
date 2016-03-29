@@ -81,7 +81,7 @@ function Entity(level, position, width, height){
             }
             else if(this.isAttacking()){
                 var selectedWeapon = this.getSelectedItem();
-                this.setAttacking(false);
+
 
                 if(selectedWeapon.getName() == 'bow'){
                     this.setAnimation(this.animationList.bowAttack);
@@ -92,12 +92,14 @@ function Entity(level, position, width, height){
                 else if(selectedWeapon.getName() == 'sword'){
                     this.setAnimation(this.animationList.swordAttack);
                 }
-                else if(selectedWeapon.getName() == 'fireballSpell'){
+                else if(selectedWeapon.getName() == 'fireBallSpell'){
                     this.setAnimation(this.animationList.fireBallAttack);
                 }
                 else if(selectedWeapon.getName() == 'bossFeet'){
                     this.setAnimation(this.animationList.bossFeet);
                 }
+
+                this.setAttacking(false);
             }
             else if(this.isJumping()){
                 if(this.isDoubleJumping()){
@@ -297,7 +299,7 @@ function Entity(level, position, width, height){
 
         self.setDamage(self, damageAmount * 0.25, 0, 0.25, 3);
 
-        if(self.getHealth() <= minHealthValue && self.isBleeding()){
+        if(self.getHealth() <= minHealthValue && self.isBleeding() && !self.isDead()){
             self.setHealth(minHealthValue);
             self.setBleeding(false);
         }

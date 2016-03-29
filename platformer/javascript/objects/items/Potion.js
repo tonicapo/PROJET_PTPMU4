@@ -39,13 +39,13 @@ function Potion(level, position, delay, animationFrames){
         }
         else if(this.constructor.name == 'StrengthPotion'){
             if(entity.getBonus('strength') == 1){
-                entity.setBonus('strength', 1.5, 5000);
+                entity.setBonus('strength', 1.5, 7500);
                 return true;
             }
         }
         else if(this.constructor.name == 'ResistancePotion'){
             if(entity.getBonus('resistance') == 1){
-                entity.setBonus('resistance', 1.5, 5000);
+                entity.setBonus('resistance', 1.5, 7500);
                 return true;
             }
         }

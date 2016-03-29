@@ -33,7 +33,7 @@ function Ruby(level, position, delay, gravity){
     Valuable.call(this, level, position, delay, gravity);
     this.animationList.idle = new Animation('idle', platformer.textures.items.ruby, 250);
 
-    this.setDropAmount(10);
+    this.setDropAmount(15);
 }
 
 function Saphir(level, position, delay, gravity){

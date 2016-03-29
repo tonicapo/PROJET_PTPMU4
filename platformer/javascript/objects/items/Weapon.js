@@ -44,6 +44,7 @@ function Weapon(level, name, position, delay, animationFrames, options){
     }
 
     this.getName = function(){ return name; }
+    this.getTexture = function(){ return animationFrames[0]; }
 }
 
 
@@ -82,7 +83,7 @@ function KnifeItem(level, position){
 
 function BossFeetItem(level, position){
     Weapon.call(this, level, 'bossFeet', position, 100, platformer.textures.items.bossFeet, {
-        damage : 4,
+        damage : 8,
         knockback : 8,
         bleeding : 4,
         range : 0,

@@ -416,7 +416,7 @@ function WorldGeneration(level, test){
             }
         }
 
-        platformer.notify('Knight : ' + kc + ', Archer : ' + ac + ', Boss : ' + bc);
+        //platformer.notify('Knight : ' + kc + ', Archer : ' + ac + ', Boss : ' + bc);
     }
 
 

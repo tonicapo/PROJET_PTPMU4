@@ -5,7 +5,11 @@ function LevelState(gsh){
         objects,
         timers,
         winZone,
-        chest;
+        chest,
+        bonusNames,
+        activeEffects,
+        entitiesCount,
+        remainingEntities;
 
     this.init = function(){
         self = this;
@@ -19,6 +23,7 @@ function LevelState(gsh){
         }
 
         timers = new TimerManager;
+
         objects = {};
         objects.particles = new ArrayList;
         objects.entities = new ArrayList;
@@ -35,9 +40,13 @@ function LevelState(gsh){
         player.init();
         player.setDirection(1);
 
+        bonusNames = Object.keys(player.getEachBonus())
+
         // premier plan
         map = new Map(this);
         map.init();
+
+        entitiesCount = map.getEntitiesCount();
 
         // arrière plan
         background = new Background('#b4eaf4', platformer.textures.background);
@@ -45,6 +54,8 @@ function LevelState(gsh){
 
         chest = map.getChest();
 
+
+        activeEffects = [];
         /**
         * Zone de fin
         */
@@ -62,9 +73,32 @@ function LevelState(gsh){
 
         player.update();
 
+        remainingEntities = getRemainingEntitiesLength();
+
+        activeEffects = [];
+        for(var i = 0; i < bonusNames.length; i++){
+            if(player.getBonus(bonusNames[i]) > 1){
+                var texture;
+                switch(bonusNames[i]){
+                    case 'speed' : texture = platformer.textures.items.speedPotion[0]; break;
+                    case 'resistance' : texture = platformer.textures.items.resistancePotion[0]; break;
+                    case 'strength' : texture = platformer.textures.items.strengthPotion[0]; break;
+                }
+                if(typeof texture !== 'undefined'){
+                    activeEffects.push(texture);
+                }
+            }
+        }
+
+        /**
+        * on vérifie si le jeu est terminé
+        */
         if(!(!player.intersects(winZone) || player.isLevelCompleted() || player.isFalling())){
-            player.setLevelCompleted();
-            window.dispatchEvent(platformer.events.levelcomplete);
+            var killCondition = platformer.difficulty.killAllMobsToComplete;
+            if(!killCondition || (killCondition && remainingEntities <= 0)){
+                player.setLevelCompleted();
+                window.dispatchEvent(platformer.events.levelcomplete);
+            }
         }
     }
 
@@ -125,25 +159,81 @@ function LevelState(gsh){
 
     this.getPlayer = function(){ return player; }
 
+    function getRemainingEntitiesLength(){
+        var c = 0;
+        var list = self.getEntities();
+
+        for(var i in list){
+            if(typeof list[i] !== 'undefined' && !list[i].isDead()){
+                c++;
+            }
+        }
+
+        return c;
+    }
+
     function drawWinZone(ctx){
         ctx.fillStyle = '#000';
         ctx.strokeRect(winZone.x - map.getPanX(), winZone.y - map.getPanY(), winZone.width, winZone.height);
     }
 
     function renderGui(ctx){
-        var maxHealth = 160 * platformer.scale - 6;
+        /**
+        * VIE DU JOUEUR
+        */
+        var maxHealth = 153 * platformer.scale;
         var health = player.getHealth() * maxHealth / player.property.maxHealth;
-        // Barre de vie
+
+
         ctx.save();
         if(health < maxHealth){
             ctx.fillStyle = '#d2d2d2';
-            ctx.fillRect(48 + 3, 48 + 3, 160 * platformer.scale - 6, 20 * platformer.scale - 6);
+            ctx.fillRect(48 + 25 * platformer.scale + 3, 48 + 3, 160 * platformer.scale - 6, 20 * platformer.scale - 6);
         }
         ctx.fillStyle = '#ed5050';
-        ctx.fillRect(48 + 3, 48 + 3, health, 20 * platformer.scale - 6);
+        ctx.fillRect(48 + 25 * platformer.scale + 3, 48 + 3, health, 20 * platformer.scale - 6);
         ctx.restore();
 
-        ctx.drawImage(platformer.textures.gui.healthbar, 48, 48, 160 * platformer.scale, 20 * platformer.scale);
+        ctx.drawImage(platformer.textures.gui.healthbar, 48, 48, 192 * platformer.scale, 46 * platformer.scale);
+
+
+        /**
+        * STATS
+        */
+        ctx.save();
+        var x = 48 + 25 * platformer.scale + 3;
+        var y = 48 + 46 + 27 + 28;
+        var strokeSize = 2;
+
+        ctx.font = '20pt ' + platformer.font;
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 5;
+        ctx.fillStyle = '#FFFFFF';
+        // pièces
+        ctx.strokeText(player.getStat('coins'), x, y);
+        ctx.fillText(player.getStat('coins'), x, y);
+        if(platformer.difficulty != platformer.mode['peaceful']){
+            // kills
+            ctx.strokeText(remainingEntities + '/' + entitiesCount, x + 128, y);
+            ctx.fillText(remainingEntities + '/' + entitiesCount, x + 128, y);
+        }
+        ctx.restore();
+
+        /**
+        * ARMES EQUIPEE
+        */
+        var weapon = player.getSelectedItem();
+        if(typeof weapon !== 'undefined'){
+            ctx.drawImage(weapon.getTexture(), 48 - 3 * platformer.scale, 48 * 4, 32 * platformer.scale, 32 * platformer.scale);
+        }
+
+        /**
+        * EFFETS DE POTION
+        */
+        var y = 48;
+        for(var i = 0; i < activeEffects.length; i++){
+            ctx.drawImage(activeEffects[i], 48 - 10 * platformer.scale, 32 * platformer.scale + 48 * 4 + 48 * i, 32 * platformer.scale, 32 * platformer.scale);
+        }
     }
 
     onetime(window, 'levelcomplete', function(e){

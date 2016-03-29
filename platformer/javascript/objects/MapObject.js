@@ -405,7 +405,10 @@ function MapObject(level, x, y, width, height, animated){
         return bonus[name];
     }
 
-
+    this.getEachBonus = function(){
+        return bonus;
+    }
+    
     // getters
     this.isBlockedLeft = function(){ return blockedLeft; }
     this.isBlockedRight = function(){ return blockedRight; }
