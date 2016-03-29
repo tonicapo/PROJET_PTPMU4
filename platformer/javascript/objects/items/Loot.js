@@ -42,7 +42,7 @@ function Loot(level, position, delay){
 
     this.render = function(ctx, panX, panY){
         var renderBox = this.getRenderBox();
-        ctx.drawImage(this.getTexture(), renderBox.x - panX, renderBox.y - panY, renderBox.width, renderBox.height);
+        ctx.drawImage(this.getTexture(), Math.floor(renderBox.x - panX), Math.floor(renderBox.y - panY), renderBox.width, renderBox.height);
         //this.renderHitBox(ctx, panX, panY);
         //ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
         //ctx.strokeRect(this.x - panX, this.y - panY, this.width, this.height);
@@ -51,12 +51,12 @@ function Loot(level, position, delay){
     this.renderHitBox = function(ctx, panX, panY){
         var hitBox = this.getHitBox();
         ctx.strokeStyle = '#000';
-        ctx.strokeRect(hitBox.x - panX, hitBox.y - panY, hitBox.width, hitBox.height);
+        ctx.strokeRect(Math.floor(hitBox.x - panX), Math.floor(hitBox.y - panY), hitBox.width, hitBox.height);
     }
 
     this.renderDimension = function(ctx, panX, panY){
         ctx.strokeStyle = 'red';
-        ctx.strokeRect(this.x - panX, this.y - panY, this.width, this.height);
+        ctx.strokeRect(Math.floor(this.x - panX), Math.floor(this.y - panY), this.width, this.height);
     }
 
     this.isPickable = function(){

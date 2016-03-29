@@ -61,7 +61,7 @@ function SwordItem(level, position){
 
 function BowItem(level, position){
     Weapon.call(this, level, 'bow', position, 100, platformer.textures.items.bow, {
-        damage : 8,
+        damage : 10,
         knockback : 8,
         bleeding : 4,
         range : 225,
@@ -73,7 +73,7 @@ function BowItem(level, position){
 function KnifeItem(level, position){
     Weapon.call(this, level, 'knife', position, 100, platformer.textures.items.knife, {
         damage : 7.5,
-        knockback : 6,
+        knockback : 3,
         bleeding : 2.5,
         range : 200,
         delay : 500,
@@ -95,9 +95,9 @@ function BossFeetItem(level, position){
 function FireBallSpellItem(level, position){
     Weapon.call(this, level, 'fireBallSpell', position, 100, platformer.textures.items.fireBallSpell, {
         damage : 10,
-        knockback : 16,
-        bleeding : 6,
-        range : 500,
+        knockback : 14,
+        bleeding : 5,
+        range : 400,
         delay : 1500,
         projectile : true
     });

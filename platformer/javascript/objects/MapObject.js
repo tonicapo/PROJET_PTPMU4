@@ -86,13 +86,13 @@ function MapObject(level, x, y, width, height, animated){
 
         ctx.save();
         ctx.scale((direction == 0) ? -1 : 1, 1);
-        ctx.drawImage(this.getTexture(), posX, renderBox.y - panY, renderBox.width, renderBox.height);
+        ctx.drawImage(this.getTexture(), Math.floor(posX), Math.floor(renderBox.y - panY), renderBox.width, renderBox.height);
         ctx.restore();
     }
 
     this.draw = function(ctx, panX, panY){
         ctx.strokeStyle = this.getColor();
-        ctx.strokeRect(this.x - panX, this.y - panY, this.width, this.height);
+        ctx.strokeRect(Math.floor(this.x - panX), Math.floor(this.y - panY), this.width, this.height);
     }
 
     function fixBounds(){
@@ -408,7 +408,7 @@ function MapObject(level, x, y, width, height, animated){
     this.getEachBonus = function(){
         return bonus;
     }
-    
+
     // getters
     this.isBlockedLeft = function(){ return blockedLeft; }
     this.isBlockedRight = function(){ return blockedRight; }

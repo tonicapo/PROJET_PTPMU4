@@ -8,10 +8,6 @@ function Player(level){
     this.setRenderBox(80 * platformer.scale, 64 * platformer.scale);
     this.setRangeBoxHeightRatio(1);
 
-    // events liés au player
-    platformer.events.playerdeath = new CustomEvent('playerdeath');
-    platformer.events.playerkill = new CustomEvent('playerkill');
-
 
     this.animationList.idle = new Animation('idle', platformer.textures.player.idle, 1000, { random : true });
     this.animationList.walking = new Animation('walking', platformer.textures.player.walking, 100);

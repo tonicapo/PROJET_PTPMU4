@@ -29,7 +29,7 @@ function Boss(level, position){
     this.animationList.falling = new Animation('falling', platformer.textures.boss.falling, 1000);
 
     this.animationList.fireBallAttack = new Animation('fireBallAttack', platformer.textures.boss.fireBallAttack, 250, { cancelable : true });
-    this.animationList.bossFeet = new Animation('bossFeet', platformer.textures.boss.bossFeet, 400, { cancelable : false });
+    this.animationList.bossFeet = new Animation('bossFeet', platformer.textures.boss.bossFeet, 200, { cancelable : false });
 
     this.animationList.deadIdle = new Animation('deadIdle', platformer.textures.boss.deadIdle, 100, { loop : false, cancelable : false });
     this.animationList.deadFalling = new Animation('deadFalling', platformer.textures.boss.deadFalling, 0, { loop : false, cancelable : true });

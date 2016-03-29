@@ -4,8 +4,6 @@ function MenuState(gsh){
         'Mode de jeu'
     ];
 
-    var timers;
-
     var modes = Object.keys(platformer.mode);
 
     var selectedChoice;
@@ -17,6 +15,7 @@ function MenuState(gsh){
 
     var background;
 
+    var coin;
 
     this.init = function(){
         var storedMode = parseInt(JSON.parse(localStorage.getItem('platformer_difficulty')));
@@ -26,10 +25,8 @@ function MenuState(gsh){
 
         selectedChoice = 0;
 
-        timers = new TimerManager;
-
+        // render
         logoPosY = 0;
-
         background = new Background('#000000', null);
         background.init();
     }
@@ -38,8 +35,6 @@ function MenuState(gsh){
         targetLogoPosY = platformer.game.getScreenHeight() / 2 - logoHeight;
         if(logoPosY < targetLogoPosY) logoPosY = lerp(logoPosY, targetLogoPosY, 0.05);
         else logoPosY = targetLogoPosY;
-
-        timers.update();
     }
 
     this.render = function(ctx){
@@ -53,9 +48,13 @@ function MenuState(gsh){
         */
         ctx.save();
         ctx.font = '12pt ' + platformer.font;
-        ctx.textAlign = 'left';
         ctx.fillStyle = '#dadada';
-        ctx.fillText('', 48, 48);
+        ctx.fillText('Nom du compte', 48, 48);
+        ctx.font = '10pt ' + platformer.font;
+        ctx.fillStyle = '#757575';
+        ctx.fillText('Total pièces : 0', 48, 48 + 32);
+        ctx.fillText('Total victimes : 0', 48, 48 + 32 * 2);
+        ctx.fillText('Classement : 1er', 48, 48 + 32 * 4);
         ctx.restore();
 
         /**
@@ -85,7 +84,7 @@ function MenuState(gsh){
                 // cadre
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.075)';
                 ctx.fillRect(platformer.game.getScreenWidth() / 2 - 100, menuY + i * 64 - 48, 200, 48);
-                ctx.strokeStyle = '#A6374B';
+                ctx.strokeStyle = '#c74040';
                 ctx.strokeRect(platformer.game.getScreenWidth() / 2 - 100, menuY + i * 64 - 48, 200, 48);
 
                 ctx.fillStyle = '#dadada';
@@ -114,7 +113,7 @@ function MenuState(gsh){
         * SYNOPSIS
         */
         ctx.save();
-        ctx.font = '12pt ' + platformer.font;
+        ctx.font = '10pt ' + platformer.font;
         ctx.textAlign = 'center';
         ctx.fillStyle = '#757575';
         for(var j = 0; j < platformer.difficulty.text.length; j++){

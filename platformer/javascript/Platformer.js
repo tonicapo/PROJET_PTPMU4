@@ -372,11 +372,7 @@ platformer.initTextures = function(resources){
         platformer.getSubImage(resources.player, 80, 0, 80, 64)
     ];
     platformer.textures.player.victory = [
-        platformer.getSubImage(resources.player, 0, 384, 80, 64),
-        platformer.getSubImage(resources.player, 0, 0, 80, 64),
-        platformer.getSubImage(resources.player, 0, 0, 80, 64),
-        platformer.getSubImage(resources.player, 0, 384, 80, 64),
-        platformer.getSubImage(resources.player, 0, 0, 80, 64)
+        platformer.getSubImage(resources.player, 0, 384, 80, 64)
     ];
     platformer.textures.player.doubleJumping = [
         platformer.getSubImage(resources.player, 0, 0, 80, 64),
@@ -770,7 +766,7 @@ platformer.initModes = function(){
         numRows : 20,
 
         crateSpawnChance : 0.1,
-        hostileSpawnRate : 0.15,
+        hostileSpawnRate : 0.16,
         coinBridgeSpawnChance : 0.75,
         bonusChestSpawnChance : 0.4,
 

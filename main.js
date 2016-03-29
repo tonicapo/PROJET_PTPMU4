@@ -11,17 +11,16 @@ window.addEventListener('DOMContentLoaded', function(){
     gameWrapper.style.position = 'relative';
     document.body.appendChild(gameWrapper);
 
-    // seed avec boss : '2372287575'
 
     platformer.init(gameID, {
         title : 'Blood & Guts',
         debug : false,
 
-        width : 1440,
+        width : 1378 ,
         height : 700,
 
-        resizeable : true,
-        fullscreen : true,
+        resizeable : false,
+        fullscreen : false,
 
         seed : undefined,
 

@@ -205,7 +205,7 @@ function Map(level){
 
         // test
         panX = parseInt(lerp(panX, targetPanX, 0.075), 10);
-        panY = parseInt(lerp(panY, targetPanY, 0.075), 10);
+        panY = parseInt(lerp(panY, targetPanY, 0.025), 10);
 
 
         tileAcrossX = parseInt(screenWidth / platformer.tileSizeX + 2);

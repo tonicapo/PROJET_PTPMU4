@@ -1,5 +1,5 @@
 function LevelState(gsh){
-    var self,
+    var self = this,
         map,
         player,
         objects,
@@ -11,12 +11,19 @@ function LevelState(gsh){
         entitiesCount,
         remainingEntities;
 
-    this.init = function(){
-        self = this;
+    var showVictoryMessage;
+    var showDeathMessage;
 
-        // events généraux
-        platformer.events.levelcomplete = new CustomEvent('levelcomplete');
-        platformer.events.levelstart = new CustomEvent('levelstart');
+    // events généraux
+    platformer.events.levelcomplete = new CustomEvent('levelcomplete');
+    platformer.events.levelstart = new CustomEvent('levelstart');
+    // events liés au player
+    platformer.events.playerdeath = new CustomEvent('playerdeath');
+
+    this.init = function(){
+        showVictoryMessage = false;
+        showDeathMessage = false;
+
 
         if(typeof timers !== 'undefined'){
             timers.empty();
@@ -62,9 +69,16 @@ function LevelState(gsh){
         var c = chest.getCenter();
         winZone = new Rectangle(c.x - platformer.tileSizeX - chest.width / 2, c.y - platformer.tileSizeY - chest.width / 2, platformer.tileSizeX * 2 + chest.width, platformer.tileSizeY * 2 + chest.height);
 
+        /**
+        * Listener
+        */
+        onetime(window, 'levelcomplete', handleLevelCompleted);
+        onetime(window, 'playerdeath', handlePlayerDeath);
+
+
 
         // lancement du jeu
-        document.dispatchEvent(platformer.events.levelstart);
+        window.dispatchEvent(platformer.events.levelstart);
     }
 
     this.update = function(){
@@ -106,6 +120,7 @@ function LevelState(gsh){
         map.render(ctx);
         renderGui(ctx);
         //drawWinZone(ctx);
+        renderMessages(ctx);
     }
 
     this.renderBackground = function(ctx){
@@ -188,7 +203,7 @@ function LevelState(gsh){
         ctx.save();
         if(health < maxHealth){
             ctx.fillStyle = '#d2d2d2';
-            ctx.fillRect(48 + 25 * platformer.scale + 3, 48 + 3, 160 * platformer.scale - 6, 20 * platformer.scale - 6);
+            ctx.fillRect(48 + 25 * platformer.scale + 3, 48 + 3, 153 * platformer.scale, 20 * platformer.scale - 6);
         }
         ctx.fillStyle = '#ed5050';
         ctx.fillRect(48 + 25 * platformer.scale + 3, 48 + 3, health, 20 * platformer.scale - 6);
@@ -244,7 +259,58 @@ function LevelState(gsh){
         }
     }
 
-    onetime(window, 'levelcomplete', function(e){
+    function renderMessages(ctx){
+        /**
+        * Message de mort
+        */
+        if(showDeathMessage){
+            ctx.save();
+            var txt = 'Game Over';
+
+            ctx.fillStyle = '#c74040';
+            ctx.fillRect(0, platformer.game.getScreenHeight() / 2 - 40, platformer.game.getScreenWidth(), 80);
+
+
+            ctx.font = '32px ' + platformer.font;
+            ctx.textAlign = 'center';
+            ctx.lineWidth = 6;
+
+
+            ctx.strokeStyle = '#000000';
+            ctx.strokeText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() / 2 + 32);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() / 2 + 32);
+
+            ctx.restore();
+        }
+
+
+        /**
+        * Message de victoire
+        */
+        if(showVictoryMessage){
+            ctx.save();
+            var txt = '+ ' + player.getStat('coins') + ' pièces !';
+
+            ctx.fillStyle = '#40c766';
+            ctx.fillRect(0, platformer.game.getScreenHeight() / 2 - 40, platformer.game.getScreenWidth(), 80);
+
+
+            ctx.font = '32px ' + platformer.font;
+            ctx.textAlign = 'center';
+            ctx.lineWidth = 6;
+
+
+            ctx.strokeRect = '#000000';
+            ctx.strokeText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() / 2 + 32);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() / 2 + 32);
+
+            ctx.restore();
+        }
+    }
+
+    function handleLevelCompleted(e){
         e.stopPropagation();
 
         // tue toutes les entités
@@ -262,23 +328,26 @@ function LevelState(gsh){
         - Envoyer le nombre de kills
         */
 
+        platformer.seed = undefined;
+
+        timers.addTimer(function(){
+            showVictoryMessage = true;
+        }, 1000);
+
         var stats = player.getStats();
         console.log(stats);
-    });
+    }
 
-
-    /**
-    * Events
-    */
-
-    /*
-    * TODO : durée de jeu
-    */
-    onetime(window, 'playerdeath', function(e){
+    function handlePlayerDeath(e){
         e.stopPropagation();
+
+        timers.addTimer(function(){
+            showDeathMessage = true;
+        }, 1000);
+
         /**
         - Ajoute une mort au compteur de mort du player
         */
-        console.log('Player died');
-    });
+
+    }
 }

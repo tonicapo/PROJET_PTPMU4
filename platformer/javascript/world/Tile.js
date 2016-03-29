@@ -16,7 +16,7 @@ function Tile(level, tiletype, position, opacity, metadata){
     this.render = function(ctx, panX, panY){
         //ctx.save();
         //ctx.globalAlpha = this.opacity;
-        ctx.drawImage(this.tiletype.textures[this.metadata], this.x - panX, this.y - panY, this.width, this.height);
+        ctx.drawImage(this.tiletype.textures[this.metadata], Math.floor(this.x - panX), Math.floor(this.y - panY), this.width, this.height);
         //ctx.restore();
     }
 

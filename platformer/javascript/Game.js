@@ -131,7 +131,7 @@ function Game(){
 
         element.setAttribute('id', id);
         element.style.imageRendering = 'pixelated';
-        element.mozOpaque = true;
+        element.mozOpaque = false;
 
         element.style.position = 'absolute';
         element.style.top = '0px';
