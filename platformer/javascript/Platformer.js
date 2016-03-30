@@ -673,9 +673,7 @@ platformer.initTiletypes = function(resources){
         platformer.getSubImage(resources.tilemap, 224, 128, 32, 32),
         platformer.getSubImage(resources.tilemap, 224, 96, 32, 32)
     ], true, false);
-    platformer.tiletype.chest = new TileType('chest', [
-        platformer.textures.tile.chest
-    ], false, false);
+    platformer.tiletype.chest = new TileType('chest', platformer.textures.tile.chest, false, false);
     platformer.tiletype.stone = new TileType('stone', [
         platformer.getSubImage(resources.tilemap, 256, 64, 32, 32),
         platformer.getSubImage(resources.tilemap, 288, 64, 32, 32),
@@ -751,7 +749,7 @@ platformer.initModes = function(){
         crateSpawnChance : 0,
         hostileSpawnRate : 0,
         coinBridgeSpawnChance : 0,
-        bonusChestSpawnChance : 0,
+        bonusChestSpawnChance : 0.1,
 
         archerSpawnChance : 0,
         bossSpawnChance : 0,
@@ -776,7 +774,7 @@ platformer.initModes = function(){
 
         archerSpawnChance : 0.2,
         bossSpawnChance : 0,
-        healthRatio : 1,
+        healthRatio : 0.75,
         reactionTimeRatio : 1
     };
     platformer.mode.normal = {
@@ -797,7 +795,7 @@ platformer.initModes = function(){
 
         archerSpawnChance : 0.3,
         bossSpawnChance : 0.1,
-        healthRatio : 1,
+        healthRatio : 0.75,
         reactionTimeRatio : 0.9
     };
     platformer.mode.hard = {
@@ -819,7 +817,7 @@ platformer.initModes = function(){
 
         archerSpawnChance : 0.4,
         bossSpawnChance : 0.15,
-        healthRatio : 1.25,
+        healthRatio : 1,
         reactionTimeRatio : 0.75
     };
     platformer.mode.hardcore = {
@@ -839,7 +837,7 @@ platformer.initModes = function(){
 
         archerSpawnChance : 0.4725,
         bossSpawnChance : 0.15,
-        healthRatio : 1.5,
+        healthRatio : 1.25,
         reactionTimeRatio : 0.5
     };
 }
