@@ -732,7 +732,8 @@ platformer.initModes = function(){
 
         archerSpawnChance : 0,
         bossSpawnChance : 0,
-        healthRatio : 1
+        healthRatio : 1,
+        reactionTimeRatio : 1
     };
     platformer.mode.easy = {
         name : 'Facile',
@@ -745,14 +746,15 @@ platformer.initModes = function(){
         numCols : 100,
         numRows : 20,
 
-        crateSpawnChance : 0.1,
+        crateSpawnChance : 0.05,
         hostileSpawnRate : 0.1,
         coinBridgeSpawnChance : 0.75,
         bonusChestSpawnChance : 0.4,
 
         archerSpawnChance : 0.2,
         bossSpawnChance : 0,
-        healthRatio : 1
+        healthRatio : 1,
+        reactionTimeRatio : 1
     };
     platformer.mode.normal = {
         name : 'Normal',
@@ -772,7 +774,8 @@ platformer.initModes = function(){
 
         archerSpawnChance : 0.3,
         bossSpawnChance : 0.1,
-        healthRatio : 1
+        healthRatio : 1,
+        reactionTimeRatio : 0.9
     };
     platformer.mode.hard = {
         name : 'Difficile',
@@ -793,6 +796,27 @@ platformer.initModes = function(){
 
         archerSpawnChance : 0.4,
         bossSpawnChance : 0.15,
-        healthRatio : 1.5
+        healthRatio : 1.25,
+        reactionTimeRatio : 0.75
+    };
+    platformer.mode.hardcore = {
+        name : 'Hardcore',
+        text : [
+            'HARDCORE : Adieu.'
+        ],
+        killAllMobsToComplete : true,
+
+        numCols : 275,
+        numRows : 20,
+
+        crateSpawnChance : 0.05,
+        hostileSpawnRate : 0.3,
+        coinBridgeSpawnChance : 1,
+        bonusChestSpawnChance : 0.75,
+
+        archerSpawnChance : 0.4725,
+        bossSpawnChance : 0.15,
+        healthRatio : 1.5,
+        reactionTimeRatio : 0.5
     };
 }

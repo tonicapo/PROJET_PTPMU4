@@ -19,7 +19,7 @@ function Boss(level, position){
     this.property.baseRange = 50;
     this.property.bleedingChance = 0;
     this.property.attackCooldown = 0;
-    this.property.reactionTime = 250;
+    this.property.reactionTime = 350 * platformer.difficulty.reactionTimeRatio;
     this.property.viewDistance = 750;
 
 

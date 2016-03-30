@@ -4,6 +4,7 @@ function Player(level){
     var self = this;
     var stats = { };
     var levelCompleted = false;
+    var spawnPosition;
 
     this.setRenderBox(80 * platformer.scale, 64 * platformer.scale);
     this.setRangeBoxHeightRatio(1);
@@ -102,10 +103,10 @@ function Player(level){
     }
 
     this.setSpawn = function(x, y){
-        var position = getPositionAtCoord(x, y);
+        spawnPosition = getPositionAtCoord(x, y);
 
-        this.x = position.x;
-        this.y = position.y - Math.abs(platformer.tileSizeY - this.height);
+        this.x = spawnPosition.x;
+        this.y = spawnPosition.y - Math.abs(platformer.tileSizeY - this.height);
     }
 
     this.isLevelCompleted = function(){
@@ -116,4 +117,6 @@ function Player(level){
         this.left = false;
         this.right = false;
     }
+
+    this.getSpawnPosition = function(){ return spawnPosition; }
 }

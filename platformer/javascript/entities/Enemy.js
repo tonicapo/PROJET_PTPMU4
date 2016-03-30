@@ -45,7 +45,7 @@ function Archer(level, position){
     this.property.baseRange = 100;
     this.property.bleedingChance = 0.3;
     this.property.attackCooldown = 750;
-    this.property.reactionTime = 400;
+    this.property.reactionTime = 400 * platformer.difficulty.reactionTimeRatio;
     this.property.viewDistance = 500;
 
 
@@ -67,7 +67,7 @@ function Knight(level, position){
     this.property.baseRange = 25;
     this.property.bleedingChance = 0.15;
     this.property.attackCooldown = 700;
-    this.property.reactionTime = 400;
+    this.property.reactionTime = 400 * platformer.difficulty.reactionTimeRatio;
     this.property.viewDistance = 350;
 
     this.addInventory(new SwordItem(level));

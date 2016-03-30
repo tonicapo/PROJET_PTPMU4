@@ -14,6 +14,11 @@ function LevelState(gsh){
     var showVictoryMessage;
     var showDeathMessage;
 
+    var progressBarMargin = 48;
+    var progressBarHeight = 4;
+    var progressBarWidth;
+    var progressX;
+
     // events généraux
     platformer.events.levelcomplete = new CustomEvent('levelcomplete');
     platformer.events.levelstart = new CustomEvent('levelstart');
@@ -82,6 +87,10 @@ function LevelState(gsh){
     }
 
     this.update = function(){
+        // calcul de la taille de la barre de progression
+        progressBarWidth = platformer.game.getScreenWidth() - progressBarMargin * 2;
+        progressX = Math.round(progressBarWidth * (player.x - player.getSpawnPosition().x) / (chest.x - player.getSpawnPosition().x));
+
         timers.update();
         map.update();
 
@@ -193,6 +202,9 @@ function LevelState(gsh){
     }
 
     function renderGui(ctx){
+        if(player.isDead() || player.isLevelCompleted()){
+            return;
+        }
         /**
         * VIE DU JOUEUR
         */
@@ -218,11 +230,10 @@ function LevelState(gsh){
         ctx.save();
         var x = 48 + 25 * platformer.scale + 3;
         var y = 48 + 46 + 27 + 28;
-        var strokeSize = 2;
 
         ctx.font = '20pt ' + platformer.font;
         ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 4;
         ctx.fillStyle = '#FFFFFF';
         // pièces
         ctx.strokeText(player.getStat('coins'), x, y);
@@ -257,6 +268,24 @@ function LevelState(gsh){
             ctx.fillText(activeEffects[i].name, 48 - 10 * platformer.scale + 32 * platformer.scale + 12, 32 * platformer.scale + 48 * 4 + 48 * i + 32 * platformer.scale / 2 + 14);
             ctx.restore();
         }
+
+
+        /**
+        * PROGRESSION
+        */
+        ctx.save();
+        ctx.globalAlpha = 0.5;
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(progressBarMargin, platformer.game.getScreenHeight() - progressBarHeight - progressBarMargin / 2, progressBarWidth, progressBarHeight);
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(progressBarMargin, platformer.game.getScreenHeight() - progressBarHeight - progressBarMargin / 2, progressBarWidth, progressBarHeight);
+
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = '#2585b7';
+        ctx.fillRect(progressBarMargin, platformer.game.getScreenHeight() - progressBarHeight - progressBarMargin / 2, progressX, progressBarHeight);
+        ctx.restore();
     }
 
     function renderMessages(ctx){
@@ -268,18 +297,18 @@ function LevelState(gsh){
             var txt = 'Game Over';
 
             ctx.fillStyle = '#c74040';
-            ctx.fillRect(0, platformer.game.getScreenHeight() / 2 - 40, platformer.game.getScreenWidth(), 80);
+            ctx.fillRect(0, platformer.game.getScreenHeight() * 4/5 - 40, platformer.game.getScreenWidth(), 80);
 
 
             ctx.font = '32px ' + platformer.font;
             ctx.textAlign = 'center';
-            ctx.lineWidth = 6;
+            ctx.lineWidth = 4;
 
 
             ctx.strokeStyle = '#000000';
-            ctx.strokeText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() / 2 + 32);
+            ctx.strokeText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() * 4/5 + 32);
             ctx.fillStyle = '#FFFFFF';
-            ctx.fillText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() / 2 + 32);
+            ctx.fillText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() * 4/5 + 32);
 
             ctx.restore();
         }
@@ -293,18 +322,18 @@ function LevelState(gsh){
             var txt = '+ ' + player.getStat('coins') + ' pièces !';
 
             ctx.fillStyle = '#2585b7';
-            ctx.fillRect(0, platformer.game.getScreenHeight() / 2 - 40, platformer.game.getScreenWidth(), 80);
+            ctx.fillRect(0, platformer.game.getScreenHeight() * 4/5 - 40, platformer.game.getScreenWidth(), 80);
 
 
             ctx.font = '32px ' + platformer.font;
             ctx.textAlign = 'center';
-            ctx.lineWidth = 6;
+            ctx.lineWidth = 4;
 
 
             ctx.strokeStyle = '#000000';
-            ctx.strokeText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() / 2 + 32);
+            ctx.strokeText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() * 4/5 + 32);
             ctx.fillStyle = '#FFFFFF';
-            ctx.fillText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() / 2 + 32);
+            ctx.fillText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() * 4/5 + 32);
 
             ctx.restore();
         }

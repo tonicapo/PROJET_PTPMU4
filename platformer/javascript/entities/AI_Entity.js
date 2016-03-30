@@ -20,7 +20,7 @@ function AI_Entity(level, position, width, height){
     var viewBoxHeightRatio = 2/5;
     var viewBoxOffsetY = 0;
 
-    this.property.reactionTime = 350;
+    this.property.reactionTime = 350 * platformer.difficulty.reactionTimeRatio;
     this.property.attackCooldown = 500;
     this.property.viewDistance = 250;
 
