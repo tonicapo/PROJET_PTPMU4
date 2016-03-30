@@ -355,7 +355,9 @@ platformer.getAssets = function(){
 
 
 platformer.initTextures = function(resources){
-    // textures
+    /**
+    * GUI
+    */
     platformer.textures.gui = { };
     platformer.textures.gui.healthbar = platformer.getSubImage(resources.tilemap, 0, 256, 192, 46);
     platformer.textures.gui.arrows = [
@@ -365,9 +367,13 @@ platformer.initTextures = function(resources){
         platformer.getSubImage(resources.tilemap, 256 + 11 + 11 + 6, 128, 6, 11)
     ];
 
+
     platformer.textures.entity = { };
     platformer.textures.player = { };
 
+    /**
+    * PLAYER
+    */
     platformer.textures.player.jumping = [
         platformer.getSubImage(resources.player, 80, 0, 80, 64)
     ];
@@ -415,7 +421,9 @@ platformer.initTextures = function(resources){
     ];
 
 
-
+    /**
+    * CHEVALIER SQUELETTE
+    */
     platformer.textures.skeleton_knight = { };
 
     platformer.textures.skeleton_knight.jumping = [
@@ -467,7 +475,9 @@ platformer.initTextures = function(resources){
         platformer.getSubImage(resources.skeleton_knight, 240, 320, 80, 64)
     ];
 
-
+    /**
+    * BOSS
+    */
     platformer.textures.boss = { };
 
     platformer.textures.boss.idle = [
@@ -505,7 +515,9 @@ platformer.initTextures = function(resources){
         platformer.getSubImage(resources.boss, 0, 0, 122, 122)
     ];
 
-
+    /**
+    * ARCHER SQUELETTE
+    */
     platformer.textures.skeleton_archer = { };
 
     platformer.textures.skeleton_archer.jumping = [
@@ -542,7 +554,9 @@ platformer.initTextures = function(resources){
         platformer.getSubImage(resources.skeleton_archer, 240, 320, 80, 64)
     ];
 
-
+    /**
+    * ITEMS
+    */
     platformer.textures.items = { };
 
     platformer.textures.items.coin = [
@@ -629,6 +643,15 @@ platformer.initTextures = function(resources){
         platformer.getSubImage(resources.tilemap, 224, 224, 32, 32),
         platformer.getSubImage(resources.tilemap, 256, 224, 32, 32)
     ];
+
+
+    /**
+    * TILES
+    */
+    platformer.textures.tile = { };
+    platformer.textures.tile.chest = [
+        platformer.getSubImage(resources.tilemap, 224, 160, 32, 32)
+    ];
 }
 
 platformer.initBackgrounds = function(resources){
@@ -651,7 +674,7 @@ platformer.initTiletypes = function(resources){
         platformer.getSubImage(resources.tilemap, 224, 96, 32, 32)
     ], true, false);
     platformer.tiletype.chest = new TileType('chest', [
-        platformer.getSubImage(resources.tilemap, 224, 160, 32, 32)
+        platformer.textures.tile.chest
     ], false, false);
     platformer.tiletype.stone = new TileType('stone', [
         platformer.getSubImage(resources.tilemap, 256, 64, 32, 32),

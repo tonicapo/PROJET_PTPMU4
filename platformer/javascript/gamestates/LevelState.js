@@ -18,6 +18,7 @@ function LevelState(gsh){
     var progressBarHeight = 4;
     var progressBarWidth;
     var progressX;
+    var progressBarOffsetY;
 
     // events généraux
     platformer.events.levelcomplete = new CustomEvent('levelcomplete');
@@ -90,6 +91,7 @@ function LevelState(gsh){
         // calcul de la taille de la barre de progression
         progressBarWidth = platformer.game.getScreenWidth() - progressBarMargin * 2;
         progressX = Math.round(progressBarWidth * (player.x - player.getSpawnPosition().x) / (chest.x - player.getSpawnPosition().x));
+        progressBarOffsetY = platformer.game.getScreenHeight() - progressBarHeight - progressBarMargin / 2;
 
         if(progressX < 0){
             progressX = 0;
@@ -98,15 +100,17 @@ function LevelState(gsh){
             progressX = progressBarWidth;
         }
 
-        
+
 
         timers.update();
         map.update();
-
         player.update();
 
         remainingEntities = getRemainingEntitiesLength();
 
+        /*
+        * Liste des effets actifs
+        */
         activeEffects = [];
         for(var i = 0; i < bonusNames.length; i++){
             if(player.getBonus(bonusNames[i]) > 1){
@@ -137,12 +141,11 @@ function LevelState(gsh){
     this.render = function(ctx){
         map.render(ctx);
         renderGui(ctx);
-        //drawWinZone(ctx);
         renderMessages(ctx);
     }
 
     this.renderBackground = function(ctx){
-
+        return;
     }
 
 
@@ -286,15 +289,17 @@ function LevelState(gsh){
         ctx.globalAlpha = 0.5;
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 4;
-        ctx.strokeRect(progressBarMargin, platformer.game.getScreenHeight() - progressBarHeight - progressBarMargin / 2, progressBarWidth, progressBarHeight);
+        ctx.strokeRect(progressBarMargin, progressBarOffsetY, progressBarWidth, progressBarHeight);
 
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(progressBarMargin, platformer.game.getScreenHeight() - progressBarHeight - progressBarMargin / 2, progressBarWidth, progressBarHeight);
+        ctx.fillRect(progressBarMargin, progressBarOffsetY, progressBarWidth, progressBarHeight);
 
         ctx.globalAlpha = 1;
         ctx.fillStyle = '#2585b7';
-        ctx.fillRect(progressBarMargin, platformer.game.getScreenHeight() - progressBarHeight - progressBarMargin / 2, progressX, progressBarHeight);
+        ctx.fillRect(progressBarMargin, progressBarOffsetY, progressX, progressBarHeight);
         ctx.restore();
+
+        ctx.drawImage(platformer.textures.tile.chest[0], progressBarWidth + 16, progressBarOffsetY - 32 - 8, 32, 32);
     }
 
     function renderMessages(ctx){
