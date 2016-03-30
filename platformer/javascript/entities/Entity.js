@@ -174,7 +174,18 @@ function Entity(level, position, width, height){
                 if(!landed){
                     for(var i in projectiles){
                         if(rangeBox.intersects(projectiles[i]) && projectiles[i].isDeflectable()){
-                            projectiles[i].setStopped(true);
+                            var p = projectiles[i];
+                            var direction = (p.getDirection() == 0) ? 1 : 0;
+                            p.setDirection(direction);
+
+                            if(direction == 0){
+                                p.left = true;
+                                p.right = false;
+                            }
+                            else{
+                                p.left = false;
+                                p.right = true;
+                            }
                         }
                     }
 

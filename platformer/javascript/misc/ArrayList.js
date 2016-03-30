@@ -23,6 +23,7 @@ function ArrayList(){
     this.clean = function(){
         for(var k in list){
             if(list[k].dirty){
+                list[k] = null;
                 delete list[k];
             }
         }

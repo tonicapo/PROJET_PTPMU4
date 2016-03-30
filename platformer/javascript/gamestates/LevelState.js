@@ -292,7 +292,7 @@ function LevelState(gsh){
             ctx.save();
             ctx.font = '12pt ' + platformer.font;
             ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 3;
             ctx.fillStyle = '#FFFFFF';
             ctx.strokeText(activeEffects[i].name, 48 - 10 * platformer.scale + 32 * platformer.scale + 12, 32 * platformer.scale + 48 * 4 + 48 * i + 32 * platformer.scale / 2 + 14);
             ctx.fillText(activeEffects[i].name, 48 - 10 * platformer.scale + 32 * platformer.scale + 12, 32 * platformer.scale + 48 * 4 + 48 * i + 32 * platformer.scale / 2 + 14);
@@ -313,7 +313,7 @@ function LevelState(gsh){
         ctx.fillRect(progressBarMargin, progressBarOffsetY, progressBarWidth, progressBarHeight);
 
         ctx.globalAlpha = 1;
-        ctx.fillStyle = '#2585b7';
+        ctx.fillStyle = '#38a3da';
         ctx.fillRect(progressBarMargin, progressBarOffsetY, progressX, progressBarHeight);
         ctx.restore();
 

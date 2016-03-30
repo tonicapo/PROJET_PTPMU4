@@ -78,6 +78,7 @@ function Map(level){
             level.spawnEntity(entities[i]);
         }
 
+
         renderlist = {
             tiles : [],
             particles : [],
@@ -139,6 +140,7 @@ function Map(level){
 
         for(var k in items){
             if(items[k].isDirty()){
+                items[k] = null;
                 delete items[k];
             }
             else{
@@ -161,9 +163,11 @@ function Map(level){
                     * optimisation
                     */
                     if(filter == 'entities' && items[k].isDead()){
+                        items[k] = null;
                         delete items[k];
                     }
                     else if(filter == 'particles'){
+                        items[k] = null;
                         delete items[k];
                     }
                 }

@@ -20,10 +20,10 @@ function Player(level){
     this.animationList.deadIdle = new Animation('deadIdle', platformer.textures.player.deadIdle, 100, { loop : false, cancelable : false });
     this.animationList.deadFalling = new Animation('deadFalling', platformer.textures.player.deadFalling, 0, { loop : false, cancelable : true });
 
-    this.animationList.bowAttack = new Animation('bowAttack', platformer.textures.player.bowAttack, 150, { cancelable : false });
-    this.animationList.knifeAttack = new Animation('knifeAttack', platformer.textures.player.knifeAttack, 150, { cancelable : false });
-    this.animationList.swordAttack = new Animation('swordAttack', platformer.textures.player.swordAttack, 75, { cancelable : false });
-    this.animationList.fireBallAttack = new Animation('fireBallAttack', platformer.textures.player.knifeAttack, 150, { cancelable : false });
+    this.animationList.bowAttack = new Animation('bowAttack', platformer.textures.player.bowAttack, 140, { cancelable : false });
+    this.animationList.knifeAttack = new Animation('knifeAttack', platformer.textures.player.knifeAttack, 140, { cancelable : false });
+    this.animationList.swordAttack = new Animation('swordAttack', platformer.textures.player.swordAttack, 70, { cancelable : false });
+    this.animationList.fireBallAttack = new Animation('fireBallAttack', platformer.textures.player.knifeAttack, 140, { cancelable : false });
 
     this.animationList.victory = new Animation('victory', platformer.textures.player.victory, 750, { loop : true });
 

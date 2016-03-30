@@ -13,7 +13,7 @@ function FireBall(level, originEntity, targets, position, direction){
     this.property.stopSpeed = 0.5;
     this.property.maxSpeed = 3;
 
-    this.setMaxDistance(500);
+    this.setMaxDistance(1000);
     this.setDestructOnStopped(true);
     this.setFollowingTarget(false);
     this.setDeflectable(true);

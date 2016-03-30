@@ -768,7 +768,7 @@ platformer.initModes = function(){
         numRows : 20,
 
         crateSpawnChance : 0.05,
-        hostileSpawnRate : 0.1,
+        hostileSpawnRate : 0.15,
         coinBridgeSpawnChance : 0.75,
         bonusChestSpawnChance : 0.4,
 
@@ -789,13 +789,13 @@ platformer.initModes = function(){
         numRows : 20,
 
         crateSpawnChance : 0.1,
-        hostileSpawnRate : 0.16,
+        hostileSpawnRate : 0.2,
         coinBridgeSpawnChance : 0.75,
         bonusChestSpawnChance : 0.4,
 
         archerSpawnChance : 0.3,
         bossSpawnChance : 0.1,
-        healthRatio : 0.75,
+        healthRatio : 1,
         reactionTimeRatio : 0.9
     };
     platformer.mode.hard = {

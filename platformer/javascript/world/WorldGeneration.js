@@ -558,6 +558,10 @@ function WorldGeneration(level, test){
                         crate.replacementTiletype = tilemap[x][niv - 2].tiletype;
                         breakableList.push(crate);
                         tilemap[i][niv - 2] = crate;
+
+                        if(typeof tilemap[i][niv - 1] !== 'undefined'){
+                            tilemap[i][niv - 1].setBreakable(false);
+                        }
                     }
                 }
 
