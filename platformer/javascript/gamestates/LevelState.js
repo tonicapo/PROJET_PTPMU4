@@ -217,6 +217,20 @@ function LevelState(gsh){
         if(player.isDead() || player.isLevelCompleted()){
             return;
         }
+
+        /**
+        * MODE DE JEU ACTIF
+        */
+        ctx.save();
+        ctx.font = '12pt ' + platformer.font;
+        ctx.strokeStyle = '#000000';
+        ctx.fillStyle = '#dadada';
+        ctx.textAlign = 'right';
+        ctx.lineWidth = 3;
+        ctx.strokeText(platformer.difficulty.name, platformer.game.getScreenWidth() - 48, 64);
+        ctx.fillText(platformer.difficulty.name, platformer.game.getScreenWidth() - 48, 64);
+        ctx.restore();
+
         /**
         * VIE DU JOUEUR
         */

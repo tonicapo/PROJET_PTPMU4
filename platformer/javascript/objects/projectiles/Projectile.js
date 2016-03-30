@@ -83,7 +83,10 @@ function Projectile(level, originEntity, targets, weapon, position, d, width, he
     }
 
     function updateStatus(){
-        if(self.isBlockedLeft() || self.isBlockedRight()){
+        if(originEntity.isDead()){
+            self.setDirty(true);
+        }
+        else if(self.isBlockedLeft() || self.isBlockedRight()){
             if(!destructOnStopped) self.x += (direction == 1) ? self.width / 2 : -(self.width / 2);
             self.setAnimation(self.animationList.idle);
             disableMovement();

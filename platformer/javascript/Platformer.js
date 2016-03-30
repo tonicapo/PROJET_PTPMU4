@@ -740,7 +740,7 @@ platformer.initModes = function(){
     platformer.mode.peaceful = {
         name : 'Paisible',
         text : [
-            'PAISIBLE : Récupérer votre coffre sans risque d\'être troublé...',
+            'Récupérer votre coffre sans risque d\'être troublé...',
             'Ce mode n\'offre aucune récompense en chemin.'
         ],
         killAllMobsToComplete : false,
@@ -761,7 +761,7 @@ platformer.initModes = function(){
     platformer.mode.easy = {
         name : 'Facile',
         text : [
-            'FACILE : Votre or a été dérobé par des créatures maléfiques.',
+            'Votre or a été dérobé par des créatures maléfiques.',
             'Vous devez récupérer un maximum de pièces, et retrouver votre coffre...'
         ],
         killAllMobsToComplete : false,
@@ -782,7 +782,7 @@ platformer.initModes = function(){
     platformer.mode.normal = {
         name : 'Normal',
         text : [
-            'NORMAL : Votre or a été dérobé par des créatures maléfiques.',
+            'Votre or a été dérobé par des créatures maléfiques.',
             'Vous devez récupérer un maximum de pièces, éliminer TOUS les voleurs, et retrouver votre coffre...'
         ],
         killAllMobsToComplete : true,
@@ -803,13 +803,13 @@ platformer.initModes = function(){
     platformer.mode.hard = {
         name : 'Difficile',
         text : [
-            'DIFFICILE : Votre or a été dérobé par des créatures maléfiques.',
+            'Votre or a été dérobé par des créatures maléfiques.',
             'Vous devez récupérer un maximum de pièces, éliminer TOUS les voleurs, et retrouver votre coffre...',
             'Ce mode offre le plus d\'opportunités de trouver de l\'or. Pour les plus expérimentés.'
         ],
         killAllMobsToComplete : true,
 
-        numCols : 275,
+        numCols : 250,
         numRows : 20,
 
         crateSpawnChance : 0.1,
@@ -825,11 +825,11 @@ platformer.initModes = function(){
     platformer.mode.hardcore = {
         name : 'Hardcore',
         text : [
-            'HARDCORE : Adieu.'
+            'Adieu.'
         ],
         killAllMobsToComplete : true,
 
-        numCols : 275,
+        numCols : 175,
         numRows : 20,
 
         crateSpawnChance : 0.05,

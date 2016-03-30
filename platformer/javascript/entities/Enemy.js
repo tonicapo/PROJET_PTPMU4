@@ -41,7 +41,7 @@ function Archer(level, position){
     this.property.maxFallSpeed = 8;
     this.property.jumpHeight = 3;
     this.property.doubleJumpHeight = 4;
-    this.property.maxHealth = 7.5;
+    this.property.maxHealth = 7.5 * platformer.difficulty.healthRatio;
     this.property.baseRange = 100;
     this.property.bleedingChance = 0.3;
     this.property.attackCooldown = 750;
@@ -63,7 +63,7 @@ function Knight(level, position){
     this.property.maxFallSpeed = 8;
     this.property.jumpHeight = 3;
     this.property.doubleJumpHeight = 4;
-    this.property.maxHealth = 12;
+    this.property.maxHealth = 12 * platformer.difficulty.healthRatio;
     this.property.baseRange = 25;
     this.property.bleedingChance = 0.15;
     this.property.attackCooldown = 700;

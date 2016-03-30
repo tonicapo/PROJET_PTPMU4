@@ -39,6 +39,16 @@ function MenuState(gsh){
 
     this.render = function(ctx){
         /**
+        * MODE DE JEU ACTIF
+        */
+        ctx.save();
+        ctx.font = '12pt ' + platformer.font;
+        ctx.fillStyle = '#dadada';
+        ctx.textAlign = 'right';
+        ctx.fillText('Mode : ' + platformer.difficulty.name, platformer.game.getScreenWidth() - 48, 64);
+        ctx.restore();
+
+        /**
         * LOGO
         */
         ctx.drawImage(platformer.textures.logo, (platformer.game.getScreenWidth() - logoWidth) / 2, logoPosY, logoWidth, logoHeight);
@@ -49,12 +59,12 @@ function MenuState(gsh){
         ctx.save();
         ctx.font = '12pt ' + platformer.font;
         ctx.fillStyle = '#dadada';
-        ctx.fillText('Nom du compte', 48, 48);
+        ctx.fillText('Nom du compte', 48, 64);
         ctx.font = '10pt ' + platformer.font;
         ctx.fillStyle = '#757575';
-        ctx.fillText('Total pièces : 0', 48, 48 + 32);
-        ctx.fillText('Total victimes : 0', 48, 48 + 32 * 2);
-        ctx.fillText('Classement : 1er', 48, 48 + 32 * 4);
+        ctx.fillText('Total pièces : 0', 48, 64 + 32);
+        ctx.fillText('Total victimes : 0', 48, 64 + 32 * 2);
+        ctx.fillText('Classement : 1er', 48, 64 + 32 * 4);
         ctx.restore();
 
         /**
