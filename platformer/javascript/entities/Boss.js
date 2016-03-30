@@ -15,7 +15,7 @@ function Boss(level, position){
     this.property.maxFallSpeed = 8;
     this.property.jumpHeight = 2;
     this.property.doubleJumpHeight = 4;
-    this.property.maxHealth = 60;
+    this.property.maxHealth = 60 * platformer.difficulty.healthRatio;
     this.property.baseRange = 50;
     this.property.bleedingChance = 0;
     this.property.attackCooldown = 0;

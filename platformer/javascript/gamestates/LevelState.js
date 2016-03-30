@@ -269,6 +269,10 @@ function LevelState(gsh){
             ctx.strokeText(remainingEntities + '/' + entitiesCount, x + 128, y);
             ctx.fillText(remainingEntities + '/' + entitiesCount, x + 128, y);
         }
+        else{
+            ctx.strokeText('0', x + 128, y);
+            ctx.fillText('0', x + 128, y);
+        }
         ctx.restore();
 
         /**
