@@ -224,7 +224,7 @@ function LevelState(gsh){
         ctx.save();
         ctx.font = '12pt ' + platformer.font;
         ctx.strokeStyle = '#000000';
-        ctx.fillStyle = '#dadada';
+        ctx.fillStyle = '#FFFFFF';
         ctx.textAlign = 'right';
         ctx.lineWidth = 3;
         ctx.strokeText(platformer.difficulty.name, platformer.game.getScreenWidth() - 48, 64);
@@ -325,50 +325,42 @@ function LevelState(gsh){
         * Message de mort
         */
         if(showDeathMessage){
-            ctx.save();
-            var txt = 'Game Over';
-
-            ctx.fillStyle = '#c74040';
-            ctx.fillRect(0, platformer.game.getScreenHeight() * 4/5 - 40, platformer.game.getScreenWidth(), 80);
-
-
-            ctx.font = '32px ' + platformer.font;
-            ctx.textAlign = 'center';
-            ctx.lineWidth = 4;
-
-
-            ctx.strokeStyle = '#000000';
-            ctx.strokeText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() * 4/5 + 32);
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() * 4/5 + 32);
-
-            ctx.restore();
+            drawBanner(ctx, 'Game Over', '#c74040');
         }
-
 
         /**
         * Message de victoire
         */
         if(showVictoryMessage){
-            ctx.save();
-            var txt = '+ ' + player.getStat('coins') + ' pièces !';
-
-            ctx.fillStyle = '#2585b7';
-            ctx.fillRect(0, platformer.game.getScreenHeight() * 4/5 - 40, platformer.game.getScreenWidth(), 80);
-
-
-            ctx.font = '32px ' + platformer.font;
-            ctx.textAlign = 'center';
-            ctx.lineWidth = 4;
-
-
-            ctx.strokeStyle = '#000000';
-            ctx.strokeText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() * 4/5 + 32);
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() * 4/5 + 32);
-
-            ctx.restore();
+            drawBanner(ctx, '+ ' + player.getStat('coins') + ' pièces !', '#2585b7');
         }
+
+        /**
+        * Message en pause
+        */
+        if(platformer.game.isPaused()){
+        //    drawBanner(ctx, 'En pause', '#73405C');
+        }
+    }
+
+    function drawBanner(ctx, txt, color){
+        ctx.save();
+
+        ctx.fillStyle = color;
+        ctx.fillRect(0, platformer.game.getScreenHeight() * 4/5 - 40, platformer.game.getScreenWidth(), 80);
+
+
+        ctx.font = '32px ' + platformer.font;
+        ctx.textAlign = 'center';
+        ctx.lineWidth = 4;
+
+
+        ctx.strokeStyle = '#000000';
+        ctx.strokeText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() * 4/5 + 32);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(txt, platformer.game.getScreenWidth() / 2, platformer.game.getScreenHeight() * 4/5 + 32);
+
+        ctx.restore();
     }
 
     function handleLevelCompleted(e){

@@ -791,7 +791,7 @@ platformer.initModes = function(){
         crateSpawnChance : 0.1,
         hostileSpawnRate : 0.2,
         coinBridgeSpawnChance : 0.75,
-        bonusChestSpawnChance : 0.4,
+        bonusChestSpawnChance : 0.5,
 
         archerSpawnChance : 0.3,
         bossSpawnChance : 0.1,

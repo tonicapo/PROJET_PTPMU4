@@ -178,17 +178,14 @@ function Map(level){
     function renderObjects(ctx, items){
         for(var i = 0, n = items.length; i < n; i++){
             items[i].render(ctx, panX, panY);
-            //items[i].draw(ctx, panX, panY);
         }
 
-        /*
-        renderBox(ctx, player);
-        for(var i in renderlist.entities){
-            renderBox(ctx, renderlist.entities[i]);
+        if(platformer.debug){
+            renderBox(ctx, player);
+            for(var i in renderlist.entities){
+                if(!renderlist.entities[i].isDead()) renderBox(ctx, renderlist.entities[i]);
+            }
         }
-
-        */
-
     }
 
     function updateCamera(){

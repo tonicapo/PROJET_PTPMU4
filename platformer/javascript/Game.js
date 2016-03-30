@@ -258,4 +258,6 @@ function Game(){
     this.getScreenHeight = function(){ return screenHeight }
 
     this.getRatio = function(){ return ratio; }
+
+    this.isPaused = function(){ return !running; }
 }

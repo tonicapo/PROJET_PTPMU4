@@ -23,6 +23,7 @@ window.addEventListener('DOMContentLoaded', function(){
         fullscreen : false,
 
         seed : undefined,
+        scale : 2,
 
         font : 'Minecraftia-Regular',
 

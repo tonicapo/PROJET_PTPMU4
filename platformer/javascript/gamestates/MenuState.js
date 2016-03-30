@@ -10,8 +10,8 @@ function MenuState(gsh){
     var targetLogoPosY = 0;
     var logoPosY = 0;
 
-    var logoWidth = 355 * platformer.scale;
-    var logoHeight = 122 * platformer.scale;
+    var logoWidth = 355 * 1.5;
+    var logoHeight = 122 * 1.5;
 
     var background;
 
@@ -66,6 +66,8 @@ function MenuState(gsh){
         ctx.fillText('Total victimes : 0', 48, 64 + 32 * 2);
         ctx.fillText('Classement : 1er', 48, 64 + 32 * 4);
         ctx.restore();
+
+        menuY += 20;
 
         /**
         * MENU

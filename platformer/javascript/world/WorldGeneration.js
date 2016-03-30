@@ -178,11 +178,11 @@ function WorldGeneration(level, test){
         generateTerrain();
         // ajouts de tiles NON structurelles (type décoration, herbes, fleurs etc..)
         decorateWorld();
-        // sélection de textures aléatoire parmis la liste disponible pour chaque tiletype
+        // sélection de textures aléatoire parmi la liste disponible pour chaque tiletype
         randomizeMetadata();
         // ajout des caisses de bonus
         addCrates();
-        // ajout de plateforme entre les zones longues de terrain
+        // ajout de plateforme supplémentaires
         addBonusPlatform();
         // ajout le coffre de fin sur la dernière plateforme
         addChest();

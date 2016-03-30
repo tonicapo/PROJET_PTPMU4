@@ -65,7 +65,7 @@ function Player(level){
     }
 
     this.keyDown = function(key){
-        if(this.isDead() || this.isLevelCompleted()){
+        if(this.isDead() || this.isLevelCompleted() || platformer.game.isPaused()){
             return;
         }
 
