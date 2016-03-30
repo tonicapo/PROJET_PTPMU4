@@ -91,6 +91,15 @@ function LevelState(gsh){
         progressBarWidth = platformer.game.getScreenWidth() - progressBarMargin * 2;
         progressX = Math.round(progressBarWidth * (player.x - player.getSpawnPosition().x) / (chest.x - player.getSpawnPosition().x));
 
+        if(progressX < 0){
+            progressX = 0;
+        }
+        if(progressX > progressBarWidth){
+            progressX = progressBarWidth;
+        }
+
+        
+
         timers.update();
         map.update();
 
