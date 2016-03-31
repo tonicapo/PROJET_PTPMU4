@@ -339,7 +339,7 @@ function LevelState(gsh){
         * Message en pause
         */
         if(platformer.game.isPaused()){
-        //    drawBanner(ctx, 'En pause', '#73405C');
+            drawBanner(ctx, 'En pause', '#73405C');
         }
     }
 
@@ -376,19 +376,16 @@ function LevelState(gsh){
                 }
             }
         }
-        /**
-        - Envoyer le nombre de pièces
-        - Envoyer le nombre de kills
-        */
+
+        if(typeof platformer.onlevelcomplete === 'function'){
+            platformer.onlevelcomplete(player.getStats());
+        }
 
         platformer.seed = undefined;
 
         timers.addTimer(function(){
             showVictoryMessage = true;
-        }, 3000);
-
-        var stats = player.getStats();
-        console.log(stats);
+        }, 2000);
     }
 
     function handlePlayerDeath(e){
@@ -398,9 +395,8 @@ function LevelState(gsh){
             showDeathMessage = true;
         }, 1500);
 
-        /**
-        - Ajoute une mort au compteur de mort du player
-        */
-
+        if(typeof platformer.onplayerdeath === 'function'){
+            platformer.onplayerdeath();
+        }
     }
 }
