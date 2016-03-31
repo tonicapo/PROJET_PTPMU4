@@ -19,6 +19,7 @@ function LevelState(gsh){
     var progressBarWidth;
     var progressX;
     var progressBarOffsetY;
+    var completed = false;
 
     // events généraux
     platformer.events.levelcomplete = new CustomEvent('levelcomplete');
@@ -29,6 +30,7 @@ function LevelState(gsh){
     this.init = function(){
         showVictoryMessage = false;
         showDeathMessage = false;
+        completed = false;
 
 
         if(typeof timers !== 'undefined'){
@@ -364,28 +366,30 @@ function LevelState(gsh){
     }
 
     function handleLevelCompleted(e){
-        e.stopPropagation();
-
-        // tue toutes les entités
-        var entities = self.getEntities();
-        for(var i in entities){
-            if(entities[i]){
-                if(!entities[i].isDead()){
-                    entities[i].setCanDropLoot(false);
-                    entities[i].setDamage(entities[i], 1000, 0, 1, 2);
+        if(player.isLevelCompleted() && !completed){
+            completed = true;
+            e.stopPropagation();
+            // tue toutes les entités
+            var entities = self.getEntities();
+            for(var i in entities){
+                if(entities[i]){
+                    if(!entities[i].isDead()){
+                        entities[i].setCanDropLoot(false);
+                        entities[i].setDamage(entities[i], 1000, 0, 1, 2);
+                    }
                 }
             }
+
+            if(typeof platformer.onlevelcomplete === 'function'){
+                platformer.onlevelcomplete(player.getStats());
+            }
+
+            platformer.seed = undefined;
+
+            timers.addTimer(function(){
+                showVictoryMessage = true;
+            }, 2000);
         }
-
-        if(typeof platformer.onlevelcomplete === 'function'){
-            platformer.onlevelcomplete(player.getStats());
-        }
-
-        platformer.seed = undefined;
-
-        timers.addTimer(function(){
-            showVictoryMessage = true;
-        }, 2000);
     }
 
     function handlePlayerDeath(e){

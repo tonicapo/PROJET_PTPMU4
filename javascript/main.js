@@ -87,7 +87,6 @@ window.addEventListener('DOMContentLoaded', function(){
 
     // gestion de l'évènement onlevelcomplete
     function gameLevelComplete(stats){
-        console.log(objectToUrlEncoded(stats));
         ajaxRequest('backend.php?type=game&task=update', 'POST', objectToUrlEncoded(stats), function(data){
             platformer.infos = data['response'];
         });
