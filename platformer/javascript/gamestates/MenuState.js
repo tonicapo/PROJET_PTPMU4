@@ -56,18 +56,21 @@ function MenuState(gsh){
         /**
         * STATS
         */
-        ctx.save();
-        ctx.font = '12pt ' + platformer.font;
-        ctx.fillStyle = '#dadada';
-        ctx.fillText('Nom du compte', 48, 64);
-        ctx.font = '10pt ' + platformer.font;
-        ctx.fillStyle = '#757575';
-        ctx.fillText('Total pièces : 0', 48, 64 + 32);
-        ctx.fillText('Total victimes : 0', 48, 64 + 32 * 2);
-        ctx.fillText('Classement : 1er', 48, 64 + 32 * 4);
-        ctx.restore();
+        if(typeof platformer.infos !== 'undefined'){
+            ctx.save();
+            ctx.font = '14pt ' + platformer.font;
+            ctx.fillStyle = '#dadada';
+            ctx.fillText(platformer.infos.pseudo, 48, 64);
+            ctx.font = '10pt ' + platformer.font;
+            ctx.fillStyle = '#757575';
+            ctx.fillText('Total pièces : ' + platformer.infos.nb_pieces, 48, 64 + 32);
+            ctx.fillText('Total victimes : ' + platformer.infos.nb_victimes, 48, 64 + 32 * 2);
+            ctx.fillText('Total morts : ' + platformer.infos.nb_morts, 48, 64 + 32 * 3);
+            ctx.fillText('Total joueurs : ' + platformer.infos.totalPlayers, 48, 64 + 32 * 5);
+            ctx.fillText('Highscore : ' + platformer.infos.highscore, 48, 64 + 32 * 6);
+            ctx.restore();
+        }
 
-        menuY += 20;
 
         /**
         * MENU
@@ -77,16 +80,16 @@ function MenuState(gsh){
         ctx.lineWidth = 3;
         ctx.textAlign = 'center';
 
-        var menuY = targetLogoPosY + logoHeight;
+        var menuY = platformer.game.getScreenHeight() / 2 + 32;
         var arrowWidth = 11 * platformer.scale;
         var arrowHeight = 6 * platformer.scale;
 
         // flèches de sélection verticales
-        ctx.drawImage(platformer.textures.gui.arrows[0], (platformer.game.getScreenWidth() - arrowWidth) / 2, menuY, arrowWidth, arrowHeight);
+        ctx.drawImage(platformer.textures.gui.arrows[0], (platformer.game.getScreenWidth() - arrowWidth) / 2, menuY - 32, arrowWidth, arrowHeight);
         ctx.drawImage(platformer.textures.gui.arrows[1], (platformer.game.getScreenWidth() - arrowWidth) / 2, menuY + 64 * choices.length + 20 * 2, arrowWidth, arrowHeight);
 
 
-        menuY += 64 + 20;
+        menuY += 64;
 
 
         for(var i = 0; i < choices.length; i++){

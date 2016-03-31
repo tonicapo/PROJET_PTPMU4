@@ -56,8 +56,8 @@ function Knight(level, position){
     Enemy.call(this, level, position);
 
     this.property.speed = 0.1;
-    this.property.stopSpeed = 0.25;
-    this.property.maxSpeed = 1.25;
+    this.property.stopSpeed = 0.2;
+    this.property.maxSpeed = 1.5;
     this.property.fallSpeed = 2;
     this.property.maxFallSpeed = 8;
     this.property.jumpHeight = 3;

@@ -1,7 +1,59 @@
 body{
     font-family:'Minecraftia-Regular';
     margin:0;
-    background-color:#000;
+    background-color:#101010;
+    font-size:16px;
+    color:#fff;
+}
+
+
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
 }
 
 @font-face{
@@ -21,4 +73,133 @@ body{
     font-style: normal;
     font-weight: bold;
     src: url(./platformer/resources/fonts/slkscreb.ttf);
+}
+
+
+*, *:after, *:before{
+    box-sizing:border-box;
+}
+
+
+.wrapper{
+    width:900px;
+    margin:0 auto;
+}
+
+.clearfix:after{
+    content:'';
+    display:block;
+    height:0;
+    clear:both;
+}
+
+/**
+MAIN
+**/
+
+h1{
+    font-family:Arial;
+    color:#FFF;
+    font-size:4rem;
+    margin-top:calc(20vh + 90px);
+    margin-bottom:2rem;
+    font-weight:bold;
+}
+
+#controls{
+    background:#dadada;
+    width:100vw;
+    font-family:Arial;
+    font-size:1.1rem;
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:-1;
+    padding:1rem;
+    text-align:center;
+}
+#controls li{
+    display:inline-block;
+    padding:0 1rem;
+    margin-bottom:1rem;
+    color:#505050;
+    font-size:0.85rem;
+}
+#controls .key{
+    text-align:center;
+    display:block;
+    min-width:2rem;
+    line-height:2rem;
+    border-radius:5px;
+    background:#dadada;
+    border:3px solid #adadad;
+    padding:0 0.75rem;
+    color:#505050;
+    margin:0 0.5rem;
+    margin-bottom:1rem;
+}
+
+
+.gameForm{
+    width:50%;
+    float:left;
+    opacity:1;
+}
+
+.gameForm#login{
+    padding-right:3rem;
+}
+.gameForm#register{
+    padding-left:3rem;
+}
+
+.gameForm#login input[type=submit]{
+    background:#9c56a7;
+    border-color:#9c56a7;
+}
+
+.gameForm .message{
+    display:none;
+    font-family:Arial;
+    font-size:1rem;
+    line-height:1.5rem;
+}
+.gameForm .message.error{
+    color:#c74040;
+}
+.gameForm .message.success{
+    color:#4ac740;
+}
+
+.gameForm h4{
+    font-family:Arial;
+    font-size:1.25rem;
+    font-weight:bold;
+    color:#dadada;
+    margin-bottom:1rem;
+}
+.gameForm input{
+    font-family:Arial;
+    font-size:1.2rem;
+    border:2px solid #252525;
+    background:transparent;
+    width:100%;
+    padding:0.5rem 1rem;
+    line-height:2rem;
+    margin-bottom:1rem;
+    outline:none;
+    cursor:pointer;
+    color:#dadada;
+}
+.gameForm input:disabled{
+    background-color:rgba(255, 255, 255, 0.1);
+    cursor:default;
+}
+.gameForm input[type=submit]{
+    background:#adadad;
+    border-color:#adadad;
+    color:#fff;
+}
+.gameForm input[type=submit]:disabled{
+    background:transparent;
 }

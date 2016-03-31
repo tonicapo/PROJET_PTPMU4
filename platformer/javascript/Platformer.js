@@ -26,6 +26,12 @@ platformer.init = function(id, options){
     platformer.onready = (typeof options.onready === 'function') ? options.onready : undefined;
     // évènement déclenché au moment où le jeu est redimensionné
     platformer.onresize = (typeof options.onresize === 'function') ? options.onresize : undefined;
+    // évènement déclenché au moment où le player meurt
+    platformer.onplayerdeath = (typeof options.onplayerdeath === 'function') ? options.onplayerdeath : undefined;
+    // évènement déclenché au moment où le player gagne
+    platformer.onlevelcomplete = (typeof options.onlevelcomplete === 'function') ? options.onlevelcomplete : undefined;
+
+    platformer.infos = (typeof options.infos !== 'undefined') ? options.infos : undefined;
 
     // Font
     platformer.font = (typeof options.font !== 'undefined') ? options.font : 'Arial';
@@ -816,7 +822,7 @@ platformer.initModes = function(){
         bonusChestSpawnChance : 0.5,
 
         archerSpawnChance : 0.4,
-        bossSpawnChance : 0.15,
+        bossSpawnChance : 0.125,
         healthRatio : 1,
         reactionTimeRatio : 0.75
     };
@@ -836,7 +842,7 @@ platformer.initModes = function(){
         bonusChestSpawnChance : 0.75,
 
         archerSpawnChance : 0.4725,
-        bossSpawnChance : 0.15,
+        bossSpawnChance : 0.125,
         healthRatio : 1.25,
         reactionTimeRatio : 0.5
     };
